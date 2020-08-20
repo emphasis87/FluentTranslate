@@ -12,6 +12,7 @@
     <Antlr4 Include="Fluent.g4">
       <Visitor>true</Visitor>
       <Listener>false</Listener>
+      <AntOutDir>.</AntOutDir>
     </Antlr4>
   </ItemGroup>
 
