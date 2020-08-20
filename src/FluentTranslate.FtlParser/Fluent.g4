@@ -4,6 +4,8 @@
  * Parser Rules
  */
 
+message_list		: message ( NEWLINE message )* ;
+message				: name WS? EQ WS? ;
 chat                : line line EOF ;
 line                : name SAYS opinion NEWLINE;
 name                : WORD ;
@@ -19,6 +21,8 @@ fragment Y          : ('Y'|'y') ;
 fragment LOWERCASE  : [a-z] ;
 fragment UPPERCASE  : [A-Z] ;
 
+WS					: (' '|'\t')+ -> skip ;
+EQ					: '=' ;
 SAYS                : S A Y S ;
 WORD                : (LOWERCASE | UPPERCASE)+ ;
 TEXT                : '"' .*? '"' ;
