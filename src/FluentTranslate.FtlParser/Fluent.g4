@@ -4,10 +4,11 @@
  * Parser Rules
  */
 
-message_list		: message ( NEWLINE message )* ;
+message_list		: message ( NEWLINE message )* NEWLINE? EOF ;
 message				: name WS? EQ WS? ;
-chat                : line line EOF ;
-line                : name SAYS opinion NEWLINE;
+comment_l3			: WS? COMMNET_L3 WS? COMMENT (NEWLINE | EOF) ;
+comment_l2			: WS? COMMNET_L2 WS? COMMENT (NEWLINE | EOF) ;
+comment_l1			: WS? COMMNET_L1 WS? COMMENT (NEWLINE | EOF) ;
 name                : WORD ;
 opinion             : TEXT ;
 
@@ -15,15 +16,17 @@ opinion             : TEXT ;
  * Lexer Rules
  */
 
-fragment A          : ('A'|'a') ;
-fragment S          : ('S'|'s') ;
-fragment Y          : ('Y'|'y') ;
 fragment LOWERCASE  : [a-z] ;
 fragment UPPERCASE  : [A-Z] ;
+fragment SHARP		: '#' ;
+fragment ANY		: .*? ;
 
+COMMNET_L3			: SHARP SHARP SHARP ;
+COMMENT_L2			: SHARP SHARP ;
+COMMENT_L1			: SHARP ;
+COMMENT				: ANY ;
 WS					: (' '|'\t')+ -> skip ;
 EQ					: '=' ;
-SAYS                : S A Y S ;
 WORD                : (LOWERCASE | UPPERCASE)+ ;
 TEXT                : '"' .*? '"' ;
 WHITESPACE          : (' '|'\t')+ -> skip ;
