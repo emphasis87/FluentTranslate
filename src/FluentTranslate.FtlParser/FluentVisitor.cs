@@ -32,11 +32,11 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IFluentVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.message_list"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.fluent"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitMessage_list([NotNull] FluentParser.Message_listContext context);
+	Result VisitFluent([NotNull] FluentParser.FluentContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.message"/>.
 	/// </summary>
@@ -44,33 +44,51 @@ public interface IFluentVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMessage([NotNull] FluentParser.MessageContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.comment_l3"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.messageContent"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitComment_l3([NotNull] FluentParser.Comment_l3Context context);
+	Result VisitMessageContent([NotNull] FluentParser.MessageContentContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.comment_l2"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.comment"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitComment_l2([NotNull] FluentParser.Comment_l2Context context);
+	Result VisitComment([NotNull] FluentParser.CommentContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.comment_l1"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.comment3"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitComment_l1([NotNull] FluentParser.Comment_l1Context context);
+	Result VisitComment3([NotNull] FluentParser.Comment3Context context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.name"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.comment2"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitName([NotNull] FluentParser.NameContext context);
+	Result VisitComment2([NotNull] FluentParser.Comment2Context context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.opinion"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.comment1"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitOpinion([NotNull] FluentParser.OpinionContext context);
+	Result VisitComment1([NotNull] FluentParser.Comment1Context context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.commentLine3"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCommentLine3([NotNull] FluentParser.CommentLine3Context context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.commentLine2"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCommentLine2([NotNull] FluentParser.CommentLine2Context context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.commentLine1"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCommentLine1([NotNull] FluentParser.CommentLine1Context context);
 }

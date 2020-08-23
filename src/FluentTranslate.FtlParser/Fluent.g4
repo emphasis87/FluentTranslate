@@ -4,13 +4,21 @@
  * Parser Rules
  */
 
-message_list		: message ( NEWLINE message )* NEWLINE? EOF ;
-message				: name WS? EQ WS? ;
-comment_l3			: WS? COMMNET_L3 WS? COMMENT (NEWLINE | EOF) ;
-comment_l2			: WS? COMMNET_L2 WS? COMMENT (NEWLINE | EOF) ;
-comment_l1			: WS? COMMNET_L1 WS? COMMENT (NEWLINE | EOF) ;
-name                : WORD ;
-opinion             : TEXT ;
+fluent				: ( comment | message )* EOF ;
+
+message				: IDENTIFIER ' '? '=' ' '? messageContent ;
+
+messageContent		: WHITESPACE ;
+
+comment				: comment3 | comment2 | comment1 ;
+
+comment3			: CommentLine3+ ;
+comment2			: CommentLine2+ ;
+comment1			: CommentLine1+ ;
+
+commentLine3		: COMMENT_MARK3 ( ' ' COMMENT )? LINE_END ;
+commentLine2		: COMMENT_MARK2 ( ' ' COMMENT )? LINE_END ;
+commentLine1		: COMMENT_MARK1 ( ' ' COMMENT )? LINE_END ;
 
 /*
  * Lexer Rules
@@ -20,14 +28,19 @@ fragment LOWERCASE  : [a-z] ;
 fragment UPPERCASE  : [A-Z] ;
 fragment SHARP		: '#' ;
 fragment ANY		: .*? ;
+fragment NEWLINE	: ('\r'? '\n' | '\r') ;
 
-COMMNET_L3			: SHARP SHARP SHARP ;
-COMMENT_L2			: SHARP SHARP ;
-COMMENT_L1			: SHARP ;
-COMMENT				: ANY ;
+STRING_LITERAL		: '\\' ;
+
+IDENTIFIER			: [a-zA-Z] [a-zA-Z0-9_-]* ;
+
+LINE_END			: NEWLINE | EOF ;
+COMMENT_MARK3		: '###' ;
+COMMENT_MARK2		: '##' ;
+COMMENT_MARK1		: '#' ;
+COMMENT_CONTENT		: [] ;
 WS					: (' '|'\t')+ -> skip ;
-EQ					: '=' ;
+EQUALS				: '=' ;
 WORD                : (LOWERCASE | UPPERCASE)+ ;
 TEXT                : '"' .*? '"' ;
 WHITESPACE          : (' '|'\t')+ -> skip ;
-NEWLINE             : ('\r'? '\n' | '\r')+ ;
