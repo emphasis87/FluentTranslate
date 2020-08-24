@@ -4,9 +4,10 @@
  * Parser Rules
  */
 
-fluent				: ( message | comment | emptyLine )* ;
+fluent				: ( message | term | comment | emptyLine )* ;
 
-message				: comment1? IDENTIFIER EQUALS expressionList ;
+message				: comment1? IDENTIFIER EQUALS ( expressionList attribute* | attribute+ );
+term				: comment1? '-' IDENTIFIER EQUALS expressionList attribute*;
 
 expressionList		: expression+ ;
 expression			: textInline
@@ -14,6 +15,8 @@ expression			: textInline
 					| placeableInline
 					| placeableBlock
 					;
+
+attribute			: LINE_END WS? '.' IDENTIFIER EQUALS expressionList ;
 
 textInline			: INLINE_CHAR+ ;
 textBlock			: WS SPACES INDENTED_CHAR textInline ;
@@ -46,7 +49,7 @@ namedArgument		: IDENTIFIER WS? ':' WS? (STRING_LITERAL | NUMBER_LITERAL) ;
 variantList			: variant* defaultVariant variant* LINE_END ;
 defaultVariant		: '*' variant ;
 variant				: LINE_END WS? variantKey SPACES? expressionList ;
-variantKey			: '[' SPACES? ( NUMBER_LITERAL | Identifier ) ']' ;
+variantKey			: '[' SPACES? ( NUMBER_LITERAL | IDENTIFIER ) ']' ;
 
 stringLiteral		: STRING_LITERAL ;
 numberLiteral		: NUMBER_LITERAL ;

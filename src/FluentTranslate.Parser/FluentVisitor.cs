@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from d:\projects\FluentTranslate\src\FluentTranslate.FtlParser\Fluent.g4 by ANTLR 4.8
+// Generated from D:\projects\FluentTranslate\src\FluentTranslate.FtlParser\Fluent.g4 by ANTLR 4.8
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -44,6 +44,12 @@ public interface IFluentVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMessage([NotNull] FluentParser.MessageContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.term"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTerm([NotNull] FluentParser.TermContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.expressionList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -55,6 +61,12 @@ public interface IFluentVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] FluentParser.ExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAttribute([NotNull] FluentParser.AttributeContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.textInline"/>.
 	/// </summary>

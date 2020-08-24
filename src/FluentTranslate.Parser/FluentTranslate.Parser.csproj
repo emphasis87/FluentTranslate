@@ -21,4 +21,8 @@
     <PackageReference Include="Antlr4BuildTasks" Version="8.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FluentTranslate.Common\FluentTranslate.Common.csproj" />
+  </ItemGroup>
+
 </Project>
