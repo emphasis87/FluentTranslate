@@ -4,43 +4,89 @@
  * Parser Rules
  */
 
-fluent				: ( comment | message )* EOF ;
+fluent				: ( message | comment | emptyLine )* ;
 
-message				: IDENTIFIER ' '? '=' ' '? messageContent ;
+message				: comment1? IDENTIFIER EQUALS expressionList ;
 
-messageContent		: WHITESPACE ;
+expressionList		: expression+ ;
+expression			: textInline
+					| textBlock
+					| placeableInline
+					| placeableBlock
+					;
+
+textInline			: INLINE_CHAR+ ;
+textBlock			: WS SPACES INDENTED_CHAR textInline ;
+
+placeableInline		: '{' SPACES? (selectExpression | inlineExpression) SPACES? '}' ;
+placeableBlock		: WS placeableInline ;
+
+selectExpression	: inlineExpression WS? '->' SPACES? variantList ;
+
+inlineExpression	: stringLiteral
+					| numberLiteral
+					| functionReference
+					| messageReference
+					| termReference
+					| variableReference
+					| placeableInline
+					;
+
+functionReference	: IDENTIFIER callArguments ;
+messageReference	: IDENTIFIER attributeAccessor? ;
+termReference		: '-' IDENTIFIER attributeAccessor? callArguments? ;
+variableReference	: '$' IDENTIFIER ;
+attributeAccessor	: '.' IDENTIFIER ;
+
+callArguments		: WS? '(' WS? argumentList WS? ')' ;
+argumentList		: ( argument WS? ',' WS? )* argument? ;
+argument			: namedArgument | inlineExpression ;
+namedArgument		: IDENTIFIER WS? ':' WS? (STRING_LITERAL | NUMBER_LITERAL) ;
+
+variantList			: variant* defaultVariant variant* LINE_END ;
+defaultVariant		: '*' variant ;
+variant				: LINE_END WS? variantKey SPACES? expressionList ;
+variantKey			: '[' SPACES? ( NUMBER_LITERAL | Identifier ) ']' ;
+
+stringLiteral		: STRING_LITERAL ;
+numberLiteral		: NUMBER_LITERAL ;
 
 comment				: comment3 | comment2 | comment1 ;
 
-comment3			: CommentLine3+ ;
-comment2			: CommentLine2+ ;
-comment1			: CommentLine1+ ;
+comment3			: commentLine3+ ;
+comment2			: commentLine2+ ;
+comment1			: commentLine1+ ;
 
-commentLine3		: COMMENT_MARK3 ( ' ' COMMENT )? LINE_END ;
-commentLine2		: COMMENT_MARK2 ( ' ' COMMENT )? LINE_END ;
-commentLine1		: COMMENT_MARK1 ( ' ' COMMENT )? LINE_END ;
+commentLine3		: CMT3 ( ' ' COMMENT )? LINE_END ;
+commentLine2		: CMT2 ( ' ' COMMENT )? LINE_END ;
+commentLine1		: CMT1 ( ' ' COMMENT )? LINE_END ;
+
+emptyLine			: (' ' | '\t')* LINE_END ;
 
 /*
  * Lexer Rules
  */
 
-fragment LOWERCASE  : [a-z] ;
-fragment UPPERCASE  : [A-Z] ;
-fragment SHARP		: '#' ;
-fragment ANY		: .*? ;
-fragment NEWLINE	: ('\r'? '\n' | '\r') ;
+INLINE_CHAR			: ~( '{' | '}' | '\r' | '\n' ) ;
+INDENTED_CHAR		: ~( '{' | '}' | '[' | '*' | '.' | '\r' | '\n' ) ;
 
-STRING_LITERAL		: '\\' ;
+SPECIAL_TEXT_CHAR	: '{' | '}' ;
+QUOTED_CHAR			: '\\' SPECIAL_CHAR ;
+SPECIAL_CHAR		: '"' | '\\' ;
 
-IDENTIFIER			: [a-zA-Z] [a-zA-Z0-9_-]* ;
+STRING_LITERAL		: '"' QUOTED_CHAR* '"' ;
+NUMBER_LITERAL		: '-'? [0-9]+ ('.' [0-9]+)? ;
+
+IDENTIFIER			: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
+
+EQUALS				: SPACES? '=' SPACES? ;
+
+WS					: (SPACES? | LINE_END)+ ;
+SPACES				: ' '+ ;
+
+CMT3				: '###' ;
+CMT2				: '##' ;
+CMT1				: '#' ;
 
 LINE_END			: NEWLINE | EOF ;
-COMMENT_MARK3		: '###' ;
-COMMENT_MARK2		: '##' ;
-COMMENT_MARK1		: '#' ;
-COMMENT_CONTENT		: [] ;
-WS					: (' '|'\t')+ -> skip ;
-EQUALS				: '=' ;
-WORD                : (LOWERCASE | UPPERCASE)+ ;
-TEXT                : '"' .*? '"' ;
-WHITESPACE          : (' '|'\t')+ -> skip ;
+NEWLINE				: ('\r'? '\n' | '\r') ;
