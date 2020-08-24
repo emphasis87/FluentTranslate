@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:\projects\FluentTranslate\src\FluentTranslate.FtlParser\Fluent.g4 by ANTLR 4.8
+// Generated from D:\projects\FluentTranslate\src\FluentTranslate.Parser\Fluent.g4 by ANTLR 4.8
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -34,7 +34,7 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class FluentBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, IFluentVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.fluent"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.entry"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -42,7 +42,7 @@ public partial class FluentBaseVisitor<Result> : AbstractParseTreeVisitor<Result
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitFluent([NotNull] FluentParser.FluentContext context) { return VisitChildren(context); }
+	public virtual Result VisitEntry([NotNull] FluentParser.EntryContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.message"/>.
 	/// <para>

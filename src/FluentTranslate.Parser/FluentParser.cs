@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:\projects\FluentTranslate\src\FluentTranslate.FtlParser\Fluent.g4 by ANTLR 4.8
+// Generated from D:\projects\FluentTranslate\src\FluentTranslate.Parser\Fluent.g4 by ANTLR 4.8
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -42,7 +42,7 @@ public partial class FluentParser : Parser {
 		STRING_LITERAL=21, NUMBER_LITERAL=22, IDENTIFIER=23, EQUALS=24, WS=25, 
 		SPACES=26, CMT3=27, CMT2=28, CMT1=29, LINE_END=30, NEWLINE=31, COMMENT=32;
 	public const int
-		RULE_fluent = 0, RULE_message = 1, RULE_term = 2, RULE_expressionList = 3, 
+		RULE_entry = 0, RULE_message = 1, RULE_term = 2, RULE_expressionList = 3, 
 		RULE_expression = 4, RULE_attribute = 5, RULE_textInline = 6, RULE_textBlock = 7, 
 		RULE_placeableInline = 8, RULE_placeableBlock = 9, RULE_selectExpression = 10, 
 		RULE_inlineExpression = 11, RULE_functionReference = 12, RULE_messageReference = 13, 
@@ -53,7 +53,7 @@ public partial class FluentParser : Parser {
 		RULE_comment2 = 29, RULE_comment1 = 30, RULE_commentLine3 = 31, RULE_commentLine2 = 32, 
 		RULE_commentLine1 = 33, RULE_emptyLine = 34;
 	public static readonly string[] ruleNames = {
-		"fluent", "message", "term", "expressionList", "expression", "attribute", 
+		"entry", "message", "term", "expressionList", "expression", "attribute", 
 		"textInline", "textBlock", "placeableInline", "placeableBlock", "selectExpression", 
 		"inlineExpression", "functionReference", "messageReference", "termReference", 
 		"variableReference", "attributeAccessor", "callArguments", "argumentList", 
@@ -107,7 +107,7 @@ public partial class FluentParser : Parser {
 		Interpreter = new ParserATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
 	}
 
-	public partial class FluentContext : ParserRuleContext {
+	public partial class EntryContext : ParserRuleContext {
 		public MessageContext[] message() {
 			return GetRuleContexts<MessageContext>();
 		}
@@ -132,22 +132,22 @@ public partial class FluentParser : Parser {
 		public EmptyLineContext emptyLine(int i) {
 			return GetRuleContext<EmptyLineContext>(i);
 		}
-		public FluentContext(ParserRuleContext parent, int invokingState)
+		public EntryContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_fluent; } }
+		public override int RuleIndex { get { return RULE_entry; } }
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IFluentVisitor<TResult> typedVisitor = visitor as IFluentVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitFluent(this);
+			if (typedVisitor != null) return typedVisitor.VisitEntry(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public FluentContext fluent() {
-		FluentContext _localctx = new FluentContext(Context, State);
-		EnterRule(_localctx, 0, RULE_fluent);
+	public EntryContext entry() {
+		EntryContext _localctx = new EntryContext(Context, State);
+		EnterRule(_localctx, 0, RULE_entry);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);

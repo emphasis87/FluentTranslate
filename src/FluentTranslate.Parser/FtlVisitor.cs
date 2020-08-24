@@ -8,5 +8,10 @@ namespace FluentTranslate.Parser
 	public class FtlVisitor : FluentBaseVisitor<IFtlEntry[]>
 	{
 
+
+		public override IFtlEntry[] VisitEntry(FluentParser.EntryContext context)
+		{
+			return base.VisitEntry(context);
+		}
 	}
 }
