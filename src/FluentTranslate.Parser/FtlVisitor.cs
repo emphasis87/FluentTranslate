@@ -5,13 +5,12 @@ using FluentTranslate.Common.Domain;
 
 namespace FluentTranslate.Parser
 {
-	public class FtlVisitor : FluentBaseVisitor<IFtlEntry[]>
-	{
+	public class FtlVisitor : FluentBaseVisitor<IFtlElement>
+	{	
+        public override IFtlElement VisitEntry(FluentParser.EntryContext context)
+        {
+            return base.VisitEntry(context);
+        }
 
-
-		public override IFtlEntry[] VisitEntry(FluentParser.EntryContext context)
-		{
-			return base.VisitEntry(context);
-		}
-	}
+    }
 }

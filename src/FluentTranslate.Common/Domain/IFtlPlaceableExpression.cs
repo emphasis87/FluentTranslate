@@ -1,6 +1,6 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public interface IFtlPlaceableExpression
+	public interface IFtlPlaceableExpression : IFtlElement
 	{
 	}
 }

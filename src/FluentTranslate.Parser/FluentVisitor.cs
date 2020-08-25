@@ -32,6 +32,12 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IFluentVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.resource"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitResource([NotNull] FluentParser.ResourceContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.entry"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

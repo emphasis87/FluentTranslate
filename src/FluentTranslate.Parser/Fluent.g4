@@ -4,7 +4,8 @@
  * Parser Rules
  */
 
-entry				: ( message | term | comment | emptyLine )* ;
+resource			: entry* ;
+entry				: ( message | term | comment | emptyLine ) ;
 
 message				: comment1? IDENTIFIER EQUALS ( expressionList attribute* | attribute+ );
 term				: comment1? '-' IDENTIFIER EQUALS expressionList attribute*;

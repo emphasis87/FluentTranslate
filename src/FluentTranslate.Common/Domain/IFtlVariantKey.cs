@@ -1,6 +1,6 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public interface IFtlVariantKey
+	public interface IFtlVariantKey : IFtlElement
 	{
 		
 	}
