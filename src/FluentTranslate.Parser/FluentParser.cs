@@ -107,7 +107,7 @@ public partial class FluentParser : Parser {
 		Interpreter = new ParserATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
 	}
 
-	public partial class ResourceContext : ParserRuleContext {
+	public partial class ResourceContext : FluentTranslate.Parser.FluentContext {
 		public EntryContext[] entry() {
 			return GetRuleContexts<EntryContext>();
 		}
@@ -160,7 +160,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class EntryContext : ParserRuleContext {
+	public partial class EntryContext : FluentTranslate.Parser.FluentContext {
 		public MessageContext message() {
 			return GetRuleContext<MessageContext>(0);
 		}
@@ -229,7 +229,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class MessageContext : ParserRuleContext {
+	public partial class MessageContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public ITerminalNode EQUALS() { return GetToken(FluentParser.EQUALS, 0); }
 		public ExpressionListContext expressionList() {
@@ -340,7 +340,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class TermContext : ParserRuleContext {
+	public partial class TermContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public ITerminalNode EQUALS() { return GetToken(FluentParser.EQUALS, 0); }
 		public ExpressionListContext expressionList() {
@@ -417,7 +417,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ExpressionListContext : ParserRuleContext {
+	public partial class ExpressionListContext : FluentTranslate.Parser.FluentContext {
 		public ExpressionContext[] expression() {
 			return GetRuleContexts<ExpressionContext>();
 		}
@@ -470,7 +470,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ExpressionContext : ParserRuleContext {
+	public partial class ExpressionContext : FluentTranslate.Parser.FluentContext {
 		public TextInlineContext textInline() {
 			return GetRuleContext<TextInlineContext>(0);
 		}
@@ -540,7 +540,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class AttributeContext : ParserRuleContext {
+	public partial class AttributeContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode LINE_END() { return GetToken(FluentParser.LINE_END, 0); }
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public ITerminalNode EQUALS() { return GetToken(FluentParser.EQUALS, 0); }
@@ -595,7 +595,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class TextInlineContext : ParserRuleContext {
+	public partial class TextInlineContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode[] INLINE_CHAR() { return GetTokens(FluentParser.INLINE_CHAR); }
 		public ITerminalNode INLINE_CHAR(int i) {
 			return GetToken(FluentParser.INLINE_CHAR, i);
@@ -652,7 +652,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class TextBlockContext : ParserRuleContext {
+	public partial class TextBlockContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode WS() { return GetToken(FluentParser.WS, 0); }
 		public ITerminalNode SPACES() { return GetToken(FluentParser.SPACES, 0); }
 		public ITerminalNode INDENTED_CHAR() { return GetToken(FluentParser.INDENTED_CHAR, 0); }
@@ -695,7 +695,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class PlaceableInlineContext : ParserRuleContext {
+	public partial class PlaceableInlineContext : FluentTranslate.Parser.FluentContext {
 		public SelectExpressionContext selectExpression() {
 			return GetRuleContext<SelectExpressionContext>(0);
 		}
@@ -773,7 +773,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class PlaceableBlockContext : ParserRuleContext {
+	public partial class PlaceableBlockContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode WS() { return GetToken(FluentParser.WS, 0); }
 		public PlaceableInlineContext placeableInline() {
 			return GetRuleContext<PlaceableInlineContext>(0);
@@ -812,7 +812,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class SelectExpressionContext : ParserRuleContext {
+	public partial class SelectExpressionContext : FluentTranslate.Parser.FluentContext {
 		public InlineExpressionContext inlineExpression() {
 			return GetRuleContext<InlineExpressionContext>(0);
 		}
@@ -875,7 +875,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class InlineExpressionContext : ParserRuleContext {
+	public partial class InlineExpressionContext : FluentTranslate.Parser.FluentContext {
 		public StringLiteralContext stringLiteral() {
 			return GetRuleContext<StringLiteralContext>(0);
 		}
@@ -972,7 +972,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class FunctionReferenceContext : ParserRuleContext {
+	public partial class FunctionReferenceContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public CallArgumentsContext callArguments() {
 			return GetRuleContext<CallArgumentsContext>(0);
@@ -1011,7 +1011,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class MessageReferenceContext : ParserRuleContext {
+	public partial class MessageReferenceContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public AttributeAccessorContext attributeAccessor() {
 			return GetRuleContext<AttributeAccessorContext>(0);
@@ -1059,7 +1059,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class TermReferenceContext : ParserRuleContext {
+	public partial class TermReferenceContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public AttributeAccessorContext attributeAccessor() {
 			return GetRuleContext<AttributeAccessorContext>(0);
@@ -1120,7 +1120,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class VariableReferenceContext : ParserRuleContext {
+	public partial class VariableReferenceContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public VariableReferenceContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1156,7 +1156,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class AttributeAccessorContext : ParserRuleContext {
+	public partial class AttributeAccessorContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public AttributeAccessorContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1192,7 +1192,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class CallArgumentsContext : ParserRuleContext {
+	public partial class CallArgumentsContext : FluentTranslate.Parser.FluentContext {
 		public ArgumentListContext argumentList() {
 			return GetRuleContext<ArgumentListContext>(0);
 		}
@@ -1263,7 +1263,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ArgumentListContext : ParserRuleContext {
+	public partial class ArgumentListContext : FluentTranslate.Parser.FluentContext {
 		public ArgumentContext[] argument() {
 			return GetRuleContexts<ArgumentContext>();
 		}
@@ -1351,7 +1351,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ArgumentContext : ParserRuleContext {
+	public partial class ArgumentContext : FluentTranslate.Parser.FluentContext {
 		public NamedArgumentContext namedArgument() {
 			return GetRuleContext<NamedArgumentContext>(0);
 		}
@@ -1403,7 +1403,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class NamedArgumentContext : ParserRuleContext {
+	public partial class NamedArgumentContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public ITerminalNode STRING_LITERAL() { return GetToken(FluentParser.STRING_LITERAL, 0); }
 		public ITerminalNode NUMBER_LITERAL() { return GetToken(FluentParser.NUMBER_LITERAL, 0); }
@@ -1473,7 +1473,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class VariantListContext : ParserRuleContext {
+	public partial class VariantListContext : FluentTranslate.Parser.FluentContext {
 		public DefaultVariantContext defaultVariant() {
 			return GetRuleContext<DefaultVariantContext>(0);
 		}
@@ -1548,7 +1548,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class DefaultVariantContext : ParserRuleContext {
+	public partial class DefaultVariantContext : FluentTranslate.Parser.FluentContext {
 		public VariantContext variant() {
 			return GetRuleContext<VariantContext>(0);
 		}
@@ -1586,7 +1586,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class VariantContext : ParserRuleContext {
+	public partial class VariantContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode LINE_END() { return GetToken(FluentParser.LINE_END, 0); }
 		public VariantKeyContext variantKey() {
 			return GetRuleContext<VariantKeyContext>(0);
@@ -1650,7 +1650,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class VariantKeyContext : ParserRuleContext {
+	public partial class VariantKeyContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode NUMBER_LITERAL() { return GetToken(FluentParser.NUMBER_LITERAL, 0); }
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public ITerminalNode SPACES() { return GetToken(FluentParser.SPACES, 0); }
@@ -1707,7 +1707,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class StringLiteralContext : ParserRuleContext {
+	public partial class StringLiteralContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode STRING_LITERAL() { return GetToken(FluentParser.STRING_LITERAL, 0); }
 		public StringLiteralContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1742,7 +1742,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class NumberLiteralContext : ParserRuleContext {
+	public partial class NumberLiteralContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode NUMBER_LITERAL() { return GetToken(FluentParser.NUMBER_LITERAL, 0); }
 		public NumberLiteralContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1777,7 +1777,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class CommentContext : ParserRuleContext {
+	public partial class CommentContext : FluentTranslate.Parser.FluentContext {
 		public Comment3Context comment3() {
 			return GetRuleContext<Comment3Context>(0);
 		}
@@ -1840,7 +1840,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class Comment3Context : ParserRuleContext {
+	public partial class Comment3Context : FluentTranslate.Parser.FluentContext {
 		public CommentLine3Context[] commentLine3() {
 			return GetRuleContexts<CommentLine3Context>();
 		}
@@ -1899,7 +1899,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class Comment2Context : ParserRuleContext {
+	public partial class Comment2Context : FluentTranslate.Parser.FluentContext {
 		public CommentLine2Context[] commentLine2() {
 			return GetRuleContexts<CommentLine2Context>();
 		}
@@ -1958,7 +1958,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class Comment1Context : ParserRuleContext {
+	public partial class Comment1Context : FluentTranslate.Parser.FluentContext {
 		public CommentLine1Context[] commentLine1() {
 			return GetRuleContexts<CommentLine1Context>();
 		}
@@ -2017,7 +2017,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class CommentLine3Context : ParserRuleContext {
+	public partial class CommentLine3Context : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode CMT3() { return GetToken(FluentParser.CMT3, 0); }
 		public ITerminalNode LINE_END() { return GetToken(FluentParser.LINE_END, 0); }
 		public ITerminalNode COMMENT() { return GetToken(FluentParser.COMMENT, 0); }
@@ -2066,7 +2066,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class CommentLine2Context : ParserRuleContext {
+	public partial class CommentLine2Context : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode CMT2() { return GetToken(FluentParser.CMT2, 0); }
 		public ITerminalNode LINE_END() { return GetToken(FluentParser.LINE_END, 0); }
 		public ITerminalNode COMMENT() { return GetToken(FluentParser.COMMENT, 0); }
@@ -2115,7 +2115,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class CommentLine1Context : ParserRuleContext {
+	public partial class CommentLine1Context : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode CMT1() { return GetToken(FluentParser.CMT1, 0); }
 		public ITerminalNode LINE_END() { return GetToken(FluentParser.LINE_END, 0); }
 		public ITerminalNode COMMENT() { return GetToken(FluentParser.COMMENT, 0); }
@@ -2164,7 +2164,7 @@ public partial class FluentParser : Parser {
 		return _localctx;
 	}
 
-	public partial class EmptyLineContext : ParserRuleContext {
+	public partial class EmptyLineContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode LINE_END() { return GetToken(FluentParser.LINE_END, 0); }
 		public EmptyLineContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)

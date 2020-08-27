@@ -2,11 +2,11 @@
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FtlMessage : IFtlEntry
+	public class FtlMessage : IFtlEntry, IFtlContentEntry
 	{
 		public FtlComment Comment { get; set; }
 		public string Name { get; set; }
-		public List<IFtlExpression> Content { get; set; } = new List<IFtlExpression>();
-		public List<FtlAttribute> Attributes { get; set; } = new List<FtlAttribute>();
+		public IList<IFtlExpression> Content { get; set; }
+		public IList<FtlAttribute> Attributes { get; set; }
 	}
 }

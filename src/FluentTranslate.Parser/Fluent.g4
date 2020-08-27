@@ -1,4 +1,5 @@
 ﻿grammar Fluent;
+options { contextSuperClass = FluentTranslate.Parser.FluentContext; }
 
 /*
  * Parser Rules
