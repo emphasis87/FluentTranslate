@@ -117,4 +117,80 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Attributes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\attributes.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Comments" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\comments.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Functions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\functions.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="FunctionsDatetime" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\functionsdatetime.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="FunctionsNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\functionsnumber.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Hello" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\hello.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="MultilineText" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\multilinetext.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Placeables" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\placeables.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="PlaceablesInterpolation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\placeablesinterpolation.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="PlaceablesSpecialCharacters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\placeablesspecialcharacters.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="QuotedText" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\quotedtext.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="QuotedTextEscape" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\quotedtextescape.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="QuotedTextLeadingBracket" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\quotedtextleadingbracket.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="QuotedTextLeadingDot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\quotedtextleadingdot.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="QuotedTextUnicodeDash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\quotedtextunicodedash.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="QuotedTextUnicodeEscape" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\quotedtextunicodeescape.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Selectors" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\selectors.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="SelectorsNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\selectorsnumber.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="SelectorsOrdinal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\selectorsordinal.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TermsAttributes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\termsattributes.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TermsParameterized" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\termsparameterized.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TermsVariants" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\termsvariants.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Variables" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\variables.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="VariablesExplicitFormatting" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\variablesexplicitformatting.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="VariablesImplicitFormatting" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\variablesimplicitformatting.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>
