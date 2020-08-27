@@ -8,5 +8,11 @@ namespace FluentTranslate.Common.Domain
 		public string Name { get; set; }
 		public IList<IFtlExpression> Content { get; set; }
 		public IList<FtlAttribute> Attributes { get; set; }
+
+		public FtlMessage()
+		{
+			Content = new List<IFtlExpression>();
+			Attributes = new List<FtlAttribute>();
+		}
 	}
 }

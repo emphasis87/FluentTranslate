@@ -36,17 +36,22 @@ public partial class FluentParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		IDENTIFIER=1, SPACES=2, EQUALS=3, INLINE_TEXT=4;
+		COMMENT_OPEN=1, IDENTIFIER=2, EQUALS=3, SPACES=4, NL=5, COMMENT_NL=6, 
+		COMMENT_CONTENT=7, TEXT_INLINE=8, CONTENT_NL=9, INDENT=10;
 	public const int
-		RULE_resource = 0, RULE_entry = 1, RULE_message = 2, RULE_textInline = 3;
+		RULE_resource = 0, RULE_entry = 1, RULE_message = 2, RULE_emptyLine = 3, 
+		RULE_expressionList = 4, RULE_expression = 5, RULE_textInline = 6, RULE_comment = 7;
 	public static readonly string[] ruleNames = {
-		"resource", "entry", "message", "textInline"
+		"resource", "entry", "message", "emptyLine", "expressionList", "expression", 
+		"textInline", "comment"
 	};
 
 	private static readonly string[] _LiteralNames = {
+		null, "'#'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "IDENTIFIER", "SPACES", "EQUALS", "INLINE_TEXT"
+		null, "COMMENT_OPEN", "IDENTIFIER", "EQUALS", "SPACES", "NL", "COMMENT_NL", 
+		"COMMENT_CONTENT", "TEXT_INLINE", "CONTENT_NL", "INDENT"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -81,6 +86,7 @@ public partial class FluentParser : Parser {
 	}
 
 	public partial class ResourceContext : FluentTranslate.Parser.FluentContext {
+		public ITerminalNode Eof() { return GetToken(FluentParser.Eof, 0); }
 		public EntryContext[] entry() {
 			return GetRuleContexts<EntryContext>();
 		}
@@ -107,19 +113,20 @@ public partial class FluentParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 9;
+			State = 17;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 8; entry();
+				State = 16; entry();
 				}
 				}
-				State = 11;
+				State = 19;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( _la==IDENTIFIER );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << COMMENT_OPEN) | (1L << IDENTIFIER) | (1L << SPACES) | (1L << NL))) != 0) );
+			State = 21; Match(Eof);
 			}
 		}
 		catch (RecognitionException re) {
@@ -136,6 +143,12 @@ public partial class FluentParser : Parser {
 	public partial class EntryContext : FluentTranslate.Parser.FluentContext {
 		public MessageContext message() {
 			return GetRuleContext<MessageContext>(0);
+		}
+		public CommentContext comment() {
+			return GetRuleContext<CommentContext>(0);
+		}
+		public EmptyLineContext emptyLine() {
+			return GetRuleContext<EmptyLineContext>(0);
 		}
 		public EntryContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -156,7 +169,28 @@ public partial class FluentParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 13; message();
+			State = 26;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case IDENTIFIER:
+				{
+				State = 23; message();
+				}
+				break;
+			case COMMENT_OPEN:
+				{
+				State = 24; comment();
+				}
+				break;
+			case SPACES:
+			case NL:
+				{
+				State = 25; emptyLine();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -173,6 +207,9 @@ public partial class FluentParser : Parser {
 	public partial class MessageContext : FluentTranslate.Parser.FluentContext {
 		public ITerminalNode IDENTIFIER() { return GetToken(FluentParser.IDENTIFIER, 0); }
 		public ITerminalNode EQUALS() { return GetToken(FluentParser.EQUALS, 0); }
+		public ExpressionListContext expressionList() {
+			return GetRuleContext<ExpressionListContext>(0);
+		}
 		public MessageContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -192,8 +229,147 @@ public partial class FluentParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 15; Match(IDENTIFIER);
-			State = 16; Match(EQUALS);
+			State = 28; Match(IDENTIFIER);
+			State = 29; Match(EQUALS);
+			{
+			State = 30; expressionList();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EmptyLineContext : FluentTranslate.Parser.FluentContext {
+		public ITerminalNode NL() { return GetToken(FluentParser.NL, 0); }
+		public ITerminalNode SPACES() { return GetToken(FluentParser.SPACES, 0); }
+		public EmptyLineContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_emptyLine; } }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IFluentParserVisitor<TResult> typedVisitor = visitor as IFluentParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEmptyLine(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EmptyLineContext emptyLine() {
+		EmptyLineContext _localctx = new EmptyLineContext(Context, State);
+		EnterRule(_localctx, 6, RULE_emptyLine);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 33;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==SPACES) {
+				{
+				State = 32; Match(SPACES);
+				}
+			}
+
+			State = 35; Match(NL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ExpressionListContext : FluentTranslate.Parser.FluentContext {
+		public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public ExpressionListContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_expressionList; } }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IFluentParserVisitor<TResult> typedVisitor = visitor as IFluentParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpressionList(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ExpressionListContext expressionList() {
+		ExpressionListContext _localctx = new ExpressionListContext(Context, State);
+		EnterRule(_localctx, 8, RULE_expressionList);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 38;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			do {
+				{
+				{
+				State = 37; expression();
+				}
+				}
+				State = 40;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			} while ( _la==TEXT_INLINE );
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ExpressionContext : FluentTranslate.Parser.FluentContext {
+		public TextInlineContext textInline() {
+			return GetRuleContext<TextInlineContext>(0);
+		}
+		public ExpressionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_expression; } }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IFluentParserVisitor<TResult> typedVisitor = visitor as IFluentParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ExpressionContext expression() {
+		ExpressionContext _localctx = new ExpressionContext(Context, State);
+		EnterRule(_localctx, 10, RULE_expression);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 42; textInline();
 			}
 		}
 		catch (RecognitionException re) {
@@ -208,7 +384,7 @@ public partial class FluentParser : Parser {
 	}
 
 	public partial class TextInlineContext : FluentTranslate.Parser.FluentContext {
-		public ITerminalNode INLINE_TEXT() { return GetToken(FluentParser.INLINE_TEXT, 0); }
+		public ITerminalNode TEXT_INLINE() { return GetToken(FluentParser.TEXT_INLINE, 0); }
 		public TextInlineContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -224,11 +400,98 @@ public partial class FluentParser : Parser {
 	[RuleVersion(0)]
 	public TextInlineContext textInline() {
 		TextInlineContext _localctx = new TextInlineContext(Context, State);
-		EnterRule(_localctx, 6, RULE_textInline);
+		EnterRule(_localctx, 12, RULE_textInline);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 18; Match(INLINE_TEXT);
+			State = 44; Match(TEXT_INLINE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class CommentContext : FluentTranslate.Parser.FluentContext {
+		public IToken _COMMENT_CONTENT;
+		public IList<IToken> _Content = new List<IToken>();
+		public ITerminalNode[] COMMENT_OPEN() { return GetTokens(FluentParser.COMMENT_OPEN); }
+		public ITerminalNode COMMENT_OPEN(int i) {
+			return GetToken(FluentParser.COMMENT_OPEN, i);
+		}
+		public ITerminalNode[] COMMENT_NL() { return GetTokens(FluentParser.COMMENT_NL); }
+		public ITerminalNode COMMENT_NL(int i) {
+			return GetToken(FluentParser.COMMENT_NL, i);
+		}
+		public ITerminalNode[] COMMENT_CONTENT() { return GetTokens(FluentParser.COMMENT_CONTENT); }
+		public ITerminalNode COMMENT_CONTENT(int i) {
+			return GetToken(FluentParser.COMMENT_CONTENT, i);
+		}
+		public CommentContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_comment; } }
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IFluentParserVisitor<TResult> typedVisitor = visitor as IFluentParserVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitComment(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public CommentContext comment() {
+		CommentContext _localctx = new CommentContext(Context, State);
+		EnterRule(_localctx, 14, RULE_comment);
+		int _la;
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 53;
+			ErrorHandler.Sync(this);
+			_alt = 1;
+			do {
+				switch (_alt) {
+				case 1:
+					{
+					{
+					State = 46; Match(COMMENT_OPEN);
+					State = 48;
+					ErrorHandler.Sync(this);
+					_la = TokenStream.LA(1);
+					if (_la==COMMENT_CONTENT) {
+						{
+						State = 47; _localctx._COMMENT_CONTENT = Match(COMMENT_CONTENT);
+						_localctx._Content.Add(_localctx._COMMENT_CONTENT);
+						}
+					}
+
+					State = 51;
+					ErrorHandler.Sync(this);
+					_la = TokenStream.LA(1);
+					if (_la==COMMENT_NL) {
+						{
+						State = 50; Match(COMMENT_NL);
+						}
+					}
+
+					}
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				State = 55;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,6,Context);
+			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
 			}
 		}
 		catch (RecognitionException re) {
@@ -244,22 +507,53 @@ public partial class FluentParser : Parser {
 
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\x6', '\x17', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
-		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x3', 
-		'\x2', '\x6', '\x2', '\f', '\n', '\x2', '\r', '\x2', '\xE', '\x2', '\r', 
-		'\x3', '\x3', '\x3', '\x3', '\x3', '\x4', '\x3', '\x4', '\x3', '\x4', 
-		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x2', '\x2', '\x6', '\x2', 
-		'\x4', '\x6', '\b', '\x2', '\x2', '\x2', '\x13', '\x2', '\v', '\x3', '\x2', 
-		'\x2', '\x2', '\x4', '\xF', '\x3', '\x2', '\x2', '\x2', '\x6', '\x11', 
-		'\x3', '\x2', '\x2', '\x2', '\b', '\x14', '\x3', '\x2', '\x2', '\x2', 
-		'\n', '\f', '\x5', '\x4', '\x3', '\x2', '\v', '\n', '\x3', '\x2', '\x2', 
-		'\x2', '\f', '\r', '\x3', '\x2', '\x2', '\x2', '\r', '\v', '\x3', '\x2', 
-		'\x2', '\x2', '\r', '\xE', '\x3', '\x2', '\x2', '\x2', '\xE', '\x3', '\x3', 
-		'\x2', '\x2', '\x2', '\xF', '\x10', '\x5', '\x6', '\x4', '\x2', '\x10', 
-		'\x5', '\x3', '\x2', '\x2', '\x2', '\x11', '\x12', '\a', '\x3', '\x2', 
-		'\x2', '\x12', '\x13', '\a', '\x5', '\x2', '\x2', '\x13', '\a', '\x3', 
-		'\x2', '\x2', '\x2', '\x14', '\x15', '\a', '\x6', '\x2', '\x2', '\x15', 
-		'\t', '\x3', '\x2', '\x2', '\x2', '\x3', '\r',
+		'\x5964', '\x3', '\f', '<', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', '\t', 
+		'\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x4', '\x6', 
+		'\t', '\x6', '\x4', '\a', '\t', '\a', '\x4', '\b', '\t', '\b', '\x4', 
+		'\t', '\t', '\t', '\x3', '\x2', '\x6', '\x2', '\x14', '\n', '\x2', '\r', 
+		'\x2', '\xE', '\x2', '\x15', '\x3', '\x2', '\x3', '\x2', '\x3', '\x3', 
+		'\x3', '\x3', '\x3', '\x3', '\x5', '\x3', '\x1D', '\n', '\x3', '\x3', 
+		'\x4', '\x3', '\x4', '\x3', '\x4', '\x3', '\x4', '\x3', '\x5', '\x5', 
+		'\x5', '$', '\n', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x6', '\x6', 
+		'\x6', ')', '\n', '\x6', '\r', '\x6', '\xE', '\x6', '*', '\x3', '\a', 
+		'\x3', '\a', '\x3', '\b', '\x3', '\b', '\x3', '\t', '\x3', '\t', '\x5', 
+		'\t', '\x33', '\n', '\t', '\x3', '\t', '\x5', '\t', '\x36', '\n', '\t', 
+		'\x6', '\t', '\x38', '\n', '\t', '\r', '\t', '\xE', '\t', '\x39', '\x3', 
+		'\t', '\x2', '\x2', '\n', '\x2', '\x4', '\x6', '\b', '\n', '\f', '\xE', 
+		'\x10', '\x2', '\x2', '\x2', ';', '\x2', '\x13', '\x3', '\x2', '\x2', 
+		'\x2', '\x4', '\x1C', '\x3', '\x2', '\x2', '\x2', '\x6', '\x1E', '\x3', 
+		'\x2', '\x2', '\x2', '\b', '#', '\x3', '\x2', '\x2', '\x2', '\n', '(', 
+		'\x3', '\x2', '\x2', '\x2', '\f', ',', '\x3', '\x2', '\x2', '\x2', '\xE', 
+		'.', '\x3', '\x2', '\x2', '\x2', '\x10', '\x37', '\x3', '\x2', '\x2', 
+		'\x2', '\x12', '\x14', '\x5', '\x4', '\x3', '\x2', '\x13', '\x12', '\x3', 
+		'\x2', '\x2', '\x2', '\x14', '\x15', '\x3', '\x2', '\x2', '\x2', '\x15', 
+		'\x13', '\x3', '\x2', '\x2', '\x2', '\x15', '\x16', '\x3', '\x2', '\x2', 
+		'\x2', '\x16', '\x17', '\x3', '\x2', '\x2', '\x2', '\x17', '\x18', '\a', 
+		'\x2', '\x2', '\x3', '\x18', '\x3', '\x3', '\x2', '\x2', '\x2', '\x19', 
+		'\x1D', '\x5', '\x6', '\x4', '\x2', '\x1A', '\x1D', '\x5', '\x10', '\t', 
+		'\x2', '\x1B', '\x1D', '\x5', '\b', '\x5', '\x2', '\x1C', '\x19', '\x3', 
+		'\x2', '\x2', '\x2', '\x1C', '\x1A', '\x3', '\x2', '\x2', '\x2', '\x1C', 
+		'\x1B', '\x3', '\x2', '\x2', '\x2', '\x1D', '\x5', '\x3', '\x2', '\x2', 
+		'\x2', '\x1E', '\x1F', '\a', '\x4', '\x2', '\x2', '\x1F', ' ', '\a', '\x5', 
+		'\x2', '\x2', ' ', '!', '\x5', '\n', '\x6', '\x2', '!', '\a', '\x3', '\x2', 
+		'\x2', '\x2', '\"', '$', '\a', '\x6', '\x2', '\x2', '#', '\"', '\x3', 
+		'\x2', '\x2', '\x2', '#', '$', '\x3', '\x2', '\x2', '\x2', '$', '%', '\x3', 
+		'\x2', '\x2', '\x2', '%', '&', '\a', '\a', '\x2', '\x2', '&', '\t', '\x3', 
+		'\x2', '\x2', '\x2', '\'', ')', '\x5', '\f', '\a', '\x2', '(', '\'', '\x3', 
+		'\x2', '\x2', '\x2', ')', '*', '\x3', '\x2', '\x2', '\x2', '*', '(', '\x3', 
+		'\x2', '\x2', '\x2', '*', '+', '\x3', '\x2', '\x2', '\x2', '+', '\v', 
+		'\x3', '\x2', '\x2', '\x2', ',', '-', '\x5', '\xE', '\b', '\x2', '-', 
+		'\r', '\x3', '\x2', '\x2', '\x2', '.', '/', '\a', '\n', '\x2', '\x2', 
+		'/', '\xF', '\x3', '\x2', '\x2', '\x2', '\x30', '\x32', '\a', '\x3', '\x2', 
+		'\x2', '\x31', '\x33', '\a', '\t', '\x2', '\x2', '\x32', '\x31', '\x3', 
+		'\x2', '\x2', '\x2', '\x32', '\x33', '\x3', '\x2', '\x2', '\x2', '\x33', 
+		'\x35', '\x3', '\x2', '\x2', '\x2', '\x34', '\x36', '\a', '\b', '\x2', 
+		'\x2', '\x35', '\x34', '\x3', '\x2', '\x2', '\x2', '\x35', '\x36', '\x3', 
+		'\x2', '\x2', '\x2', '\x36', '\x38', '\x3', '\x2', '\x2', '\x2', '\x37', 
+		'\x30', '\x3', '\x2', '\x2', '\x2', '\x38', '\x39', '\x3', '\x2', '\x2', 
+		'\x2', '\x39', '\x37', '\x3', '\x2', '\x2', '\x2', '\x39', ':', '\x3', 
+		'\x2', '\x2', '\x2', ':', '\x11', '\x3', '\x2', '\x2', '\x2', '\t', '\x15', 
+		'\x1C', '#', '*', '\x32', '\x35', '\x39',
 	};
 
 	public static readonly ATN _ATN =

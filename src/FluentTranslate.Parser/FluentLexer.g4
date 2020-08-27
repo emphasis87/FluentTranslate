@@ -1,17 +1,30 @@
 ﻿lexer grammar FluentLexer;
 
 fragment InlineChar	: ~( '{' | '}' | '\r' | '\n' ) ;
+fragment Newline	: '\r\n' | '\n' ;
 
-CMT3				: '###' ;
-CMT2				: '##' ;
-CMT1				: '#' ;
+COMMENT_OPEN		: '#'   -> mode(IN_COMMENT) ;
 
 IDENTIFIER			: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
+EQUALS				: SPACES? '=' SPACES? -> mode(IN_CONTENT) ;
 
 SPACES				: ' '+ ;
-EQUALS				: SPACES? '=' SPACES? ;
 
-mode CONTENT;
+NL					: Newline ;
+
+mode IN_COMMENT;
+COMMENT_NL			: Newline -> popMode ;
+COMMENT_CONTENT		: ~[\r\n]*? ;
+
+mode IN_CONTENT;
+TEXT_INLINE			: InlineChar+ ;
+CONTENT_NL			: Newline -> mode(MAYBE_CONTENT) ;
+
+mode MAYBE_CONTENT;
+INDENT				: ' '+   -> mode(IN_CONTENT) ;
+OTHER				: ~(' ') -> more, popMode ;
+
+/*
 INLINE_TEXT			: InlineChar+ ;
 
 INLINE_CHAR			: ~( '{' | '}' | '\r' | '\n' ) ;
@@ -24,12 +37,9 @@ SPECIAL_CHAR		: '"' | '\\' ;
 STRING_LITERAL		: '"' QUOTED_CHAR* '"' ;
 NUMBER_LITERAL		: '-'? [0-9]+ ('.' [0-9]+)? ;
 
-IDENTIFIER			: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
-
-EQUALS				: SPACES? '=' SPACES? ;
-
 WS					: (SPACES? | LINE_END)+ ;
-SPACES				: ' '+ ;
+INDENT				: ' '+ ;
 
 LINE_END			: NEWLINE | EOF ;
 NEWLINE				: ('\r'? '\n' | '\r') ;
+*/

@@ -7,6 +7,7 @@ namespace FluentTranslate.Parser
 	public class FluentContext : Antlr4.Runtime.ParserRuleContext
 	{
 		public IFtlElement Element { get; set; }
+		public Stack<IFtlElement> Children { get; set; } = new Stack<IFtlElement>();
 
 		public FluentContext(ParserRuleContext parent, int invokingStateNumber) : base(parent, invokingStateNumber)
 		{

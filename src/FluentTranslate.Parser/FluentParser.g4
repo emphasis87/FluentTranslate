@@ -8,19 +8,23 @@ options {
  * Parser Rules
  */
 
-resource			: entry+ ;
+resource			: entry+ EOF ;
 
-entry				: message ;
+entry				: ( message | comment | emptyLine ) ;
 
-message				: IDENTIFIER EQUALS /*( expressionList )*/;
+message				: IDENTIFIER EQUALS ( expressionList );
 
-//expressionList		: expression+ ;
-//expression			: textInline
+emptyLine			: SPACES? NL ;
+
+expressionList		: expression+ ;
+expression			: textInline
 //					| textBlock 
-//					;
+					;
 
-textInline			: INLINE_TEXT ;
+textInline			: TEXT_INLINE ;
 //textBlock			: WS SPACES INDENTED_CHAR textInline ;
+
+comment				: ( COMMENT_OPEN Content+=COMMENT_CONTENT? COMMENT_NL? )+ ;
 
 /*
 entry				: ( message | term | comment | emptyLine ) ;

@@ -41,7 +41,7 @@ namespace FluentTranslate.Parser
 			if (containerContext != null)
 			{
 				var container = (IFtlContentEntry) containerContext.Element;
-				var inlineText = context.INLINE_TEXT().GetText();
+				var inlineText = context.TEXT_INLINE().GetText();
 				var text = new FtlText()
 				{
 					Value = inlineText
@@ -52,30 +52,9 @@ namespace FluentTranslate.Parser
 			return base.VisitTextInline(context);
 		}
 
-		//public override IFtlElement VisitMessage(FluentParser.MessageContext context)
-		//{
-		//	var message = new FtlMessage();
-		//	context.Element = message;
-		//	base.VisitMessage(context);
-		//	return message;
-		//}
-
-		//public override IFtlElement VisitAttribute(FluentParser.AttributeContext context)
-		//{
-		//	var attribute = new FtlAttribute();
-		//	context.Element = attribute;
-		//	if (context.Parent is FluentContext parentContext)
-		//	{
-		//		switch (parentContext.Element)
-		//		{
-		//			case IFtlContentEntry attributeElement:
-		//				attributeElement.Attributes.Add(attribute);
-		//				break;
-		//		}
-		//	}
-
-		//	base.VisitAttribute(context);
-		//	return attribute;
-		//}
+		public override IFtlElement VisitComment(FluentParser.CommentContext context)
+		{
+			return base.VisitComment(context);
+		}
 	}
 }
