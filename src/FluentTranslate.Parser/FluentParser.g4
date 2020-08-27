@@ -1,11 +1,28 @@
-﻿grammar Fluent;
-options { contextSuperClass = FluentTranslate.Parser.FluentContext; }
+﻿parser grammar FluentParser;
+options { 
+	tokenVocab = FluentLexer;
+	contextSuperClass = FluentTranslate.Parser.FluentContext; 
+}
 
 /*
  * Parser Rules
  */
 
-resource			: entry* ;
+resource			: entry+ ;
+
+entry				: message ;
+
+message				: IDENTIFIER EQUALS /*( expressionList )*/;
+
+//expressionList		: expression+ ;
+//expression			: textInline
+//					| textBlock 
+//					;
+
+textInline			: INLINE_TEXT ;
+//textBlock			: WS SPACES INDENTED_CHAR textInline ;
+
+/*
 entry				: ( message | term | comment | emptyLine ) ;
 
 message				: comment1? IDENTIFIER EQUALS ( expressionList attribute* | attribute+ );
@@ -68,9 +85,7 @@ commentLine1		: CMT1 ( ' ' COMMENT )? LINE_END ;
 
 emptyLine			: (' ' | '\t')* LINE_END ;
 
-/*
- * Lexer Rules
- */
+// Lexer Rules
 
 INLINE_CHAR			: ~( '{' | '}' | '\r' | '\n' ) ;
 INDENTED_CHAR		: ~( '{' | '}' | '[' | '*' | '.' | '\r' | '\n' ) ;
@@ -95,3 +110,4 @@ CMT1				: '#' ;
 
 LINE_END			: NEWLINE | EOF ;
 NEWLINE				: ('\r'? '\n' | '\r') ;
+*/

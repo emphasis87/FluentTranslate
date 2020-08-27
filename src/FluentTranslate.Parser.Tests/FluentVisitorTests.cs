@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using Antlr4.Runtime;
+using FluentTranslate.Common.Domain;
 using NUnit.Framework;
 
 namespace FluentTranslate.Parser.Tests
 {
 	public class FluentVisitorTests
 	{
-		private void Act(string resource)
+		private FtlResource Act(string resource)
 		{
 			var inputStream = new AntlrInputStream(new StringReader(resource));
 			var lexer = new FluentLexer(inputStream);
@@ -16,13 +17,14 @@ namespace FluentTranslate.Parser.Tests
 			var parser = new FluentParser(tokenStream);
 
 			var visitor = new FtlVisitor();
-			visitor.Visit(parser.resource());
+			return (FtlResource)visitor.Visit(parser.resource());
 		}
 
 		[Test]
 		public void Hello()
 		{
-			Act(Resources.Hello);
+			var result = Act(Resources.Hello);
+
 		}
 
 		[Test]

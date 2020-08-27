@@ -1,14 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Antlr4.Runtime.Tree;
 using FluentTranslate.Common.Domain;
 
 namespace FluentTranslate.Parser
 {
-	public class FtlVisitor : FluentBaseVisitor<IFtlElement>
-	{	
-        public override IFtlElement VisitEntry(FluentParser.EntryContext context)
+	public class FtlVisitor : FluentParserBaseVisitor<IFtlElement>
+	{
+		public override IFtlElement Visit(IParseTree tree)
+		{
+			return base.Visit(tree);
+		}
+
+		public override IFtlElement VisitResource(FluentParser.ResourceContext context)
+		{
+			var resource = new FtlResource();
+			context.Element = resource;
+			base.VisitResource(context);
+			return resource;
+		}
+
+		public override IFtlElement VisitEntry(FluentParser.EntryContext context)
         {
             return base.VisitEntry(context);
         }
@@ -21,22 +35,47 @@ namespace FluentTranslate.Parser
 			return message;
 		}
 
-		public override IFtlElement VisitAttribute(FluentParser.AttributeContext context)
+		public override IFtlElement VisitTextInline(FluentParser.TextInlineContext context)
 		{
-			var attribute = new FtlAttribute();
-			context.Element = attribute;
-			if (context.Parent is FluentContext parentContext)
+			var containerContext = context.AscendParent().FirstOrDefault(x => x.Element is IFtlContentEntry);
+			if (containerContext != null)
 			{
-				switch (parentContext.Element)
+				var container = (IFtlContentEntry) containerContext.Element;
+				var inlineText = context.INLINE_TEXT().GetText();
+				var text = new FtlText()
 				{
-					case IFtlContentEntry attributeElement:
-						attributeElement.Attributes.Add(attribute);
-						break;
-				}
+					Value = inlineText
+				};
+				container.Content.Add(text);
 			}
 
-			base.VisitAttribute(context);
-			return attribute;
+			return base.VisitTextInline(context);
 		}
+
+		//public override IFtlElement VisitMessage(FluentParser.MessageContext context)
+		//{
+		//	var message = new FtlMessage();
+		//	context.Element = message;
+		//	base.VisitMessage(context);
+		//	return message;
+		//}
+
+		//public override IFtlElement VisitAttribute(FluentParser.AttributeContext context)
+		//{
+		//	var attribute = new FtlAttribute();
+		//	context.Element = attribute;
+		//	if (context.Parent is FluentContext parentContext)
+		//	{
+		//		switch (parentContext.Element)
+		//		{
+		//			case IFtlContentEntry attributeElement:
+		//				attributeElement.Attributes.Add(attribute);
+		//				break;
+		//		}
+		//	}
+
+		//	base.VisitAttribute(context);
+		//	return attribute;
+		//}
 	}
 }
