@@ -43,12 +43,12 @@ namespace FluentTranslate.Parser
 			return message;
 		}
 
-		public override IFtlElement VisitTextInline(FluentParser.TextInlineContext context)
+		public override IFtlElement VisitText(FluentParser.TextContext context)
 		{
 			var containerContext = context.AscendParent().FirstOrDefault(x => x.Element is IFtlContentEntry);
 			if (containerContext != null)
 			{
-				var container = (IFtlContentEntry) containerContext.Element;
+				var container = (IFtlContentEntry)containerContext.Element;
 				var inlineText = context.TEXT().GetText();
 				var text = new FtlText()
 				{
@@ -57,7 +57,7 @@ namespace FluentTranslate.Parser
 				container.Content.Add(text);
 			}
 
-			return base.VisitTextInline(context);
+			return base.VisitText(context);
 		}
 
 		public override IFtlElement VisitComment(FluentParser.CommentContext context)
