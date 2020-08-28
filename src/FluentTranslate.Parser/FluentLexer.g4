@@ -1,28 +1,61 @@
 ﻿lexer grammar FluentLexer;
 
-fragment InlineChar	: ~( '{' | '}' | '\r' | '\n' ) ;
-fragment Newline	: '\r\n' | '\n' ;
+tokens { NL, INDENT, PLACEABLE_OPEN, TEXT }
 
-COMMENT_OPEN		: '#'   -> mode(IN_COMMENT) ;
+fragment InlineChar		: ~( '{' | '}' | '\r' | '\n' ) ;
+fragment IndentedChar	: ~( '{' | '}' | '[' | '*' | '.' | '\r' | '\n' | ' ' ) ;
+fragment QuotedChar		: ~( '"' | '\\' | '\r' | '\n' ) ;
+fragment Newline		: '\r\n' | '\n' ;
+fragment Identifier		: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
+fragment Comment		: '###' | '##' | '#' ;
+fragment Whitespace		: [' '] ;
+fragment Indent			: Whitespace+ ;
 
-IDENTIFIER			: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
-EQUALS				: SPACES? '=' SPACES? -> mode(IN_CONTENT) ;
-
-SPACES				: ' '+ ;
-
+COMMENT_OPEN		: Comment -> pushMode(COMMENTS) ;
+IDENTIFIER			: Identifier ;
+EQUALS				: '=' -> pushMode(SINGLELINE) ;
+INDENT				: Indent ;
 NL					: Newline ;
 
-mode IN_COMMENT;
-COMMENT_NL			: Newline -> popMode ;
-COMMENT_CONTENT		: ~[\r\n]*? ;
+mode COMMENTS;
+COMMENT_NL			: Newline -> type(NL), popMode ;
+COMMENT_TEXT		: ~[\r\n]* ;
 
-mode IN_CONTENT;
-TEXT_INLINE			: InlineChar+ ;
-CONTENT_NL			: Newline -> mode(MAYBE_CONTENT) ;
+mode SINGLELINE;
+SL_PLACEABLE		: '{' -> type(PLACEABLE_OPEN), mode(PLACEABLES);
+SL_MULTILINE		: Newline+ Whitespace -> mode(MULTILINE), more ;
+SL_NL				: Newline -> type(NL), popMode ;
+SL_TEXT				: InlineChar+ -> type(TEXT) ;
 
-mode MAYBE_CONTENT;
-INDENT				: ' '+   -> mode(IN_CONTENT) ;
-OTHER				: ~(' ') -> more, popMode ;
+mode MULTILINE;
+ML_PLACEABLE_OPEN	: '{' -> type(PLACEABLE_OPEN), mode(PLACEABLES);
+ML_NEXT				: Newline+ Whitespace -> more ;
+ML_NL				: Newline -> type(NL), popMode ;
+ML_TEXT				: IndentedChar InlineChar* -> type(TEXT) ;
+ML_ATTRIBUTE		: '.' Identifier ;
+ML_INDENT			: Indent -> more ;
+
+mode PLACEABLES;
+PLACEABLE_CLOSE		: '}' -> popMode ;
+STRING_OPEN			: '"' -> pushMode(STRINGS) ;
+NUMBER_LITERAL		: '-'? [0-9]+ ( '.' [0-9]+ )? ;
+VARIABLE_REFERENCE	: '$' SELECTOR_IDENTIFIER ;
+ATTRIBUTE_REF		: '.' SELECTOR_IDENTIFIER ;
+CALL_OPEN			: '(' ;
+CALL_CLOSE			: ')' ;
+CALL_ARG_SEP		: ',' ;
+PL_INDENT			: ' '+ -> type(INDENT) ;
+SELECTOR_IDENTIFIER	: Identifier ;
+SELECTOR_NL			: Newline -> popMode, mode(MULTILINE), pushMode(PLACEABLES) ;
+
+mode STRINGS;
+ESCAPED_CHAR		: '\\' ('"' | '\\') ;
+UNICODE_ESCAPE		: '\\u' [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F] 
+					| '\\U' [0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]
+					;
+STRING_CLOSE		: '"' -> popMode ;
+QUOTED_STRING		: QuotedChar+ ;
+
 
 /*
 INLINE_TEXT			: InlineChar+ ;

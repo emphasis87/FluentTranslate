@@ -12,19 +12,37 @@ resource			: entry+ EOF ;
 
 entry				: ( message | comment | emptyLine ) ;
 
-message				: IDENTIFIER EQUALS ( expressionList );
+message				: IDENTIFIER INDENT? EQUALS ( expressionList );
 
-emptyLine			: SPACES? NL ;
+emptyLine			: INDENT? NL ;
 
 expressionList		: expression+ ;
 expression			: textInline
-//					| textBlock 
+//					| textBlock
+					| placeable
 					;
 
-textInline			: TEXT_INLINE ;
-//textBlock			: WS SPACES INDENTED_CHAR textInline ;
+textBlock			: textInline ;
+textInline			: TEXT NL? ;
 
-comment				: ( COMMENT_OPEN Content+=COMMENT_CONTENT? COMMENT_NL? )+ ;
+comment				: COMMENT_OPEN COMMENT_TEXT? NL? ;
+
+placeable			: PLACEABLE_OPEN INDENT? placeableExpression INDENT? PLACEABLE_CLOSE NL? ;
+
+placeableExpression	: inlineExpression ;
+
+inlineExpression	: stringLiteral
+					| numberLiteral
+//					| functionReference
+//					| messageReference
+//					| termReference
+					| variableReference
+//					| placeableInline
+					;
+
+stringLiteral		: STRING_OPEN ( ESCAPED_CHAR | UNICODE_ESCAPE | QUOTED_STRING )* STRING_CLOSE ;
+numberLiteral		: NUMBER_LITERAL ;
+variableReference	: VARIABLE_REFERENCE ;
 
 /*
 entry				: ( message | term | comment | emptyLine ) ;
@@ -42,12 +60,12 @@ expression			: textInline
 attribute			: LINE_END WS? '.' IDENTIFIER EQUALS expressionList ;
 
 textInline			: INLINE_CHAR+ ;
-textBlock			: WS SPACES INDENTED_CHAR textInline ;
+textBlock			: WS INDENT INDENTED_CHAR textInline ;
 
-placeableInline		: '{' SPACES? (selectExpression | inlineExpression) SPACES? '}' ;
+placeableInline		: '{' INDENT? (selectExpression | inlineExpression) INDENT? '}' ;
 placeableBlock		: WS placeableInline ;
 
-selectExpression	: inlineExpression WS? '->' SPACES? variantList ;
+selectExpression	: inlineExpression WS? '->' INDENT? variantList ;
 
 inlineExpression	: stringLiteral
 					| numberLiteral
@@ -71,8 +89,8 @@ namedArgument		: IDENTIFIER WS? ':' WS? (STRING_LITERAL | NUMBER_LITERAL) ;
 
 variantList			: variant* defaultVariant variant* LINE_END ;
 defaultVariant		: '*' variant ;
-variant				: LINE_END WS? variantKey SPACES? expressionList ;
-variantKey			: '[' SPACES? ( NUMBER_LITERAL | IDENTIFIER ) ']' ;
+variant				: LINE_END WS? variantKey INDENT? expressionList ;
+variantKey			: '[' INDENT? ( NUMBER_LITERAL | IDENTIFIER ) ']' ;
 
 stringLiteral		: STRING_LITERAL ;
 numberLiteral		: NUMBER_LITERAL ;
@@ -103,10 +121,10 @@ NUMBER_LITERAL		: '-'? [0-9]+ ('.' [0-9]+)? ;
 
 IDENTIFIER			: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
 
-EQUALS				: SPACES? '=' SPACES? ;
+EQUALS				: INDENT? '=' INDENT? ;
 
-WS					: (SPACES? | LINE_END)+ ;
-SPACES				: ' '+ ;
+WS					: (INDENT? | LINE_END)+ ;
+INDENT				: ' '+ ;
 
 CMT3				: '###' ;
 CMT2				: '##' ;

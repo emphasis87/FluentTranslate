@@ -14,6 +14,14 @@ namespace FluentTranslate.Parser
 			return base.Visit(tree);
 		}
 
+		public override IFtlElement VisitTerminal(ITerminalNode node)
+		{
+			var displayName = FluentLexer.DefaultVocabulary.GetDisplayName(node.Symbol.Type);
+			var symbolicName = FluentLexer.DefaultVocabulary.GetSymbolicName(node.Symbol.Type);
+			Console.WriteLine($"{symbolicName,20} {node.Symbol}");
+			return base.VisitTerminal(node);
+		}
+
 		public override IFtlElement VisitResource(FluentParser.ResourceContext context)
 		{
 			var resource = new FtlResource();
@@ -41,7 +49,7 @@ namespace FluentTranslate.Parser
 			if (containerContext != null)
 			{
 				var container = (IFtlContentEntry) containerContext.Element;
-				var inlineText = context.TEXT_INLINE().GetText();
+				var inlineText = context.TEXT().GetText();
 				var text = new FtlText()
 				{
 					Value = inlineText

@@ -17,12 +17,14 @@
     <Antlr4 Include="FluentLexer.g4">
       <Visitor>true</Visitor>
       <AntOutDir>.</AntOutDir>
-      <Listener>false</Listener>
+      <Listener>true</Listener>
+      <GAtn>true</GAtn>
     </Antlr4>
     <Antlr4 Include="FluentParser.g4">
       <Visitor>true</Visitor>
-      <Listener>false</Listener>
+      <Listener>true</Listener>
       <AntOutDir>.</AntOutDir>
+      <GAtn>true</GAtn>
     </Antlr4>
   </ItemGroup>
 

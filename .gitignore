@@ -352,3 +352,6 @@ MigrationBackup/
 # Antlr4 files
 *.interp
 *.tokens
+
+# Antlr4 ATN diagrams in graphviz
+*.dot

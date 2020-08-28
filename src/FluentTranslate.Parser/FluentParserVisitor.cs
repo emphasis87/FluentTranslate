@@ -68,6 +68,12 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] FluentParser.ExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.textBlock"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTextBlock([NotNull] FluentParser.TextBlockContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.textInline"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -79,4 +85,40 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitComment([NotNull] FluentParser.CommentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.placeable"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPlaceable([NotNull] FluentParser.PlaceableContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.placeableExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPlaceableExpression([NotNull] FluentParser.PlaceableExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.inlineExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInlineExpression([NotNull] FluentParser.InlineExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.stringLiteral"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStringLiteral([NotNull] FluentParser.StringLiteralContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.numberLiteral"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNumberLiteral([NotNull] FluentParser.NumberLiteralContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.variableReference"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitVariableReference([NotNull] FluentParser.VariableReferenceContext context);
 }
