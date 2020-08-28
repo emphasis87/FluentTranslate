@@ -18,13 +18,11 @@
       <Visitor>true</Visitor>
       <AntOutDir>.</AntOutDir>
       <Listener>true</Listener>
-      <GAtn>true</GAtn>
     </Antlr4>
     <Antlr4 Include="FluentParser.g4">
       <Visitor>true</Visitor>
       <Listener>true</Listener>
       <AntOutDir>.</AntOutDir>
-      <GAtn>true</GAtn>
     </Antlr4>
   </ItemGroup>
 
