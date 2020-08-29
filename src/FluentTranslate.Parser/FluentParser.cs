@@ -41,9 +41,9 @@ public partial class FluentParser : Parser {
 		NUMBER_LITERAL=13, VARIABLE_REF=14, TERM_REF=15, ATTRIBUTE_REF=16, SELECTOR=17, 
 		CALL_OPEN=18, CALL_CLOSE=19, CALL_ARG_SEP=20, CALL_ARG_NAME_SEP=21, VARIANT_DEFAULT=22, 
 		VARIANT_OPEN=23, VARIANT_CLOSE=24, COMMENT=25, ESCAPED_CHAR=26, UNICODE_ESCAPE=27, 
-		STRING_CLOSE=28, QUOTED_STRING=29, PL_VARIABLE_REF=30, PL_TERM_REF=31, 
-		PL_ATTRIBUTE_REF=32, CL_PLACEABLE_CLOSE=33, CL_CLOSE=34, CL_ARG_SEP=35, 
-		CL_ARG_NAME_SEP=36, VA_VARIANT_DEFAULT=37, VA_VARIANT_OPEN=38;
+		STRING_CLOSE=28, QUOTED_STRING=29, ML_VARIANT_DEFAULT=30, ML_VARIANT_OPEN=31, 
+		PL_VARIABLE_REF=32, PL_TERM_REF=33, PL_ATTRIBUTE_REF=34, CL_PLACEABLE_CLOSE=35, 
+		CL_CLOSE=36, CL_ARG_SEP=37, CL_ARG_NAME_SEP=38;
 	public const int
 		RULE_resource = 0, RULE_entry = 1, RULE_comment = 2, RULE_emptyLine = 3, 
 		RULE_term = 4, RULE_message = 5, RULE_attributeList = 6, RULE_attribute = 7, 
@@ -66,8 +66,8 @@ public partial class FluentParser : Parser {
 	private static readonly string[] _LiteralNames = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, "'\"'", null, null, null, null, "'}'", "')'", 
-		"','", "':'", "'*'", "'['"
+		null, null, null, null, "'\"'", null, null, null, null, null, null, "'}'", 
+		"')'", "','", "':'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "NL", "NL_INDENT", "INDENT", "TERM", "IDENTIFIER", "IDENTIFIER_REF", 
@@ -75,9 +75,9 @@ public partial class FluentParser : Parser {
 		"NUMBER_LITERAL", "VARIABLE_REF", "TERM_REF", "ATTRIBUTE_REF", "SELECTOR", 
 		"CALL_OPEN", "CALL_CLOSE", "CALL_ARG_SEP", "CALL_ARG_NAME_SEP", "VARIANT_DEFAULT", 
 		"VARIANT_OPEN", "VARIANT_CLOSE", "COMMENT", "ESCAPED_CHAR", "UNICODE_ESCAPE", 
-		"STRING_CLOSE", "QUOTED_STRING", "PL_VARIABLE_REF", "PL_TERM_REF", "PL_ATTRIBUTE_REF", 
-		"CL_PLACEABLE_CLOSE", "CL_CLOSE", "CL_ARG_SEP", "CL_ARG_NAME_SEP", "VA_VARIANT_DEFAULT", 
-		"VA_VARIANT_OPEN"
+		"STRING_CLOSE", "QUOTED_STRING", "ML_VARIANT_DEFAULT", "ML_VARIANT_OPEN", 
+		"PL_VARIABLE_REF", "PL_TERM_REF", "PL_ATTRIBUTE_REF", "CL_PLACEABLE_CLOSE", 
+		"CL_CLOSE", "CL_ARG_SEP", "CL_ARG_NAME_SEP"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 

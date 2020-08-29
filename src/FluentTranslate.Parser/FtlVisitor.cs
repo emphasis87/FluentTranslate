@@ -9,6 +9,15 @@ namespace FluentTranslate.Parser
 {
 	public class FtlVisitor : FluentParserBaseVisitor<IFtlElement>
 	{
+		private readonly FluentLexer _lexer;
+		private readonly FluentParser _parser;
+
+		public FtlVisitor(FluentLexer lexer, FluentParser parser)
+		{
+			_lexer = lexer;
+			_parser = parser;
+		}
+
 		public override IFtlElement Visit(IParseTree tree)
 		{
 			return base.Visit(tree);
@@ -18,7 +27,7 @@ namespace FluentTranslate.Parser
 		{
 			var displayName = FluentLexer.DefaultVocabulary.GetDisplayName(node.Symbol.Type);
 			var symbolicName = FluentLexer.DefaultVocabulary.GetSymbolicName(node.Symbol.Type);
-			Console.WriteLine($"{symbolicName,20} {node.Symbol}");
+			//Console.WriteLine($"{symbolicName,20} {node.Symbol}");
 			return base.VisitTerminal(node);
 		}
 

@@ -11,12 +11,19 @@ namespace FluentTranslate.Parser.Tests
 		private FtlResource Act(string resource)
 		{
 			var inputStream = new AntlrInputStream(new StringReader(resource));
-			var lexer = new FluentLexer(inputStream);
+			var lexer = new FtlLexer(inputStream);
+
+			var mode = 0;
+			foreach (var modeName in lexer.ModeNames)
+			{
+				Console.WriteLine($"{mode++} {modeName}");
+			}
+			Console.WriteLine();
 
 			var tokenStream = new CommonTokenStream(lexer);
 			var parser = new FluentParser(tokenStream);
-
-			var visitor = new FtlVisitor();
+			
+			var visitor = new FtlVisitor(lexer, parser);
 			return (FtlResource)visitor.Visit(parser.resource());
 		}
 
