@@ -91,6 +91,36 @@ public interface IFluentParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitMessage([NotNull] FluentParser.MessageContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.attributeList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAttributeList([NotNull] FluentParser.AttributeListContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.attributeList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAttributeList([NotNull] FluentParser.AttributeListContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAttribute([NotNull] FluentParser.AttributeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAttribute([NotNull] FluentParser.AttributeContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.record"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterRecord([NotNull] FluentParser.RecordContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.record"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitRecord([NotNull] FluentParser.RecordContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.expressionList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -110,6 +140,16 @@ public interface IFluentParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitExpression([NotNull] FluentParser.ExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.ws"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterWs([NotNull] FluentParser.WsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.ws"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitWs([NotNull] FluentParser.WsContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.text"/>.
 	/// </summary>
@@ -161,16 +201,6 @@ public interface IFluentParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVariantList([NotNull] FluentParser.VariantListContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="FluentParser.variant"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterVariant([NotNull] FluentParser.VariantContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="FluentParser.variant"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitVariant([NotNull] FluentParser.VariantContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.defaultVariant"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -180,6 +210,16 @@ public interface IFluentParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitDefaultVariant([NotNull] FluentParser.DefaultVariantContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.variant"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterVariant([NotNull] FluentParser.VariantContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.variant"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitVariant([NotNull] FluentParser.VariantContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.inlineExpression"/>.
 	/// </summary>
@@ -241,6 +281,26 @@ public interface IFluentParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitMessageReference([NotNull] FluentParser.MessageReferenceContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.recordReference"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterRecordReference([NotNull] FluentParser.RecordReferenceContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.recordReference"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitRecordReference([NotNull] FluentParser.RecordReferenceContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.attributeAccessor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAttributeAccessor([NotNull] FluentParser.AttributeAccessorContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.attributeAccessor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAttributeAccessor([NotNull] FluentParser.AttributeAccessorContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.functionCall"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -290,34 +350,4 @@ public interface IFluentParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitArgumentExpression([NotNull] FluentParser.ArgumentExpressionContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="FluentParser.attributeList"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterAttributeList([NotNull] FluentParser.AttributeListContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="FluentParser.attributeList"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitAttributeList([NotNull] FluentParser.AttributeListContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="FluentParser.attribute"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterAttribute([NotNull] FluentParser.AttributeContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="FluentParser.attribute"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitAttribute([NotNull] FluentParser.AttributeContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="FluentParser.multilineIndent"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterMultilineIndent([NotNull] FluentParser.MultilineIndentContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="FluentParser.multilineIndent"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitMultilineIndent([NotNull] FluentParser.MultilineIndentContext context);
 }

@@ -68,6 +68,24 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMessage([NotNull] FluentParser.MessageContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.attributeList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAttributeList([NotNull] FluentParser.AttributeListContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAttribute([NotNull] FluentParser.AttributeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.record"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRecord([NotNull] FluentParser.RecordContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.expressionList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -79,6 +97,12 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] FluentParser.ExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.ws"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitWs([NotNull] FluentParser.WsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.text"/>.
 	/// </summary>
@@ -110,17 +134,17 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVariantList([NotNull] FluentParser.VariantListContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.variant"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitVariant([NotNull] FluentParser.VariantContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.defaultVariant"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitDefaultVariant([NotNull] FluentParser.DefaultVariantContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.variant"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitVariant([NotNull] FluentParser.VariantContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.inlineExpression"/>.
 	/// </summary>
@@ -158,6 +182,18 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMessageReference([NotNull] FluentParser.MessageReferenceContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.recordReference"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRecordReference([NotNull] FluentParser.RecordReferenceContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.attributeAccessor"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAttributeAccessor([NotNull] FluentParser.AttributeAccessorContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.functionCall"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -187,22 +223,4 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitArgumentExpression([NotNull] FluentParser.ArgumentExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.attributeList"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitAttributeList([NotNull] FluentParser.AttributeListContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.attribute"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitAttribute([NotNull] FluentParser.AttributeContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.multilineIndent"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMultilineIndent([NotNull] FluentParser.MultilineIndentContext context);
 }

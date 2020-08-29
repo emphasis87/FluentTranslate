@@ -15,47 +15,50 @@ entry				: ( term | message | comment | emptyLine ) ;
 comment				: COMMENT ;
 emptyLine			: INDENT? NL ;
 
-term				: TERM expressionList attributeList ;
-message				: MESSAGE expressionList attributeList ;
+term				: TERM record attributeList ;
+message				: record attributeList ;
+attributeList		: attribute* ;
+attribute			: ATTRIBUTE record ;
+
+record				: IDENTIFIER INDENT? EQUALS ws expressionList ;
 
 expressionList		: expression+ ;
 expression			: text | placeable ;
 
-text				: TEXT NL? ;
+ws					: (NL | NL_INDENT | INDENT)* ;
+text				: ws TEXT ws ;
 
-placeable			: PLACEABLE_OPEN placeableExpression PLACEABLE_CLOSE NL? ;
+placeable			: PLACEABLE_OPEN ws placeableExpression ws PLACEABLE_CLOSE  ;
 placeableExpression	: selectExpression | inlineExpression ;
 
-selectExpression	: inlineExpression SELECTOR variantList ;
+selectExpression	: inlineExpression ws SELECTOR ws variantList ;
 
 variantList			: variant* defaultVariant variant* ;
-variant				: VARIANT_KEY expressionList ;
-defaultVariant		: VARIANT_DEFAULT_KEY expressionList ;
+defaultVariant		: VARIANT_DEFAULT variant ;
+variant				: VARIANT_OPEN (IDENTIFIER_REF | NUMBER_LITERAL) VARIANT_CLOSE expressionList ;
+
 
 inlineExpression	: stringLiteral
 					| numberLiteral
-					| variableReference
-					| termReference					
-					| messageReference
 					| functionCall
+					| variableReference
+					| termReference		
+					| messageReference
 					| placeable
 					;
 
 stringLiteral		: STRING_OPEN ( ESCAPED_CHAR | UNICODE_ESCAPE | QUOTED_STRING )* STRING_CLOSE ;
 numberLiteral		: NUMBER_LITERAL ;
 
-variableReference	: VARIABLE_REF ;
-termReference		: TERM_REF ATTRIBUTE_REF?;
-messageReference	: MESSAGE_REF ATTRIBUTE_REF? ;
+variableReference	: VARIABLE_REF IDENTIFIER_REF ;
+termReference		: TERM_REF recordReference argumentList? ;
+messageReference	: recordReference ;
+recordReference		: IDENTIFIER_REF attributeAccessor? ;
+attributeAccessor	: ATTRIBUTE_REF IDENTIFIER_REF ;
 
-functionCall		: FUNCTION_CALL argumentList CALL_CLOSE ;
+functionCall		: IDENTIFIER_REF ws argumentList ;
 
-argumentList		: (argument CALL_ARG_SEP )* argument? ;
-argument			: namedArgument | argumentExpression ;
-namedArgument		: CALL_NAMED_ARG argumentExpression ;
+argumentList		: ws CALL_OPEN ( argument CALL_ARG_SEP )* argument? CALL_CLOSE ;
+argument			: ws (namedArgument | argumentExpression) ws ;
+namedArgument		: IDENTIFIER_REF ws CALL_ARG_NAME_SEP ws argumentExpression ;
 argumentExpression	: inlineExpression ;
-
-attributeList		: attribute* ;
-attribute			: ATTRIBUTE expressionList ;
-
-multilineIndent		: (INDENT? NL)* INDENT? ;
