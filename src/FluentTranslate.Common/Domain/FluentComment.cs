@@ -1,7 +1,8 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public class FtlStringLiteral : IFtlInlineExpression
+	public class FluentComment : IFluentEntry
 	{
+		public int Level { get; set; }
 		public string Value { get; set; }
 	}
 }

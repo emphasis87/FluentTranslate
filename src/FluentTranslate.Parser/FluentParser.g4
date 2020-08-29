@@ -1,4 +1,5 @@
 ﻿parser grammar FluentParser;
+
 options { 
 	tokenVocab = FluentLexer;
 	contextSuperClass = FluentTranslate.Parser.FluentContext; 

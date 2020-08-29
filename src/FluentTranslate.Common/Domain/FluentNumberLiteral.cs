@@ -1,6 +1,6 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public class FtlNumberLiteral : IFtlInlineExpression, IFtlVariantKey
+	public class FluentNumberLiteral : IFluentExpression, IFluentVariantKey
 	{
 		public string Value { get; set; }
 	}

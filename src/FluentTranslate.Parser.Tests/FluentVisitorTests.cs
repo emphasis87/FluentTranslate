@@ -8,10 +8,10 @@ namespace FluentTranslate.Parser.Tests
 {
 	public class FluentVisitorTests
 	{
-		private FtlResource Act(string resource)
+		private FluentResource Act(string resource)
 		{
 			var inputStream = new AntlrInputStream(new StringReader(resource));
-			var lexer = new FtlLexer(inputStream);
+			var lexer = new FluentDebugLexer(inputStream);
 
 			var mode = 0;
 			foreach (var modeName in lexer.ModeNames)
@@ -23,8 +23,8 @@ namespace FluentTranslate.Parser.Tests
 			var tokenStream = new CommonTokenStream(lexer);
 			var parser = new FluentParser(tokenStream);
 			
-			var visitor = new FtlVisitor(lexer, parser);
-			return (FtlResource)visitor.Visit(parser.resource());
+			var visitor = new FluentDeserializationVisitor();
+			return (FluentResource)visitor.Visit(parser.resource());
 		}
 
 		[Test]

@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Antlr4.Runtime;
 
-namespace FluentTranslate.Parser
+namespace FluentTranslate.Parser.Tests
 {
-	public class FtlLexer : FluentLexer
+	public class FluentDebugLexer : FluentLexer
 	{
-		public FtlLexer(ICharStream input) : base(input)
+		public FluentDebugLexer(ICharStream input) : base(input)
 		{
 		}
 
-		public FtlLexer(ICharStream input, TextWriter output, TextWriter errorOutput) : base(input, output, errorOutput)
+		public FluentDebugLexer(ICharStream input, TextWriter output, TextWriter errorOutput) : base(input, output, errorOutput)
 		{
 		}
 

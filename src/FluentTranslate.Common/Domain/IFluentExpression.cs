@@ -1,6 +1,6 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public interface IFtlEntry : IFtlElement
+	public interface IFluentExpression : IFluentElement
 	{
 		
 	}
