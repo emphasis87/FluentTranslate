@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Common.Domain
 {
-	public abstract class FluentRecord
+	public abstract class FluentRecord : IFluentElement, IFluentContainer
 	{
 		public string Comment { get; set; }
 		public string Id { get; set; }

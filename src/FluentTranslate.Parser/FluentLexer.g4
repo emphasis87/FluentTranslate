@@ -27,19 +27,20 @@ tokens {
 	VARIANT_CLOSE;
 }
 
+fragment InlinePrintable: ~( '{' | '}' | '\r' | '\n' | ' ' ) ;
 fragment InlineChar		: ~( '{' | '}' | '\r' | '\n' ) ;
 fragment IndentedChar	: ~( '{' | '}' | '[' | '*' | '.' | '\r' | '\n' ) ;
 fragment QuotedChar		: ~( '"' | '\\' | '\r' | '\n' ) ;
 fragment Newline		: '\r\n' | '\n' ;
 fragment Identifier		: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
 fragment CommentPrefix	: '###' | '##' | '#' ;
-fragment CommentText	: ~[\r\n]* ;
+fragment CommentChar	: ~('\r' | '\n') ;
 fragment IndentChar		: [' '] ;
 fragment Indent			: IndentChar+ ;
 fragment Whitespace		: (IndentChar | Newline)+ ;
 fragment NumberLiteral	: '-'? [0-9]+ ( '.' [0-9]+ )? ;
 
-COMMENT_OPEN		: Prefix=(CommentPrefix) -> pushMode(COMMENTS), more ;
+COMMENT_OPEN		: CommentPrefix -> pushMode(COMMENTS) ;
 PLACEABLE_OPEN		: '{' -> type(PLACEABLE_OPEN), pushMode(PLACEABLES) ;
 TERM				: '-' -> type(TERM), pushMode(RECORDS) ;
 ATTRIBUTE			: '.' -> type(ATTRIBUTE), pushMode(RECORDS) ;
@@ -49,7 +50,8 @@ NL					: Newline ;
 INDENT				: Indent ;
 
 mode COMMENTS;
-COMMENT				: Text=(CommentText) Newline? -> popMode ;
+COMMENT				: CommentChar*;
+CM_NL				: Newline? -> type(NL), popMode ;
 
 mode RECORDS;
 RC_EQUALS			: '=' -> type(EQUALS), mode(SINGLELINE) ;
@@ -57,11 +59,12 @@ RC_IDENTIFIER		: Identifier -> type(IDENTIFIER) ;
 RC_INDENT			: Indent -> type(INDENT) ;
 
 mode SINGLELINE;
-SL_TEXT				: InlineChar+ -> type(TEXT) ;
+SL_TEXT				: InlinePrintable InlineChar* -> type(TEXT) ;
 SL_PLACEABLE_OPEN	: '{' -> type(PLACEABLE_OPEN), mode(PLACEABLES) ;
 SL_PLACEABLE_CLOSE	: '}' -> type(PLACEABLE_CLOSE), popMode, popMode, pushMode(SINGLELINE) ;
 SL_NL_INDENT		: Newline Indent -> type(NL_INDENT), mode(MULTILINE) ;
 SL_NL				: Newline -> type(NL), popMode ;
+SL_INDENT			: Indent -> type(INDENT) ;
 
 mode MULTILINE;
 ML_TEXT				: IndentedChar InlineChar* -> type(TEXT) ;
@@ -111,6 +114,7 @@ VA_VARIANT_DEFAULT	: '*' -> type(VARIANT_DEFAULT) ;
 VA_VARIANT_OPEN		: '[' -> type(VARIANT_OPEN) ;
 VA_VARIANT_CLOSE	: ']' -> type(VARIANT_CLOSE), pushMode(SINGLELINE) ;
 VA_PLACEABLE_OPEN	: '{' -> type(PLACEABLE_OPEN), pushMode(PLACEABLES) ;
+VA_PLACEABLE_CLOSE	: '}' -> type(PLACEABLE_CLOSE), popMode ;
 VA_IDENTIFIER		: Identifier -> type(IDENTIFIER_REF) ;
 VA_NUMBER_LITERAL	: NumberLiteral -> type(NUMBER_LITERAL) ;
 VA_NL_INDENT		: Newline Indent -> type(NL_INDENT) ;

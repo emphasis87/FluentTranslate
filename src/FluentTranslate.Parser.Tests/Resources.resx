@@ -142,6 +142,9 @@
   <data name="Placeables" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>examples\placeables.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="PlaceablesInner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>examples\placeablesinner.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="PlaceablesInterpolation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>examples\placeablesinterpolation.ftl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

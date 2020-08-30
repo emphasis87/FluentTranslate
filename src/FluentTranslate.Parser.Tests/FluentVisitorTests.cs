@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Antlr4.Runtime;
+using FluentAssertions;
 using FluentTranslate.Common.Domain;
 using NUnit.Framework;
 
@@ -8,7 +10,7 @@ namespace FluentTranslate.Parser.Tests
 {
 	public class FluentVisitorTests
 	{
-		private FluentResource Act(string resource)
+		private IFluentElement Act(string resource)
 		{
 			var inputStream = new AntlrInputStream(new StringReader(resource));
 			var lexer = new FluentDebugLexer(inputStream);
@@ -24,14 +26,16 @@ namespace FluentTranslate.Parser.Tests
 			var parser = new FluentParser(tokenStream);
 			
 			var visitor = new FluentDeserializationVisitor();
-			return (FluentResource)visitor.Visit(parser.resource());
+			return visitor.Visit(parser.resource()).FirstOrDefault();
 		}
 
 		[Test]
 		public void Hello()
 		{
 			var result = Act(Resources.Hello);
-
+			//var entry = (FluentMessage)result.Entries.Single();
+			//var text = (FluentText)entry.Content.Single();
+			//text.Value.Should().Be(Resources.Hello[9..]);
 		}
 
 		[Test]
@@ -74,6 +78,12 @@ namespace FluentTranslate.Parser.Tests
 		public void Placeables()
 		{
 			Act(Resources.Placeables);
+		}
+
+		[Test]
+		public void PlaceablesInner()
+		{
+			Act(Resources.PlaceablesInner);
 		}
 
 		[Test]

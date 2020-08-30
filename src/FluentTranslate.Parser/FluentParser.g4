@@ -13,31 +13,32 @@ resource			: entry+ EOF ;
 
 entry				: ( term | message | comment | emptyLine ) ;
 
-comment				: COMMENT ;
-emptyLine			: INDENT? NL ;
+comment				: COMMENT_OPEN COMMENT NL? ;
 
-term				: TERM record attributeList ;
-message				: record attributeList ;
-attributeList		: attribute* ;
-attribute			: ATTRIBUTE record ;
+term				: TERM record expressionList attributeList? ;
+message				: record expressionList? attributeList? ;
 
-record				: IDENTIFIER INDENT? EQUALS ws expressionList ;
+record				: IDENTIFIER INDENT? EQUALS INDENT? ;
+
+attributeList		: attribute+ ;
+attribute			: ws indent ATTRIBUTE record expressionList ;
 
 expressionList		: expression+ ;
 expression			: text | placeable ;
 
-ws					: (NL | NL_INDENT | INDENT)* ;
-text				: ws TEXT ws ;
+text				: ws TEXT ;
 
-placeable			: PLACEABLE_OPEN ws placeableExpression ws PLACEABLE_CLOSE  ;
+indent				: ( INDENT | NL_INDENT ) ;
+ws					: ( INDENT | NL | NL_INDENT )*? ;
+
+placeable			: Prefix=ws PLACEABLE_OPEN ws placeableExpression ws PLACEABLE_CLOSE ;
 placeableExpression	: selectExpression | inlineExpression ;
 
 selectExpression	: inlineExpression ws SELECTOR ws variantList ;
 
-variantList			: variant* defaultVariant variant* ;
+variantList			: (ws variant)* ws defaultVariant (ws variant)* ;
 defaultVariant		: VARIANT_DEFAULT variant ;
-variant				: VARIANT_OPEN (IDENTIFIER_REF | NUMBER_LITERAL) VARIANT_CLOSE expressionList ;
-
+variant				: VARIANT_OPEN INDENT? ( IDENTIFIER_REF | NUMBER_LITERAL ) INDENT? VARIANT_CLOSE expressionList ;
 
 inlineExpression	: stringLiteral
 					| numberLiteral
@@ -57,9 +58,11 @@ messageReference	: recordReference ;
 recordReference		: IDENTIFIER_REF attributeAccessor? ;
 attributeAccessor	: ATTRIBUTE_REF IDENTIFIER_REF ;
 
-functionCall		: IDENTIFIER_REF ws argumentList ;
+functionCall		: IDENTIFIER_REF argumentList ;
 
-argumentList		: ws CALL_OPEN ( argument CALL_ARG_SEP )* argument? CALL_CLOSE ;
-argument			: ws (namedArgument | argumentExpression) ws ;
+argumentList		: ws CALL_OPEN ( argument ws CALL_ARG_SEP )* argument? ws CALL_CLOSE ;
+argument			: ws ( namedArgument | argumentExpression ) ;
 namedArgument		: IDENTIFIER_REF ws CALL_ARG_NAME_SEP ws argumentExpression ;
 argumentExpression	: inlineExpression ;
+
+emptyLine			: INDENT? ( NL | NL_INDENT ) ;

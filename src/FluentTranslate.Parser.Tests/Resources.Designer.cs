@@ -172,6 +172,16 @@ namespace FluentTranslate.Parser.Tests {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to # $title (String) - The title of the bookmark to remove.
+        ///remove-bookmark = Are you sure you want to remove { { { $title } } }?.
+        /// </summary>
+        internal static string PlaceablesInner {
+            get {
+                return ResourceManager.GetString("PlaceablesInner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -brand-name = Firefox
         ///installing = Installing { -brand-name }.
         ///

@@ -1,10 +1,7 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public class FluentMessageReference : IFluentExpression
+	public class FluentMessageReference : FluentRecordReference
 	{
-		public string Id { get; set; }
-		public string AttributeId { get; set; }
-
-		public string Name => $"{Id}{(AttributeId != null ? $".{AttributeId}" : null)}";
+		public override string Reference => $"{Id}{(AttributeId != null ? $".{AttributeId}" : null)}";
 	}
 }

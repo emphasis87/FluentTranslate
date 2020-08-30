@@ -1,6 +1,6 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public class FluentText : IFluentContent, IFluentExpression
+	public class FluentText : IFluentContent
 	{
 		public string Value { get; set; }
 	}

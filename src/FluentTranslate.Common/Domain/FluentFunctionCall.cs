@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentFunctionCall : IFluentExpression
+	public class FluentFunctionCall : IFluentCallable, IFluentExpression
 	{
 		public string Id { get; set; }
 		public IList<FluentCallArgument> Arguments { get; set; }

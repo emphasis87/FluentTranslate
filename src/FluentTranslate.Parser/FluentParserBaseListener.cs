@@ -71,18 +71,6 @@ public partial class FluentParserBaseListener : IFluentParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitComment([NotNull] FluentParser.CommentContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="FluentParser.emptyLine"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterEmptyLine([NotNull] FluentParser.EmptyLineContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="FluentParser.emptyLine"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitEmptyLine([NotNull] FluentParser.EmptyLineContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.term"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -106,6 +94,18 @@ public partial class FluentParserBaseListener : IFluentParserListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitMessage([NotNull] FluentParser.MessageContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.record"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterRecord([NotNull] FluentParser.RecordContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.record"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitRecord([NotNull] FluentParser.RecordContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.attributeList"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -131,18 +131,6 @@ public partial class FluentParserBaseListener : IFluentParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitAttribute([NotNull] FluentParser.AttributeContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="FluentParser.record"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterRecord([NotNull] FluentParser.RecordContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="FluentParser.record"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitRecord([NotNull] FluentParser.RecordContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.expressionList"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -167,18 +155,6 @@ public partial class FluentParserBaseListener : IFluentParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitExpression([NotNull] FluentParser.ExpressionContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="FluentParser.ws"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterWs([NotNull] FluentParser.WsContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="FluentParser.ws"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitWs([NotNull] FluentParser.WsContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.text"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -190,6 +166,30 @@ public partial class FluentParserBaseListener : IFluentParserListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitText([NotNull] FluentParser.TextContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.indent"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterIndent([NotNull] FluentParser.IndentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.indent"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitIndent([NotNull] FluentParser.IndentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.ws"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterWs([NotNull] FluentParser.WsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.ws"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitWs([NotNull] FluentParser.WsContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="FluentParser.placeable"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -418,6 +418,18 @@ public partial class FluentParserBaseListener : IFluentParserListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitArgumentExpression([NotNull] FluentParser.ArgumentExpressionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="FluentParser.emptyLine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEmptyLine([NotNull] FluentParser.EmptyLineContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="FluentParser.emptyLine"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEmptyLine([NotNull] FluentParser.EmptyLineContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

@@ -1,6 +1,6 @@
 ﻿namespace FluentTranslate.Common.Domain
 {
-	public class FluentMessage : FluentRecord, IFluentEntry, IFluentContainer
+	public class FluentMessage : FluentRecord, IFluentEntry
 	{
 	}
 }

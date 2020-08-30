@@ -2,10 +2,8 @@
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentTermReference : IFluentExpression
+	public class FluentTermReference : FluentRecordReference, IFluentCallable
 	{
-		public string Id { get; set; }
-		public string AttributeId { get; set; }
 		public IList<FluentCallArgument> Arguments { get; set; }
 
 		public FluentTermReference()
@@ -13,6 +11,6 @@ namespace FluentTranslate.Common.Domain
 			Arguments = new List<FluentCallArgument>();
 		}
 
-		public string Name => $"-{Id}{(AttributeId != null ? $".{AttributeId}" : null)}";
+		public override string Reference => $"-{Id}{(AttributeId != null ? $".{AttributeId}" : null)}";
 	}
 }
