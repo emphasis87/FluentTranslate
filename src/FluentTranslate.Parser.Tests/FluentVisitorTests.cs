@@ -61,7 +61,7 @@ namespace FluentTranslate.Parser.Tests
 		public void Comments()
 		{
 			var resource = Act(Resources.Comments);
-			resource.Entries.Should().HaveCount(11);
+			resource.Entries.Should().HaveCount(16);
 			var comment0 = (FluentComment) resource.Entries[0];
 			comment0.Level.Should().Be(1);
 			comment0.Value.Should()
@@ -91,7 +91,8 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.");
 		[Test]
 		public void MultilineText()
 		{
-			Act(Resources.MultilineText);
+			var resource = Act(Resources.MultilineText);
+			resource.Entries.Should().HaveCount(8);
 		}
 
 		[Test]

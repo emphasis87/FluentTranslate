@@ -73,6 +73,19 @@ namespace FluentTranslate.Parser
 			return result;
 		}
 
+		public override List<IFluentElement> VisitEntry(FluentParser.EntryContext context)
+		{
+			return base.VisitEntry(context);
+		}
+
+		public override List<IFluentElement> VisitEmptyLine(FluentParser.EmptyLineContext context)
+		{
+			var result = DefaultResult;
+			var empty = new FluentEmptyLines();
+			result.Add(empty);
+			return result;
+		}
+
 		public override List<IFluentElement> VisitComment(FluentParser.CommentContext context)
 		{
 			var result = DefaultResult;
@@ -83,11 +96,6 @@ namespace FluentTranslate.Parser
 			};
 			result.Add(comment);
 			return result;
-		}
-
-		public override List<IFluentElement> VisitEntry(FluentParser.EntryContext context)
-		{
-			return base.VisitEntry(context);
 		}
 
 		public override List<IFluentElement> VisitTerm(FluentParser.TermContext context)

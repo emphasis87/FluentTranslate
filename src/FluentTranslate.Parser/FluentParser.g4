@@ -15,8 +15,8 @@ entry				: ( term | message | comment | emptyLine ) ;
 
 comment				: COMMENT_OPEN COMMENT NL? ;
 
-term				: TERM record expressionList attributeList? ;
-message				: record expressionList? attributeList? ;
+term				: TERM record expressionList attributeList? NL? ;
+message				: record expressionList? attributeList? NL? ;
 
 record				: IDENTIFIER INDENT? EQUALS INDENT? ;
 
