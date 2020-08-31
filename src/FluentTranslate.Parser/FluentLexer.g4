@@ -40,7 +40,7 @@ fragment Indent			: IndentChar+ ;
 fragment Whitespace		: (IndentChar | Newline)+ ;
 fragment NumberLiteral	: '-'? [0-9]+ ( '.' [0-9]+ )? ;
 
-COMMENT_OPEN		: CommentPrefix -> pushMode(COMMENTS) ;
+COMMENT_OPEN		: CommentPrefix ' '? -> pushMode(COMMENTS) ;
 PLACEABLE_OPEN		: '{' -> type(PLACEABLE_OPEN), pushMode(PLACEABLES) ;
 TERM				: '-' -> type(TERM), pushMode(RECORDS) ;
 ATTRIBUTE			: '.' -> type(ATTRIBUTE), pushMode(RECORDS) ;

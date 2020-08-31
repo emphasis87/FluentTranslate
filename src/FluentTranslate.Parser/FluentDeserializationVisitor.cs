@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using FluentTranslate.Common.Domain;
 
@@ -28,6 +29,33 @@ namespace FluentTranslate.Parser
 		{
 			var resource = new FluentResource();
 			var result = base.VisitResource(context);
+			if (result.Count == 0)
+			{
+				result.Add(resource);
+				return result;
+			}
+
+			for (var i = 0; i < result.Count - 1; i++)
+			{
+				switch (result[i], result[i+1])
+				{
+					case (FluentComment left, FluentComment right) when FluentComment.CanAggregate(left, right):
+					{
+						result[i] = FluentComment.Aggregate(left, right);
+						result.RemoveAt(i + 1);
+						i--;
+						break;
+					}
+					case (FluentEmptyLines left, FluentEmptyLines right):
+					{
+						result[i] = FluentEmptyLines.Aggregate(left, right);
+						result.RemoveAt(i + 1);
+						i--;
+						break;
+					}
+				}
+			}
+
 			foreach (var child in result)
 			{
 				switch (child)
@@ -48,9 +76,9 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitComment(FluentParser.CommentContext context)
 		{
 			var result = DefaultResult;
-			var comment = new FluentComment()
+			var comment = new FluentComment
 			{
-				Level = context.COMMENT_OPEN().GetText().Length,
+				Level = context.COMMENT_OPEN().GetText().TrimEnd().Length,
 				Value = context.COMMENT().GetText()
 			};
 			result.Add(comment);
@@ -67,7 +95,15 @@ namespace FluentTranslate.Parser
 			var result = base.VisitTerm(context);
 			var record = (FluentRecord) result[0];
 			result.RemoveAt(0);
-			return AggregateRecord(record, result);
+			
+			AggregateContainer(record, result);
+			AggregateRecord(record, result);
+
+			if (result.Count != 0)
+				throw UnsupportedChildTypeException(result[0]);
+
+			result.Add(record);
+			return result;
 		}
 
 		public override List<IFluentElement> VisitMessage(FluentParser.MessageContext context)
@@ -75,47 +111,83 @@ namespace FluentTranslate.Parser
 			var result = base.VisitMessage(context);
 			var record = (FluentRecord) result[0];
 			result.RemoveAt(0);
-			return AggregateRecord(record, result);
+			
+			AggregateContainer(record, result);
+			AggregateRecord(record, result);
+
+			if (result.Count != 0)
+				throw UnsupportedChildTypeException(result[0]);
+
+			result.Add(record);
+			return result;
 		}
 
-		private static List<IFluentElement> AggregateRecord(FluentRecord record, List<IFluentElement> result)
+		public override List<IFluentElement> VisitAttribute(FluentParser.AttributeContext context)
 		{
-			foreach (var child in result)
+			var result = base.VisitAttribute(context);
+			var attribute = (FluentAttribute) result[0];
+			result.RemoveAt(0);
+
+			AggregateContainer(attribute, result);
+
+			if (result.Count != 0)
+				throw UnsupportedChildTypeException(result[0]);
+
+			result.Add(attribute);
+			return result;
+		}
+
+		private static void AggregateContainer(IFluentContainer container, IList<IFluentElement> result)
+		{
+			for (var i = 0; i < result.Count; i++)
 			{
-				switch (child)
+				switch (result[i])
 				{
 					case IFluentContent content:
-						record.Content.Add(content);
-						break;
-					case FluentAttribute attribute:
-						record.Attributes.Add(attribute);
+						container.Content.Add(content);
+						result.RemoveAt(i);
+						i--;
 						break;
 				}
 			}
+		}
 
-			result.Clear();
-			result.Add(record);
-			return result;
+		private static void AggregateRecord(FluentRecord record, IList<IFluentElement> result)
+		{
+			for (var i = 0; i < result.Count; i++)
+			{
+				switch (result[i])
+				{
+					case FluentAttribute attribute:
+						record.Attributes.Add(attribute);
+						result.RemoveAt(i);
+						i--;
+						break;
+				}
+			}
 		}
 
 		public override List<IFluentElement> VisitRecord(FluentParser.RecordContext context)
 		{
 			var result = DefaultResult;
-			var record = context.Parent is FluentParser.TermContext
-				? (FluentRecord) new FluentTerm()
-				: new FluentMessage();
-			record.Id = context.IDENTIFIER().GetText();
-			result.Add(record);
+			
+			var id = context.IDENTIFIER().GetText();
+			IFluentContainer container = context.Parent switch
+			{
+				FluentParser.TermContext _ => new FluentTerm {Id = id},
+				FluentParser.MessageContext _ => new FluentMessage {Id = id},
+				FluentParser.AttributeContext _ => new FluentAttribute {Id = id},
+				_ => throw UnsupportedContextTypeException(context.Parent)
+			};
+
+			result.Add(container);
 			return result;
 		}
 
 		public override List<IFluentElement> VisitText(FluentParser.TextContext context)
 		{
 			var result = DefaultResult;
-			var text = new FluentText()
-			{
-				Value = context.GetText()
-			};
+			var text = new FluentText {Value = context.GetText()};
 			result.Add(text);
 			return result;
 		}
@@ -141,10 +213,7 @@ namespace FluentTranslate.Parser
 				}
 				case IFluentExpression content:
 				{
-					var placeable = new FluentPlaceable()
-					{
-						Content = content,
-					};
+					var placeable = new FluentPlaceable {Content = content};
 					result[0] = placeable;
 					break;
 				}
@@ -157,7 +226,7 @@ namespace FluentTranslate.Parser
 			var prefix = context.Prefix.GetText();
 			if (!string.IsNullOrEmpty(prefix))
 			{
-				var text = new FluentText()
+				var text = new FluentText
 				{
 					Value = prefix
 				};
@@ -210,33 +279,19 @@ namespace FluentTranslate.Parser
 			var result = base.VisitVariant(context);
 
 			var variant = new FluentVariant();
-			if (context.IDENTIFIER_REF() != null)
-			{
-				variant.Key = new FluentIdentifier()
-				{
-					Id = context.IDENTIFIER_REF().GetText()
-				};
-			}
+			var id = context.IDENTIFIER_REF()?.GetText();
+			if (id != null) 
+				variant.Key = new FluentIdentifier {Id = id};
 
-			if (context.NUMBER_LITERAL() != null)
-			{
-				variant.Key = new FluentNumberLiteral()
-				{
-					Value = context.NUMBER_LITERAL().GetText()
-				};
-			}
+			var numberLiteral = context.NUMBER_LITERAL()?.GetText();
+			if (numberLiteral != null)
+				variant.Key = new FluentNumberLiteral {Value = numberLiteral};
 
-			foreach (var child in result)
-			{
-				switch (child)
-				{
-					case IFluentContent content:
-						variant.Content.Add(content);
-						break;
-				}
-			}
+			AggregateContainer(variant, result);
 
-			result.Clear();
+			if (result.Count != 0)
+				throw UnsupportedChildTypeException(result[0]);
+
 			result.Add(variant);
 			return result;
 		}
@@ -244,7 +299,7 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitStringLiteral(FluentParser.StringLiteralContext context)
 		{
 			var result = DefaultResult;
-			var stringLiteral = new FluentStringLiteral()
+			var stringLiteral = new FluentStringLiteral
 			{
 				Value = context.GetText()
 			};
@@ -255,7 +310,7 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitNumberLiteral(FluentParser.NumberLiteralContext context)
 		{
 			var result = DefaultResult;
-			var numberLiteral = new FluentNumberLiteral()
+			var numberLiteral = new FluentNumberLiteral
 			{
 				Value = context.GetText()
 			};
@@ -266,10 +321,8 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitVariableReference(FluentParser.VariableReferenceContext context)
 		{
 			var result = DefaultResult;
-			var variableReference = new FluentVariableReference()
-			{
-				Id = context.IDENTIFIER_REF().GetText()
-			};
+			var id = context.IDENTIFIER_REF().GetText();
+			var variableReference = new FluentVariableReference {Id = id};
 			result.Add(variableReference);
 			return result;
 		}
@@ -277,29 +330,29 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitTermReference(FluentParser.TermReferenceContext context)
 		{
 			var result = base.VisitTermReference(context);
-			var reference = (FluentTermReference)result[0];
-			
-			var call = result.Skip(1).SingleOrDefault();
-			if (call is IFluentCallable callable)
-			{
-				foreach (var argument in callable.Arguments)
-				{
-					reference.Arguments.Add(argument);
-				}
-			}
-
+			var reference = result.OfType<FluentTermReference>().Aggregate(FluentTermReference.Aggregate);
+			result.Clear();
+			result.Add(reference);
 			return result;
 		}
 
 		public override List<IFluentElement> VisitRecordReference(FluentParser.RecordReferenceContext context)
 		{
 			var result = DefaultResult;
-			var attributeAccessor = context.attributeAccessor();
-			var reference = context.Parent is FluentParser.TermReferenceContext
-				? (FluentRecordReference) new FluentTermReference()
-				: new FluentMessageReference();
-			reference.Id = context.IDENTIFIER_REF().GetText();
-			reference.AttributeId = attributeAccessor?.IDENTIFIER_REF().GetText();
+
+			FluentRecordReference reference = context.Parent switch
+			{
+				FluentParser.TermReferenceContext _ => new FluentTermReference(),
+				FluentParser.MessageReferenceContext _ => new FluentMessageReference(),
+				_ => throw UnsupportedContextTypeException(context.Parent),
+			};
+
+			var id = context.IDENTIFIER_REF().GetText();
+			var attributeId = context.attributeAccessor()?.IDENTIFIER_REF().GetText();
+
+			reference.Id = id;
+			reference.AttributeId = attributeId;
+
 			result.Add(reference);
 			return result;
 		}
@@ -322,13 +375,19 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitArgumentList(FluentParser.ArgumentListContext context)
 		{
 			var result = base.VisitArgumentList(context);
-			var functionCall = new FluentFunctionCall();
+			IFluentCallable call = context.Parent switch
+			{
+				FluentParser.TermReferenceContext _ => new FluentTermReference(),
+				FluentParser.FunctionCallContext _ => new FluentFunctionCall(),
+				_ => throw UnsupportedContextTypeException(context.Parent),
+			};
+
 			foreach (var child in result)
 			{
 				switch (child)
 				{
 					case FluentCallArgument argument:
-						functionCall.Arguments.Add(argument);
+						call.Arguments.Add(argument);
 						break;
 					default:
 						throw UnsupportedChildTypeException(child);
@@ -336,7 +395,7 @@ namespace FluentTranslate.Parser
 			}
 
 			result.Clear();
-			result.Add(functionCall);
+			result.Add(call);
 			return result;
 		}
 
@@ -348,10 +407,7 @@ namespace FluentTranslate.Parser
 			{
 				case IFluentExpression content:
 				{
-					var argument = new FluentCallArgument()
-					{
-						Value = content
-					};
+					var argument = new FluentCallArgument {Value = content};
 					result[0] = argument;
 					break;
 				}
@@ -365,11 +421,12 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitNamedArgument(FluentParser.NamedArgumentContext context)
 		{
 			var result = base.VisitNamedArgument(context);
+			var argumentId = context.IDENTIFIER_REF().GetText();
 			var child = result[0];
 			switch (child)
 			{
 				case FluentCallArgument argument:
-					argument.Id = context.IDENTIFIER_REF().GetText();
+					argument.Id = argumentId;
 					break;
 				default:
 					throw UnsupportedChildTypeException(child);
@@ -381,6 +438,11 @@ namespace FluentTranslate.Parser
 		private static Exception UnsupportedChildTypeException(IFluentElement child, [CallerMemberName] string callerName = null)
 		{
 			return new ArgumentOutOfRangeException(nameof(child), $"{callerName}: Child of type {child.GetType()} is not supported.");
+		}
+
+		private static Exception UnsupportedContextTypeException(RuleContext context, [CallerMemberName] string callerName = null)
+		{
+			return new ArgumentOutOfRangeException(nameof(context), $"{callerName}: Context of type {context.GetType()} is not supported.");
 		}
 	}
 }

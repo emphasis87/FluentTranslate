@@ -10,7 +10,7 @@ namespace FluentTranslate.Parser.Tests
 {
 	public class FluentVisitorTests
 	{
-		private IFluentElement Act(string resource)
+		private FluentResource Act(string resource)
 		{
 			var inputStream = new AntlrInputStream(new StringReader(resource));
 			var lexer = new FluentDebugLexer(inputStream);
@@ -26,28 +26,48 @@ namespace FluentTranslate.Parser.Tests
 			var parser = new FluentParser(tokenStream);
 			
 			var visitor = new FluentDeserializationVisitor();
-			return visitor.Visit(parser.resource()).FirstOrDefault();
+			return (FluentResource)visitor.Visit(parser.resource()).FirstOrDefault();
 		}
 
 		[Test]
 		public void Hello()
 		{
-			var result = Act(Resources.Hello);
-			//var entry = (FluentMessage)result.Entries.Single();
-			//var text = (FluentText)entry.Content.Single();
-			//text.Value.Should().Be(Resources.Hello[9..]);
+			var resource = Act(Resources.Hello);
+			var entry = (FluentMessage)resource.Entries.Single();
+			var text = (FluentText)entry.Content.Single();
+			text.Value.Should().Be(Resources.Hello[8..]);
 		}
 
 		[Test]
 		public void Attributes()
 		{
-			Act(Resources.Attributes);
+			var resource = Act(Resources.Attributes);
+			var entry = (FluentMessage) resource.Entries.Single();
+			entry.Id.Should().Be("login-input");
+			entry.Content.Cast<FluentText>().Single().Value.Should().Be("Predefined value");
+			entry.Attributes.Should().HaveCount(3);
+			var attribute0 = entry.Attributes[0];
+			attribute0.Id.Should().Be("placeholder");
+			attribute0.Content.Cast<FluentText>().Single().Value.Should().Be("email@example.com");
+			var attribute1 = entry.Attributes[1];
+			attribute1.Id.Should().Be("aria-label");
+			attribute1.Content.Cast<FluentText>().Single().Value.Should().Be("Login input value");
+			var attribute2 = entry.Attributes[2];
+			attribute2.Id.Should().Be("title");
+			attribute2.Content.Cast<FluentText>().Single().Value.Should().Be("Type your login email");
 		}
 
 		[Test]
 		public void Comments()
 		{
-			Act(Resources.Comments);
+			var resource = Act(Resources.Comments);
+			resource.Entries.Should().HaveCount(11);
+			var comment0 = (FluentComment) resource.Entries[0];
+			comment0.Level.Should().Be(1);
+			comment0.Value.Should()
+				.Be(@"This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.");
 		}
 
 		[Test]

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FluentTranslate.Common.Domain
+﻿namespace FluentTranslate.Common.Domain
 {
-	public interface IFluentReference
+	public interface IFluentReference : IFluentElement
 	{
 		string Reference { get; }
 	}

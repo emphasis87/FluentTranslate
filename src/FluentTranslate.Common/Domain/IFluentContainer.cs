@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Common.Domain
 {
-	public interface IFluentContainer
+	public interface IFluentContainer : IFluentElement
 	{
 		IList<IFluentContent> Content { get; }
 	}
