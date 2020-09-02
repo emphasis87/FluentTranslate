@@ -10,7 +10,7 @@ namespace FluentTranslate.Parser.Tests
 {
 	public class FluentVisitorTests
 	{
-		private FluentResource Act(string resource)
+		private static FluentResource Act(string resource)
 		{
 			var inputStream = new AntlrInputStream(new StringReader(resource));
 			var lexer = new FluentDebugLexer(inputStream);
@@ -33,15 +33,18 @@ namespace FluentTranslate.Parser.Tests
 		public void Hello()
 		{
 			var resource = Act(Resources.Hello);
+			
 			var entry = (FluentMessage)resource.Entries.Single();
+			entry.Id.Should().Be("hello");
 			var text = (FluentText)entry.Content.Single();
-			text.Value.Should().Be(Resources.Hello[8..]);
+			text.Value.Should().Be("Hello, world!");
 		}
 
 		[Test]
 		public void Attributes()
 		{
 			var resource = Act(Resources.Attributes);
+			
 			var entry = (FluentMessage) resource.Entries.Single();
 			entry.Id.Should().Be("login-input");
 			entry.Content.Cast<FluentText>().Single().Value.Should().Be("Predefined value");
@@ -73,7 +76,40 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.");
 		[Test]
 		public void Functions()
 		{
-			Act(Resources.Functions);
+			var resource = Act(Resources.Functions);
+			
+			resource.Entries.Should().HaveCount(4);
+			
+			var e0 = (FluentMessage) resource.Entries[0];
+			e0.Id.Should().Be("emails");
+			((FluentText) e0.Content[0]).Value.Should().Be("You have ");
+			var p0 = (FluentPlaceable) e0.Content[1];
+			((FluentVariableReference) p0.Content).Id.Should().Be("unreadEmails");
+			((FluentText) e0.Content[2]).Value.Should().Be(" unread emails.");
+			
+			var e1 = (FluentMessage) resource.Entries[1];
+			e1.Id.Should().Be("emails2");
+			((FluentText) e1.Content[0]).Value.Should().Be("You have ");
+			var p1 = (FluentPlaceable) e1.Content[1];
+			var f0 = (FluentFunctionCall) p1.Content;
+			f0.Id.Should().Be("NUMBER");
+			f0.Arguments[0].Id.Should().BeNull();
+			((FluentVariableReference) f0.Arguments[0].Value).Id.Should().Be("unreadEmails");
+			((FluentText) e0.Content[2]).Value.Should().Be(" unread emails.");
+
+			var e2 = (FluentEmptyLines) resource.Entries[2];
+
+			var e3 = (FluentMessage) resource.Entries[3];
+			e3.Id.Should().Be("last-notice");
+			((FluentText) e3.Content[0]).Value.Should().Be("Last checked: ");
+			var f1 = (FluentFunctionCall) ((FluentPlaceable) e3.Content[1]).Content;
+			f1.Id.Should().Be("DATETIME");
+			f1.Arguments[0].Id.Should().BeNull();
+			((FluentVariableReference) f1.Arguments[0].Value).Id.Should().Be("lastChecked");
+			f1.Arguments[1].Id.Should().Be("day");
+			((FluentStringLiteral)f1.Arguments[1].Value).Value.Should().Be("numeric");
+			f1.Arguments[2].Id.Should().Be("month");
+			((FluentStringLiteral)f1.Arguments[2].Value).Value.Should().Be("long");
 		}
 
 		[Test]

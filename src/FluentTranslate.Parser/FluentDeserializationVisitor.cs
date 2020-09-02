@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
+using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using FluentTranslate.Common.Domain;
@@ -11,6 +11,10 @@ namespace FluentTranslate.Parser
 {
 	public class FluentDeserializationVisitor : FluentParserBaseVisitor<List<IFluentElement>>
 	{
+		private static readonly Regex NewlineIndent = new Regex(@"^(\u0020+)", RegexOptions.Compiled | RegexOptions.Multiline);
+		private static readonly Regex WhitespaceIndent = new Regex(@"^[\r\n\u0020]*?\r?\n(\u0020*[^\r\n\u0020])", RegexOptions.Compiled | RegexOptions.Singleline);
+		private static readonly Regex Whitespace = new Regex(@"^[\r\n\u0020]*$", RegexOptions.Compiled | RegexOptions.Singleline);
+
 		public override List<IFluentElement> Visit(IParseTree tree)
 		{
 			return base.Visit(tree);
@@ -158,6 +162,47 @@ namespace FluentTranslate.Parser
 						break;
 				}
 			}
+
+			// Aggregate text sequences
+			for (var i = 0; i < container.Content.Count - 1; i++)
+			{
+				switch (container.Content[i], container.Content[i + 1])
+				{
+					case (FluentText left, FluentText right):
+					{
+						container.Content[i] = FluentText.Aggregate(left, right);
+						container.Content.RemoveAt(i + 1);
+						i--;
+						break;
+					}
+				}
+			}
+
+			// Remove whitespace indentation from the first text
+			if (container.Content.FirstOrDefault() is FluentText firstText)
+				firstText.Value = WhitespaceIndent.Replace(firstText.Value, "$1");
+
+			// Find the smallest common indentation on each line
+			var indented = new List<FluentText>();
+			var indentation = int.MaxValue;
+			foreach (var text in container.Content.OfType<FluentText>())
+			{
+				var matches = NewlineIndent.Matches(text.Value);
+				if (matches.Count != 0)
+				{
+					indented.Add(text);
+					foreach (Match match in matches)
+						indentation = Math.Min(indentation, match.Groups[1].Length);
+				}
+			}
+
+			// Remove common indentation from each line
+			if (indentation < int.MaxValue)
+			{
+				var indentationPattern = new Regex($@"^\u0020{{{indentation}}}", RegexOptions.Compiled | RegexOptions.Multiline);
+				foreach (var text in indented)
+					text.Value = indentationPattern.Replace(text.Value, "");
+			}
 		}
 
 		private static void AggregateRecord(FluentRecord record, IList<IFluentElement> result)
@@ -234,10 +279,7 @@ namespace FluentTranslate.Parser
 			var prefix = context.Prefix.GetText();
 			if (!string.IsNullOrEmpty(prefix))
 			{
-				var text = new FluentText
-				{
-					Value = prefix
-				};
+				var text = new FluentText {Value = prefix};
 				result.Insert(0, text);
 			}
 
