@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -14,5 +15,8 @@ namespace FluentTranslate.Common.Domain
 			Content = new List<IFluentContent>();
 			Attributes = new List<FluentAttribute>();
 		}
-	}
+
+        public abstract bool Equals(object other, IEqualityComparer comparer);
+        public abstract int GetHashCode(IEqualityComparer comparer);
+    }
 }

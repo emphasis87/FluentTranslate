@@ -1,6 +1,8 @@
-﻿namespace FluentTranslate.Common.Domain
+﻿using System.Collections;
+
+namespace FluentTranslate.Common.Domain
 {
-    public interface IFluentElement
+    public interface IFluentElement : IStructuralEquatable
     {
         
     }

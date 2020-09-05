@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -10,5 +11,18 @@ namespace FluentTranslate.Common.Domain
 		{
 			Entries = new List<IFluentEntry>();
 		}
-	}
+
+        public bool Equals(object other, IEqualityComparer comparer)
+        {
+            if (ReferenceEquals(other, this)) return true;
+            if (other is null) return false;
+            if (other.GetType() != GetType()) return false;
+            return comparer.Equals(Entries, ((FluentResource) other).Entries);
+        }
+
+        public int GetHashCode(IEqualityComparer comparer)
+        {
+            return comparer.GetHashCode(Entries);
+        }
+    }
 }
