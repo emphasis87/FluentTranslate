@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Runtime.CompilerServices;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -13,13 +12,13 @@ namespace FluentTranslate.Common.Domain
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
             if (!(other is FluentCallArgument argument)) return false;
-            return Id == argument.Id &&
-                comparer.Equals(Value, argument.Value);
+            return comparer.Equals(Id, argument.Id)
+				&& comparer.Equals(Value, argument.Value);
         }
 
         public int GetHashCode(IEqualityComparer comparer)
         {
-            return RuntimeHelpers.GetHashCode(Id);
+            return comparer.GetHashCode(Id);
         }
     }
 }

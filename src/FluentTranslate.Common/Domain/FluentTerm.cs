@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Runtime.CompilerServices;
+using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -10,14 +10,14 @@ namespace FluentTranslate.Common.Domain
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
             if (!(other is FluentTerm term)) return false;
-            return Id == term.Id &&
-                comparer.Equals(Content, term.Content) &&
-                comparer.Equals(Attributes, term.Attributes);
+            return Id == term.Id 
+				&& comparer.Equals(Content?.ToImmutableArray(), term.Content?.ToImmutableArray()) 
+				&& comparer.Equals(Attributes?.ToImmutableArray(), term.Attributes?.ToImmutableArray());
         }
 
         public override int GetHashCode(IEqualityComparer comparer)
         {
-            return RuntimeHelpers.GetHashCode(Id);
+            return comparer.GetHashCode(Id);
         }
     }
 }

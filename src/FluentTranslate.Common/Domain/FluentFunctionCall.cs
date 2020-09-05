@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -19,13 +19,13 @@ namespace FluentTranslate.Common.Domain
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
             if (!(other is FluentFunctionCall functionCall)) return false;
-            return Id == functionCall.Id &&
-                comparer.Equals(Arguments, functionCall.Arguments);
+            return comparer.Equals(Id, functionCall.Id)
+				&& comparer.Equals(Arguments?.ToImmutableArray(), functionCall.Arguments?.ToImmutableArray());
         }
 
         public int GetHashCode(IEqualityComparer comparer)
         {
-            return RuntimeHelpers.GetHashCode(Id);
+            return comparer.GetHashCode(Id);
         }
     }
 }

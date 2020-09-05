@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -17,7 +16,7 @@ namespace FluentTranslate.Common.Domain
 
 		public static FluentTermReference Aggregate(FluentTermReference left, FluentTermReference right)
 		{
-			return new FluentTermReference()
+			return new FluentTermReference
 			{
 				Id = left.Id ?? right.Id,
 				Arguments = left.Arguments.Concat(right.Arguments).ToList(),
@@ -35,13 +34,13 @@ namespace FluentTranslate.Common.Domain
 			if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
             if (!(other is FluentTermReference termReference)) return false;
-            return Reference == termReference.Reference &&
-                comparer.Equals(Arguments, termReference.Arguments);
+            return comparer.Equals(Reference, termReference.Reference)
+				&& comparer.Equals(Arguments?.ToImmutableArray(), termReference.Arguments?.ToImmutableArray());
         }
 
         public override int GetHashCode(IEqualityComparer comparer)
         {
-            return RuntimeHelpers.GetHashCode(Reference);
+            return comparer.GetHashCode(Reference);
         }
     }
 }

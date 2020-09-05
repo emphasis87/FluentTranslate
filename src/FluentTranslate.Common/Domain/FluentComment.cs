@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Runtime.CompilerServices;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -15,7 +14,7 @@ namespace FluentTranslate.Common.Domain
 
 		public static FluentComment Aggregate(FluentComment left, FluentComment right)
 		{
-			return new FluentComment()
+			return new FluentComment
 			{
 				Level = left.Level,
 				Value = $"{left.Value}\r\n{right.Value}",
@@ -27,13 +26,13 @@ namespace FluentTranslate.Common.Domain
 			if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
             if (!(other is FluentComment comment)) return false;
-            return Level == comment.Level &&
-                   comparer.Equals(Value, comment.Value);
+            return comparer.Equals(Level, comment.Level) 
+				&& comparer.Equals(Value, comment.Value);
 		}
 
         public int GetHashCode(IEqualityComparer comparer)
         {
-            return RuntimeHelpers.GetHashCode(Value);
+            return comparer.GetHashCode(Value);
         }
     }
 }

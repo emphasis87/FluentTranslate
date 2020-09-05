@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Runtime.CompilerServices;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -17,7 +16,7 @@ namespace FluentTranslate.Common.Domain
 
         public int GetHashCode(IEqualityComparer comparer)
         {
-            return RuntimeHelpers.GetHashCode(Value);
+            return comparer.GetHashCode(Value);
         }
     }
 }

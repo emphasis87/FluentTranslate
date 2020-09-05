@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Runtime.CompilerServices;
+using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
@@ -10,14 +10,14 @@ namespace FluentTranslate.Common.Domain
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
             if (!(other is FluentMessage message)) return false;
-            return Id == message.Id &&
-                comparer.Equals(Content, message.Content) &&
-                comparer.Equals(Attributes, message.Attributes);
+            return comparer.Equals(Id, message.Id) 
+				&& comparer.Equals(Content?.ToImmutableArray(), message.Content?.ToImmutableArray()) 
+				&& comparer.Equals(Attributes?.ToImmutableArray(), message.Attributes?.ToImmutableArray());
         }
 
         public override int GetHashCode(IEqualityComparer comparer)
         {
-            return RuntimeHelpers.GetHashCode(Id);
+            return comparer.GetHashCode(Id);
         }
     }
 }

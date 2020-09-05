@@ -12,8 +12,8 @@ namespace FluentTranslate.Common.Domain
         }
 
         public int GetHashCode(IEqualityComparer comparer)
-        {
-            return 0
-        }
+		{
+			return 0;
+		}
     }
 }

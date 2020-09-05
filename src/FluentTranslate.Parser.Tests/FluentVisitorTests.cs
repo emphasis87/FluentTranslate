@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Antlr4.Runtime;
@@ -33,44 +35,176 @@ namespace FluentTranslate.Parser.Tests
 		public void Hello()
 		{
 			var resource = Act(Resources.Hello);
-			
-			var entry = (FluentMessage)resource.Entries.Single();
-			entry.Id.Should().Be("hello");
-			var text = (FluentText)entry.Content.Single();
-			text.Value.Should().Be("Hello, world!");
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource,
+				new FluentResource
+				{
+					Entries = new List<IFluentEntry>()
+					{
+						new FluentMessage
+						{
+							Id = "hello",
+							Content = new List<IFluentContent>
+							{
+								new FluentText
+								{
+									Value = "Hello, world!"
+								}
+							}
+						}
+					}
+				}).Should().BeTrue();
 		}
 
 		[Test]
 		public void Attributes()
 		{
 			var resource = Act(Resources.Attributes);
-			
-			var entry = (FluentMessage) resource.Entries.Single();
-			entry.Id.Should().Be("login-input");
-			entry.Content.Cast<FluentText>().Single().Value.Should().Be("Predefined value");
-			entry.Attributes.Should().HaveCount(3);
-			var attribute0 = entry.Attributes[0];
-			attribute0.Id.Should().Be("placeholder");
-			attribute0.Content.Cast<FluentText>().Single().Value.Should().Be("email@example.com");
-			var attribute1 = entry.Attributes[1];
-			attribute1.Id.Should().Be("aria-label");
-			attribute1.Content.Cast<FluentText>().Single().Value.Should().Be("Login input value");
-			var attribute2 = entry.Attributes[2];
-			attribute2.Id.Should().Be("title");
-			attribute2.Content.Cast<FluentText>().Single().Value.Should().Be("Type your login email");
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource,
+				new FluentResource
+				{
+					Entries = new List<IFluentEntry>()
+					{
+						new FluentMessage
+						{
+							Id = "login-input",
+							Content = new List<IFluentContent>
+							{
+								new FluentText {Value = "Predefined value"}
+							},
+							Attributes = new List<FluentAttribute>
+							{
+								new FluentAttribute
+								{
+									Id = "placeholder",
+									Content = new List<IFluentContent>
+									{
+										new FluentText {Value = "email@example.com"}
+									},
+								},
+								new FluentAttribute
+								{
+									Id = "aria-label",
+									Content = new List<IFluentContent>
+									{
+										new FluentText {Value = "Login input value"}
+									},
+								},
+								new FluentAttribute
+								{
+									Id = "title",
+									Content = new List<IFluentContent>
+									{
+										new FluentText {Value = "Type your login email"}
+									},
+								}
+							}
+						}
+					}
+				}).Should().BeTrue();
 		}
 
 		[Test]
 		public void Comments()
 		{
 			var resource = Act(Resources.Comments);
-			resource.Entries.Should().HaveCount(16);
-			var comment0 = (FluentComment) resource.Entries[0];
-			comment0.Level.Should().Be(1);
-			comment0.Value.Should()
-				.Be(@"This Source Code Form is subject to the terms of the Mozilla Public
-License, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.");
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource,
+				new FluentResource
+				{
+					Entries = new List<IFluentEntry>()
+					{
+						new FluentComment
+						{
+							Level = 1,
+							Value = "This Source Code Form is subject to the terms of the Mozilla Public"
+								+ "\r\nLicense, v. 2.0. If a copy of the MPL was not distributed with this"
+								+ "\r\nfile, You can obtain one at http://mozilla.org/MPL/2.0/."
+						},
+						new FluentEmptyLines(),
+						new FluentComment
+						{
+							Level = 3,
+							Value = "Localization for Server-side strings of Firefox Screenshots"
+						},
+						new FluentEmptyLines(),
+						new FluentComment
+						{
+							Level = 2,
+							Value = "Global phrases shared across pages"
+						},
+						new FluentEmptyLines(),
+						new FluentMessage
+						{
+							Id = "my-shots",
+							Content = new List<IFluentContent>
+							{
+								new FluentText {Value = "My Shots"}
+							}
+						},
+						new FluentMessage
+						{
+							Id = "home-link",
+							Content = new List<IFluentContent>
+							{
+								new FluentText {Value = "Home"}
+							}
+						},
+						new FluentMessage
+						{
+							Id = "screenshots-description",
+							Content = new List<IFluentContent>
+							{
+								new FluentText
+								{
+									Value = "Screenshots made simple. Take, save, and"
+										+ "\r\nshare screenshots without leaving Firefox."
+								}
+							}
+						},
+						new FluentEmptyLines(),
+						new FluentComment
+						{
+							Level = 2,
+							Value = "Creating page"
+						},
+						new FluentEmptyLines(),
+						new FluentComment
+						{
+							Level = 1,
+							Value = "Note: { $title } is a placeholder for the title of the web page"
+								+ "\r\ncaptured in the screenshot. The default, for pages without titles, is"
+								+ "\r\ncreating-page-title-default."
+						},
+						new FluentMessage
+						{
+							Id = "creating-page-title",
+							Content = new List<IFluentContent>
+							{
+								new FluentText {Value = "Creating "},
+								new FluentPlaceable {Content = new FluentVariableReference {Id = "title"}}
+							}
+						},
+						new FluentMessage
+						{
+							Id = "creating-page-title-default",
+							Content = new List<IFluentContent>
+							{
+								new FluentText {Value = "page"}
+							}
+						},
+						new FluentMessage
+						{
+							Id = "creating-page-wait-message",
+							Content = new List<IFluentContent>
+							{
+								new FluentText {Value = "Saving your shot…"}
+							}
+						},
+					}
+				}).Should().BeTrue();
+
 		}
 
 		[Test]
