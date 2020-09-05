@@ -355,3 +355,6 @@ MigrationBackup/
 
 # Antlr4 ATN diagrams in graphviz
 *.dot
+
+# JetBrains idea files
+.idea
