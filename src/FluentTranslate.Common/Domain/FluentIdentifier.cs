@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentIdentifier : IFluentElement, IFluentVariantKey
+	public class FluentIdentifier : IFluentVariantKey
 	{
 		public string Id { get; set; }
 

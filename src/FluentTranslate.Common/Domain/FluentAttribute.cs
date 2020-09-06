@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentAttribute : IFluentElement, IFluentContainer, IEnumerable<IFluentContent>
+	public class FluentAttribute : IFluentContainer, IEnumerable<IFluentContent>
 	{
 		public string Id { get; set; }
 		public IList<IFluentContent> Content { get; set; }
