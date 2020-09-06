@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
-    public class FluentResource : IFluentElement
+    public class FluentResource : IFluentElement, IEnumerable<IFluentEntry>
     {
         public IList<IFluentEntry> Entries { get; set; }
 
@@ -25,5 +25,20 @@ namespace FluentTranslate.Common.Domain
         {
             return comparer.GetHashCode(Entries?.ToImmutableArray());
         }
-    }
+
+		public IEnumerator<IFluentEntry> GetEnumerator()
+		{
+			return Entries.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public void Add(IFluentEntry entry)
+		{
+			Entries.Add(entry);
+		}
+	}
 }

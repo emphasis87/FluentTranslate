@@ -6,6 +6,15 @@ namespace FluentTranslate.Common.Domain
 	{
 		public string Id { get; set; }
 
+		public FluentVariableReference()
+		{
+		}
+
+		public FluentVariableReference(string id) : this()
+		{
+			Id = id;
+		}
+
 		public bool Equals(object other, IEqualityComparer comparer)
 		{
 			if (ReferenceEquals(other, this)) return true;

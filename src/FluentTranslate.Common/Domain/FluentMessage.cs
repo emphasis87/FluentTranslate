@@ -5,7 +5,16 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentMessage : FluentRecord, IFluentEntry
 	{
-        public override bool Equals(object other, IEqualityComparer comparer)
+		public FluentMessage()
+		{
+		}
+
+		public FluentMessage(string id) : this()
+		{
+			Id = id;
+		}
+
+		public override bool Equals(object other, IEqualityComparer comparer)
         {
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;

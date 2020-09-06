@@ -7,7 +7,22 @@ namespace FluentTranslate.Common.Domain
 		public string Id { get; set; }
 		public IFluentExpression Value { get; set; }
 
-        public bool Equals(object other, IEqualityComparer comparer)
+		public FluentCallArgument()
+		{
+		}
+
+		public FluentCallArgument(IFluentExpression value) : this()
+		{
+			Value = value;
+		}
+
+		public FluentCallArgument(string id, IFluentExpression value) : this()
+		{
+			Id = id;
+			Value = value;
+		}
+
+		public bool Equals(object other, IEqualityComparer comparer)
         {
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;

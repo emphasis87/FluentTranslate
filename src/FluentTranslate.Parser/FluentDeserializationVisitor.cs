@@ -11,9 +11,7 @@ namespace FluentTranslate.Parser
 {
 	public class FluentDeserializationVisitor : FluentParserBaseVisitor<List<IFluentElement>>
 	{
-		private static readonly Regex NewlineIndent = new Regex(@"^(\u0020+)", RegexOptions.Compiled | RegexOptions.Multiline);
-		private static readonly Regex WhitespaceIndent = new Regex(@"^[\r\n\u0020]*?\r?\n(\u0020*[^\r\n\u0020])", RegexOptions.Compiled | RegexOptions.Singleline);
-		private static readonly Regex Whitespace = new Regex(@"^[\r\n\u0020]*$", RegexOptions.Compiled | RegexOptions.Singleline);
+		private static readonly Regex WhitespaceIndent = new Regex(@"[\r\n\u0020]*?\r?\n(\u0020*[^\r\n\u0020])", RegexOptions.Compiled | RegexOptions.Singleline);
 
 		public override List<IFluentElement> Visit(IParseTree tree)
 		{
@@ -178,31 +176,31 @@ namespace FluentTranslate.Parser
 				}
 			}
 
-			// Remove whitespace indentation from the first text
-			if (container.Content.FirstOrDefault() is FluentText firstText)
-				firstText.Value = WhitespaceIndent.Replace(firstText.Value, "$1");
-
 			// Find the smallest common indentation on each line
 			var indented = new List<FluentText>();
 			var indentation = int.MaxValue;
 			foreach (var text in container.Content.OfType<FluentText>())
 			{
-				var matches = NewlineIndent.Matches(text.Value);
+				var matches = WhitespaceIndent.Matches(text.Value);
 				if (matches.Count != 0)
 				{
 					indented.Add(text);
 					foreach (Match match in matches)
-						indentation = Math.Min(indentation, match.Groups[1].Length);
+						indentation = Math.Min(indentation, match.Groups[1].Length - 1);
 				}
 			}
 
 			// Remove common indentation from each line
 			if (indentation < int.MaxValue)
 			{
-				var indentationPattern = new Regex($@"^\u0020{{{indentation}}}", RegexOptions.Compiled | RegexOptions.Multiline);
+				var indentationPattern = new Regex($@"(\r?\n)\u0020{{1,{indentation}}}", RegexOptions.Compiled | RegexOptions.Singleline);
 				foreach (var text in indented)
-					text.Value = indentationPattern.Replace(text.Value, "");
+					text.Value = indentationPattern.Replace(text.Value, "$1");
 			}
+
+			// Remove whitespace indentation from the first text
+			if (container.Content.FirstOrDefault() is FluentText firstText)
+				firstText.Value = firstText.Value.TrimStart('\r', '\n', ' ');
 		}
 
 		private static void AggregateRecord(FluentRecord record, IList<IFluentElement> result)
@@ -349,9 +347,10 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitStringLiteral(FluentParser.StringLiteralContext context)
 		{
 			var result = DefaultResult;
+			var text = context.GetText();
 			var stringLiteral = new FluentStringLiteral
 			{
-				Value = context.GetText()
+				Value = text.Substring(1, text.Length - 2)
 			};
 			result.Add(stringLiteral);
 			return result;

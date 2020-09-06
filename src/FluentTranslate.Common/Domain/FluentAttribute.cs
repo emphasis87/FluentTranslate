@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentAttribute : IFluentElement, IFluentContainer
+	public class FluentAttribute : IFluentElement, IFluentContainer, IEnumerable<IFluentContent>
 	{
 		public string Id { get; set; }
 		public IList<IFluentContent> Content { get; set; }
@@ -14,7 +14,12 @@ namespace FluentTranslate.Common.Domain
 			Content = new List<IFluentContent>();
 		}
 
-        public bool Equals(object other, IEqualityComparer comparer)
+		public FluentAttribute(string id) : this()
+		{
+			Id = id;
+		}
+
+		public bool Equals(object other, IEqualityComparer comparer)
         {
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
@@ -27,5 +32,20 @@ namespace FluentTranslate.Common.Domain
         {
             return comparer.GetHashCode(Id);
         }
-    }
+
+		public IEnumerator<IFluentContent> GetEnumerator()
+		{
+			return Content.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public void Add(IFluentContent content)
+		{
+			Content.Add(content);
+		}
+	}
 }

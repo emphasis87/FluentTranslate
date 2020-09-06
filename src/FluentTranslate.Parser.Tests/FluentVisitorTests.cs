@@ -22,13 +22,14 @@ namespace FluentTranslate.Parser.Tests
 			{
 				Console.WriteLine($"{mode++} {modeName}");
 			}
+
 			Console.WriteLine();
 
 			var tokenStream = new CommonTokenStream(lexer);
 			var parser = new FluentParser(tokenStream);
-			
+
 			var visitor = new FluentDeserializationVisitor();
-			return (FluentResource)visitor.Visit(parser.resource()).FirstOrDefault();
+			return (FluentResource) visitor.Visit(parser.resource()).FirstOrDefault();
 		}
 
 		[Test]
@@ -39,19 +40,9 @@ namespace FluentTranslate.Parser.Tests
 			StructuralComparisons.StructuralEqualityComparer.Equals(resource,
 				new FluentResource
 				{
-					Entries = new List<IFluentEntry>()
+					new FluentMessage("hello")
 					{
-						new FluentMessage
-						{
-							Id = "hello",
-							Content = new List<IFluentContent>
-							{
-								new FluentText
-								{
-									Value = "Hello, world!"
-								}
-							}
-						}
+						new FluentText("Hello, world!")
 					}
 				}).Should().BeTrue();
 		}
@@ -61,48 +52,25 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Attributes);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource,
-				new FluentResource
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			{
+				new FluentMessage("login-input")
 				{
-					Entries = new List<IFluentEntry>()
+					new FluentText("Predefined value"),
+					new FluentAttribute("placeholder")
 					{
-						new FluentMessage
-						{
-							Id = "login-input",
-							Content = new List<IFluentContent>
-							{
-								new FluentText {Value = "Predefined value"}
-							},
-							Attributes = new List<FluentAttribute>
-							{
-								new FluentAttribute
-								{
-									Id = "placeholder",
-									Content = new List<IFluentContent>
-									{
-										new FluentText {Value = "email@example.com"}
-									},
-								},
-								new FluentAttribute
-								{
-									Id = "aria-label",
-									Content = new List<IFluentContent>
-									{
-										new FluentText {Value = "Login input value"}
-									},
-								},
-								new FluentAttribute
-								{
-									Id = "title",
-									Content = new List<IFluentContent>
-									{
-										new FluentText {Value = "Type your login email"}
-									},
-								}
-							}
-						}
+						new FluentText("email@example.com")
+					},
+					new FluentAttribute("aria-label")
+					{
+						new FluentText("Login input value")
+					},
+					new FluentAttribute("title")
+					{
+						new FluentText("Type your login email")
 					}
-				}).Should().BeTrue();
+				}
+			}).Should().BeTrue();
 		}
 
 		[Test]
@@ -110,140 +78,118 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Comments);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource,
-				new FluentResource
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			{
+				new FluentComment
 				{
-					Entries = new List<IFluentEntry>()
+					Level = 1,
+					Value = "This Source Code Form is subject to the terms of the Mozilla Public"
+						+ "\r\nLicense, v. 2.0. If a copy of the MPL was not distributed with this"
+						+ "\r\nfile, You can obtain one at http://mozilla.org/MPL/2.0/."
+				},
+				new FluentEmptyLines(),
+				new FluentComment
+				{
+					Level = 3,
+					Value = "Localization for Server-side strings of Firefox Screenshots"
+				},
+				new FluentEmptyLines(),
+				new FluentComment
+				{
+					Level = 2,
+					Value = "Global phrases shared across pages"
+				},
+				new FluentEmptyLines(),
+				new FluentMessage("my-shots")
+				{
+					new FluentText("My Shots")
+				},
+				new FluentMessage("home-link")
+				{
+					new FluentText("Home")
+				},
+				new FluentMessage("screenshots-description")
+				{
+					new FluentText
 					{
-						new FluentComment
-						{
-							Level = 1,
-							Value = "This Source Code Form is subject to the terms of the Mozilla Public"
-								+ "\r\nLicense, v. 2.0. If a copy of the MPL was not distributed with this"
-								+ "\r\nfile, You can obtain one at http://mozilla.org/MPL/2.0/."
-						},
-						new FluentEmptyLines(),
-						new FluentComment
-						{
-							Level = 3,
-							Value = "Localization for Server-side strings of Firefox Screenshots"
-						},
-						new FluentEmptyLines(),
-						new FluentComment
-						{
-							Level = 2,
-							Value = "Global phrases shared across pages"
-						},
-						new FluentEmptyLines(),
-						new FluentMessage
-						{
-							Id = "my-shots",
-							Content = new List<IFluentContent>
-							{
-								new FluentText {Value = "My Shots"}
-							}
-						},
-						new FluentMessage
-						{
-							Id = "home-link",
-							Content = new List<IFluentContent>
-							{
-								new FluentText {Value = "Home"}
-							}
-						},
-						new FluentMessage
-						{
-							Id = "screenshots-description",
-							Content = new List<IFluentContent>
-							{
-								new FluentText
-								{
-									Value = "Screenshots made simple. Take, save, and"
-										+ "\r\nshare screenshots without leaving Firefox."
-								}
-							}
-						},
-						new FluentEmptyLines(),
-						new FluentComment
-						{
-							Level = 2,
-							Value = "Creating page"
-						},
-						new FluentEmptyLines(),
-						new FluentComment
-						{
-							Level = 1,
-							Value = "Note: { $title } is a placeholder for the title of the web page"
-								+ "\r\ncaptured in the screenshot. The default, for pages without titles, is"
-								+ "\r\ncreating-page-title-default."
-						},
-						new FluentMessage
-						{
-							Id = "creating-page-title",
-							Content = new List<IFluentContent>
-							{
-								new FluentText {Value = "Creating "},
-								new FluentPlaceable {Content = new FluentVariableReference {Id = "title"}}
-							}
-						},
-						new FluentMessage
-						{
-							Id = "creating-page-title-default",
-							Content = new List<IFluentContent>
-							{
-								new FluentText {Value = "page"}
-							}
-						},
-						new FluentMessage
-						{
-							Id = "creating-page-wait-message",
-							Content = new List<IFluentContent>
-							{
-								new FluentText {Value = "Saving your shot…"}
-							}
-						},
+						Value = "Screenshots made simple. Take, save, and"
+							+ "\r\nshare screenshots without leaving Firefox."
 					}
-				}).Should().BeTrue();
-
+				},
+				new FluentEmptyLines(),
+				new FluentComment
+				{
+					Level = 2,
+					Value = "Creating page"
+				},
+				new FluentEmptyLines(),
+				new FluentComment
+				{
+					Level = 1,
+					Value = "Note: { $title } is a placeholder for the title of the web page"
+						+ "\r\ncaptured in the screenshot. The default, for pages without titles, is"
+						+ "\r\ncreating-page-title-default."
+				},
+				new FluentMessage("creating-page-title")
+				{
+					new FluentText("Creating "),
+					new FluentPlaceable {Content = new FluentVariableReference("title")}
+				},
+				new FluentMessage("creating-page-title-default")
+				{
+					new FluentText("page")
+				},
+				new FluentMessage("creating-page-wait-message")
+				{
+					new FluentText("Saving your shot…")
+				}
+			}).Should().BeTrue();
 		}
 
 		[Test]
 		public void Functions()
 		{
 			var resource = Act(Resources.Functions);
-			
-			resource.Entries.Should().HaveCount(4);
-			
-			var e0 = (FluentMessage) resource.Entries[0];
-			e0.Id.Should().Be("emails");
-			((FluentText) e0.Content[0]).Value.Should().Be("You have ");
-			var p0 = (FluentPlaceable) e0.Content[1];
-			((FluentVariableReference) p0.Content).Id.Should().Be("unreadEmails");
-			((FluentText) e0.Content[2]).Value.Should().Be(" unread emails.");
-			
-			var e1 = (FluentMessage) resource.Entries[1];
-			e1.Id.Should().Be("emails2");
-			((FluentText) e1.Content[0]).Value.Should().Be("You have ");
-			var p1 = (FluentPlaceable) e1.Content[1];
-			var f0 = (FluentFunctionCall) p1.Content;
-			f0.Id.Should().Be("NUMBER");
-			f0.Arguments[0].Id.Should().BeNull();
-			((FluentVariableReference) f0.Arguments[0].Value).Id.Should().Be("unreadEmails");
-			((FluentText) e0.Content[2]).Value.Should().Be(" unread emails.");
 
-			var e2 = (FluentEmptyLines) resource.Entries[2];
-
-			var e3 = (FluentMessage) resource.Entries[3];
-			e3.Id.Should().Be("last-notice");
-			((FluentText) e3.Content[0]).Value.Should().Be("Last checked: ");
-			var f1 = (FluentFunctionCall) ((FluentPlaceable) e3.Content[1]).Content;
-			f1.Id.Should().Be("DATETIME");
-			f1.Arguments[0].Id.Should().BeNull();
-			((FluentVariableReference) f1.Arguments[0].Value).Id.Should().Be("lastChecked");
-			f1.Arguments[1].Id.Should().Be("day");
-			((FluentStringLiteral)f1.Arguments[1].Value).Value.Should().Be("numeric");
-			f1.Arguments[2].Id.Should().Be("month");
-			((FluentStringLiteral)f1.Arguments[2].Value).Value.Should().Be("long");
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			{
+				new FluentMessage("emails")
+				{
+					new FluentText("You have "),
+					new FluentPlaceable
+					{
+						Content = new FluentVariableReference("unreadEmails")
+					},
+					new FluentText(" unread emails.")
+				},
+				new FluentMessage("emails2")
+				{
+					new FluentText("You have "),
+					new FluentPlaceable
+					{
+						Content = new FluentFunctionCall("NUMBER")
+						{
+							new FluentCallArgument(new FluentVariableReference("unreadEmails"))
+						}
+					},
+					new FluentText(" unread emails.")
+				},
+				new FluentEmptyLines(),
+				new FluentMessage("last-notice")
+				{
+					new FluentText("Last checked: "),
+					new FluentPlaceable
+					{
+						Content = new FluentFunctionCall("DATETIME")
+						{
+							new FluentCallArgument(new FluentVariableReference("lastChecked")),
+							new FluentCallArgument("day", new FluentStringLiteral("numeric")),
+							new FluentCallArgument("month", new FluentStringLiteral("long")),
+						}
+					},
+					new FluentText(".")
+				},
+			}).Should().BeTrue();
 		}
 
 		[Test]

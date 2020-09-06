@@ -6,6 +6,15 @@ namespace FluentTranslate.Common.Domain
 	{
 		public string Value { get; set; }
 
+		public FluentText()
+		{
+		}
+
+		public FluentText(string value) : this()
+		{
+			Value = value;
+		}
+
 		public static FluentText Aggregate(FluentText left, FluentText right)
 		{
 			return new FluentText
