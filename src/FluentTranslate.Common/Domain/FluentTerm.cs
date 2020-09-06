@@ -5,7 +5,22 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentTerm : FluentRecord, IFluentEntry, IFluentContainer
 	{
-        public override bool Equals(object other, IEqualityComparer comparer)
+		public FluentTerm()
+		{
+		}
+
+		public FluentTerm(string id) : this()
+		{
+			Id = id;
+		}
+
+		public FluentTerm(string id, string comment) : this()
+		{
+			Id = id;
+			Comment = comment;
+		}
+
+		public override bool Equals(object other, IEqualityComparer comparer)
         {
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;

@@ -1,24 +1,29 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentComment : IFluentEntry
+	public class FluentComment : IFluentEntry, IAggregable
 	{
 		public int Level { get; set; }
 		public string Value { get; set; }
 
-		public static bool CanAggregate(FluentComment left, FluentComment right)
+		public FluentComment()
 		{
-			return left.Level == right.Level;
 		}
 
-		public static FluentComment Aggregate(FluentComment left, FluentComment right)
+		public FluentComment(string value) : this()
 		{
-			return new FluentComment
-			{
-				Level = left.Level,
-				Value = $"{left.Value}\r\n{right.Value}",
-			};
+			Level = 1;
+			Value = value;
+		}
+
+		public FluentComment(int level, string value) : this()
+		{
+			Level = level;
+			Value = value;
 		}
 
         public bool Equals(object other, IEqualityComparer comparer)
@@ -34,5 +39,38 @@ namespace FluentTranslate.Common.Domain
         {
             return comparer.GetHashCode(Value);
         }
-    }
+
+		public bool CanAggregate(object other)
+		{
+			if (ReferenceEquals(this, other)) return false;
+			return other switch
+			{
+				null => false,
+				FluentComment comment when comment.Level == Level => true,
+				FluentRecord _ when Level == 1 => true,
+				_ => false
+			};
+		}
+
+		public object Aggregate(object other)
+		{
+			static string JoinLines(string a, string b) => string.Join("\r\n", new[] {a, b}.Where(x => x != null));
+
+			switch(other)
+			{
+				case FluentComment comment when comment.Level == Level:
+				{
+					Value = JoinLines(Value, comment.Value);
+					return this;
+				}
+				case FluentRecord record when Level == 1:
+				{
+					record.Comment = JoinLines(Value, record.Comment);
+					return record;
+				}
+				default:
+					throw new ArgumentOutOfRangeException(nameof(other));
+			}
+		}
+	}
 }

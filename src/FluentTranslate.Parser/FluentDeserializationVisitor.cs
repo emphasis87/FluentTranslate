@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using FluentTranslate.Common;
 using FluentTranslate.Common.Domain;
 
 namespace FluentTranslate.Parser
@@ -39,18 +41,12 @@ namespace FluentTranslate.Parser
 
 			for (var i = 0; i < result.Count - 1; i++)
 			{
-				switch (result[i], result[i+1])
+				var right = result[i + 1];
+				switch (result[i])
 				{
-					case (FluentComment left, FluentComment right) when FluentComment.CanAggregate(left, right):
+					case IAggregable aggregable when aggregable.CanAggregate(right):
 					{
-						result[i] = FluentComment.Aggregate(left, right);
-						result.RemoveAt(i + 1);
-						i--;
-						break;
-					}
-					case (FluentEmptyLines left, FluentEmptyLines right):
-					{
-						result[i] = FluentEmptyLines.Aggregate(left, right);
+						result[i] = (IFluentElement)aggregable.Aggregate(right);
 						result.RemoveAt(i + 1);
 						i--;
 						break;
@@ -62,6 +58,9 @@ namespace FluentTranslate.Parser
 			{
 				switch (child)
 				{
+					case FluentEmptyLines _:
+						// Ignore empty lines
+						break;
 					case IFluentEntry entry:
 						resource.Entries.Add(entry);
 						break;
@@ -199,8 +198,14 @@ namespace FluentTranslate.Parser
 			}
 
 			// Remove whitespace indentation from the first text
-			if (container.Content.FirstOrDefault() is FluentText firstText)
+			while (container.Content.FirstOrDefault() is FluentText firstText)
+			{
 				firstText.Value = firstText.Value.TrimStart('\r', '\n', ' ');
+				if (!string.IsNullOrEmpty(firstText.Value)) 
+					break;
+
+				container.Content.RemoveAt(0);
+			}
 		}
 
 		private static void AggregateRecord(FluentRecord record, IList<IFluentElement> result)
@@ -492,6 +497,31 @@ namespace FluentTranslate.Parser
 		private static Exception UnsupportedContextTypeException(RuleContext context, [CallerMemberName] string callerName = null)
 		{
 			return new ArgumentOutOfRangeException(nameof(context), $"{callerName}: Context of type {context.GetType()} is not supported.");
+		}
+	}
+
+	internal class FluentEmptyLines : IFluentEntry, IAggregable
+	{
+		public bool Equals(object other, IEqualityComparer comparer)
+		{
+			return true;
+		}
+
+		public int GetHashCode(IEqualityComparer comparer)
+		{
+			return 0;
+		}
+
+		public bool CanAggregate(object other)
+		{
+			if (ReferenceEquals(this, other)) return false;
+			if (other is null) return false;
+			return other is FluentEmptyLines;
+		}
+
+		public object Aggregate(object other)
+		{
+			return this;
 		}
 	}
 }

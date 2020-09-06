@@ -6,6 +6,15 @@ namespace FluentTranslate.Common.Domain
 	{
 		public IFluentExpression Content { get; set; }
 
+		public FluentPlaceable()
+		{
+		}
+
+		public FluentPlaceable(IFluentExpression content) : this()
+		{
+			Content = content;
+		}
+
 		public bool Equals(object other, IEqualityComparer comparer)
 		{
 			if (ReferenceEquals(this, other)) return true;

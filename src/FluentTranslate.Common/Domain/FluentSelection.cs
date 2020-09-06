@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentSelection : IFluentExpression
+	public class FluentSelection : IFluentExpression, IEnumerable<FluentVariant>
 	{
 		public IFluentExpression Match { get; set; }
 		public IList<FluentVariant> Variants { get; set; }
@@ -13,6 +13,11 @@ namespace FluentTranslate.Common.Domain
 		public FluentSelection()
 		{
 			Variants = new List<FluentVariant>();
+		}
+
+		public FluentSelection(IFluentExpression match) : this()
+		{
+			Match = match;
 		}
 
 		public bool Equals(object other, IEqualityComparer comparer)
@@ -32,6 +37,21 @@ namespace FluentTranslate.Common.Domain
 					comparer.GetHashCode(Match) * 397 ^ 
 					comparer.GetHashCode(Variants);
 			}
+		}
+
+		public IEnumerator<FluentVariant> GetEnumerator()
+		{
+			return Variants.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public void Add(FluentVariant variant)
+		{
+			Variants.Add(variant);
 		}
 	}
 }

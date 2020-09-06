@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Linq;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentText : IFluentContent
+	public class FluentText : IFluentContent, IAggregable
 	{
 		public string Value { get; set; }
 
@@ -34,6 +36,29 @@ namespace FluentTranslate.Common.Domain
 		public int GetHashCode(IEqualityComparer comparer)
 		{
 			return comparer.GetHashCode(Value);
+		}
+
+		public bool CanAggregate(object other)
+		{
+			if (ReferenceEquals(this, other)) return false;
+			if (other is null) return false;
+			return other is FluentText;
+		}
+
+		public object Aggregate(object other)
+		{
+			static string JoinText(string a, string b) => string.Join("", new[] { a, b }.Where(x => x != null));
+
+			switch (other)
+			{
+				case FluentText text:
+				{
+					Value = JoinText(Value, text.Value);
+					return this;
+				}
+				default:
+					throw new ArgumentOutOfRangeException(nameof(other));
+			}
 		}
 	}
 }

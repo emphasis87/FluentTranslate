@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentVariant : IFluentContainer
+	public class FluentVariant : IFluentContainer, IEnumerable<IFluentContent>
 	{
 		public bool IsDefault { get; set; }
 		public IFluentVariantKey Key { get; set; }
@@ -13,6 +13,17 @@ namespace FluentTranslate.Common.Domain
 		public FluentVariant()
 		{
 			Content = new List<IFluentContent>();
+		}
+
+		public FluentVariant(IFluentVariantKey key) : this()
+		{
+			Key = key;
+		}
+
+		public FluentVariant(IFluentVariantKey key, bool isDefault) : this()
+		{
+			Key = key;
+			IsDefault = isDefault;
 		}
 
 		public bool Equals(object other, IEqualityComparer comparer)
@@ -28,6 +39,21 @@ namespace FluentTranslate.Common.Domain
 		public int GetHashCode(IEqualityComparer comparer)
 		{
 			return comparer.GetHashCode(Key);
+		}
+
+		public IEnumerator<IFluentContent> GetEnumerator()
+		{
+			return Content.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public void Add(IFluentContent content)
+		{
+			Content.Add(content);
 		}
 	}
 }

@@ -14,6 +14,12 @@ namespace FluentTranslate.Common.Domain
 			Id = id;
 		}
 
+		public FluentMessage(string id, string comment) : this()
+		{
+			Id = id;
+			Comment = comment;
+		}
+
 		public override bool Equals(object other, IEqualityComparer comparer)
         {
             if (ReferenceEquals(other, this)) return true;

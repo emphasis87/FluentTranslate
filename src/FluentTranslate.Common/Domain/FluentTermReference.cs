@@ -5,13 +5,24 @@ using System.Linq;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentTermReference : FluentRecordReference, IFluentCallable
+	public class FluentTermReference : FluentRecordReference, IFluentCallable, IEnumerable<FluentCallArgument>
 	{
 		public IList<FluentCallArgument> Arguments { get; set; }
 
 		public FluentTermReference()
 		{
 			Arguments = new List<FluentCallArgument>();
+		}
+
+		public FluentTermReference(string id) : this()
+		{
+			Id = id;
+		}
+
+		public FluentTermReference(string id, string attributeId) : this()
+		{
+			Id = id;
+			AttributeId = attributeId;
 		}
 
 		public static FluentTermReference Aggregate(FluentTermReference left, FluentTermReference right)
@@ -42,5 +53,20 @@ namespace FluentTranslate.Common.Domain
         {
             return comparer.GetHashCode(Reference);
         }
-    }
+
+		public IEnumerator<FluentCallArgument> GetEnumerator()
+		{
+			return Arguments.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public void Add(FluentCallArgument argument)
+		{
+			Arguments.Add(argument);
+		}
+	}
 }

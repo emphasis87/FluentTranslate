@@ -6,6 +6,15 @@ namespace FluentTranslate.Common.Domain
 	{
 		public string Value { get; set; }
 
+		public FluentNumberLiteral()
+		{
+		}
+
+		public FluentNumberLiteral(string value) : this()
+		{
+			Value = value;
+		}
+
 		public bool Equals(object other, IEqualityComparer comparer)
 		{
 			if (ReferenceEquals(this, other)) return true;

@@ -6,7 +6,16 @@ namespace FluentTranslate.Common.Domain
 	{
 		public string Id { get; set; }
 
-        public bool Equals(object other, IEqualityComparer comparer)
+		public FluentIdentifier()
+		{
+		}
+
+		public FluentIdentifier(string id)
+		{
+			Id = id;
+		}
+
+		public bool Equals(object other, IEqualityComparer comparer)
         {
             if (ReferenceEquals(other, this)) return true;
             if (other is null) return false;
