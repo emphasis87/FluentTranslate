@@ -24,11 +24,7 @@ namespace FluentTranslate.Parser.Tests
 
 			Console.WriteLine();
 
-			var tokenStream = new CommonTokenStream(lexer);
-			var parser = new FluentParser(tokenStream);
-
-			var visitor = new FluentDeserializationVisitor();
-			return (FluentResource) visitor.Visit(parser.resource()).FirstOrDefault();
+			return FluentDeserializer.Deserialize(resource, lexer);
 		}
 
 		[Test]

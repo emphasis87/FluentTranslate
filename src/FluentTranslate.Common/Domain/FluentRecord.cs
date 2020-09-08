@@ -10,6 +10,8 @@ namespace FluentTranslate.Common.Domain
 		public IList<IFluentContent> Content { get; set; }
 		public IList<FluentAttribute> Attributes { get; set; }
 
+		public abstract string Reference { get; }
+
 		protected FluentRecord()
 		{
 			Content = new List<IFluentContent>();

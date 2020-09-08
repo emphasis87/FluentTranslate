@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentTerm : FluentRecord, IFluentEntry, IFluentContainer
+	public class FluentTerm : FluentRecord, IFluentEntry, IFluentContainer, IFluentReference
 	{
 		public FluentTerm()
 		{
@@ -34,5 +34,7 @@ namespace FluentTranslate.Common.Domain
         {
             return comparer.GetHashCode(Id);
         }
-    }
+
+		public override string Reference => $"-{Id}";
+	}
 }

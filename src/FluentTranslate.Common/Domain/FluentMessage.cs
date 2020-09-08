@@ -5,6 +5,8 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentMessage : FluentRecord, IFluentEntry
 	{
+		public override string Reference => Id;
+
 		public FluentMessage()
 		{
 		}
