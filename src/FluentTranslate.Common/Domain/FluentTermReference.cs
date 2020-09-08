@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
 namespace FluentTranslate.Common.Domain
 {
-	public class FluentTermReference : FluentRecordReference, IFluentCallable, IEnumerable<FluentCallArgument>
+	public class FluentTermReference : FluentRecordReference, IFluentCallable, IAggregable, IEnumerable<FluentCallArgument>
 	{
 		public IList<FluentCallArgument> Arguments { get; set; }
 
@@ -23,15 +24,6 @@ namespace FluentTranslate.Common.Domain
 		{
 			Id = id;
 			AttributeId = attributeId;
-		}
-
-		public static FluentTermReference Aggregate(FluentTermReference left, FluentTermReference right)
-		{
-			return new FluentTermReference
-			{
-				Id = left.Id ?? right.Id,
-				Arguments = left.Arguments.Concat(right.Arguments).ToList(),
-			};
 		}
 
         public override string Reference => AttributeId switch
@@ -68,5 +60,27 @@ namespace FluentTranslate.Common.Domain
 		{
 			Arguments.Add(argument);
 		}
-	}
+
+        public bool CanAggregate(object other)
+        {
+            if (ReferenceEquals(this, other)) return false;
+            if (other is null) return false;
+            return other is FluentTermReference;
+        }
+
+        public object Aggregate(object other)
+        {
+            switch (other)
+            {
+                case FluentTermReference reference:
+                {
+                    Id ??= reference.Id;
+                    Arguments = Arguments.Concat(reference.Arguments).ToList();
+                    return this;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(other));
+            }
+        }
+    }
 }

@@ -39,20 +39,7 @@ namespace FluentTranslate.Parser
 				return result;
 			}
 
-			for (var i = 0; i < result.Count - 1; i++)
-			{
-				var right = result[i + 1];
-				switch (result[i])
-				{
-					case IAggregable aggregable when aggregable.CanAggregate(right):
-					{
-						result[i] = (IFluentElement)aggregable.Aggregate(right);
-						result.RemoveAt(i + 1);
-						i--;
-						break;
-					}
-				}
-			}
+			AggregateSequential(result);
 
 			foreach (var child in result)
 			{
@@ -74,7 +61,25 @@ namespace FluentTranslate.Parser
 			return result;
 		}
 
-		public override List<IFluentElement> VisitEntry(FluentParser.EntryContext context)
+        private static void AggregateSequential<T>(IList<T> items)
+        {
+            for (var i = 0; i < items.Count - 1; i++)
+            {
+                var right = items[i + 1];
+                switch (items[i])
+                {
+                    case IAggregable aggregable when aggregable.CanAggregate(right):
+                    {
+                        items[i] = (T) aggregable.Aggregate(right);
+                        items.RemoveAt(i + 1);
+                        i--;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public override List<IFluentElement> VisitEntry(FluentParser.EntryContext context)
 		{
 			return base.VisitEntry(context);
 		}
@@ -161,19 +166,7 @@ namespace FluentTranslate.Parser
 			}
 
 			// Aggregate text sequences
-			for (var i = 0; i < container.Content.Count - 1; i++)
-			{
-				switch (container.Content[i], container.Content[i + 1])
-				{
-					case (FluentText left, FluentText right):
-					{
-						container.Content[i] = FluentText.Aggregate(left, right);
-						container.Content.RemoveAt(i + 1);
-						i--;
-						break;
-					}
-				}
-			}
+			AggregateSequential(container.Content);
 
 			// Find the smallest common indentation on each line
 			var indented = new List<FluentText>();
@@ -384,7 +377,8 @@ namespace FluentTranslate.Parser
 		public override List<IFluentElement> VisitTermReference(FluentParser.TermReferenceContext context)
 		{
 			var result = base.VisitTermReference(context);
-			var reference = result.OfType<FluentTermReference>().Aggregate(FluentTermReference.Aggregate);
+            AggregateSequential(result);
+			var reference = result.OfType<FluentTermReference>().FirstOrDefault();
 			result.Clear();
 			result.Add(reference);
 			return result;

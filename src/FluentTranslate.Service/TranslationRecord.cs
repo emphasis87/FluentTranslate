@@ -15,5 +15,12 @@ namespace FluentTranslate.Service
 		{
 			Attributes = new Dictionary<string, string>();
 		}
+
+        public void RemovedAt(DateTime lastModified)
+        {
+            Content = null;
+            LastModified = lastModified;
+			Attributes.Clear();
+        }
 	}
 }

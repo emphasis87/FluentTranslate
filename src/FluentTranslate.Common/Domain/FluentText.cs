@@ -17,14 +17,6 @@ namespace FluentTranslate.Common.Domain
 			Value = value;
 		}
 
-		public static FluentText Aggregate(FluentText left, FluentText right)
-		{
-			return new FluentText
-			{
-				Value = $"{left.Value}{right.Value}"
-			};
-		}
-
 		public bool Equals(object other, IEqualityComparer comparer)
 		{
 			if (ReferenceEquals(other, this)) return true;

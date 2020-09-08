@@ -79,11 +79,13 @@ namespace FluentTranslate.Service
 		{
 			if (file is null) 
 				throw new ArgumentNullException(nameof(file));
-			
+
+            DateTime lastModified;
 			FluentResource resource;
 			try
 			{
 				var content = File.ReadAllText(file);
+                lastModified = File.GetLastWriteTimeUtc(file);
 				resource = FluentDeserializer.Deserialize(content);
 			}
 			catch (Exception ex)
@@ -94,9 +96,42 @@ namespace FluentTranslate.Service
 			if (resource is null)
 				return;
 
-			var currentEntries = resource.Entries
-				.OfType<FluentRecord>()
-				.ToDictionary(x => x.Reference);
+			var attributeLevels = new List<IDictionary<string, object>>();
+			attributeLevels.AddRange(Enumerable.Repeat(default(IDictionary<string, object>), 4));
+
+            var currentEntries = new List<FluentRecord>();
+            foreach (var entry in resource.Entries)
+            {
+                switch (entry)
+                {
+					case FluentComment comment:
+                    {
+                        var attributes = ParseAttributes(comment.Value);
+                        if (attributes != null)
+                            attributeLevels[comment.Level] = attributes;
+                        break;
+                    }
+                    case FluentRecord record:
+                    {
+                        var attributes = ParseAttributes(record.Comment);
+                        attributeLevels[1] = attributes;
+						var attributeResult = new Dictionary<string, object>();
+                        foreach (var attributeLevel in attributeLevels.Where(x => x != null))
+                        {
+                            foreach (var attribute in attributeLevel)
+                            {
+                                if (!attributeResult.ContainsKey(attribute.Key))
+                                    attributeResult.Add(attribute.Key, attribute.Value);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            var currentRecords = resource.Entries
+                .OfType<FluentRecord>()
+                .ToDictionary(x => x.Reference);
 
 			var records = _database.GetCollection<TranslationRecord>();
 			var previousEntries = records.Query()
@@ -104,9 +139,27 @@ namespace FluentTranslate.Service
 				.ToEnumerable()
 				.ToDictionary(x => x.Name);
 
-
+            foreach (var previous in previousEntries)
+            {
+                var previousRecord = previous.Value;
+				if (!currentEntries.TryGetValue(previous.Key, out var currentRecord))
+                {
+                    if (previousRecord.Content != null)
+                        previousRecord.RemovedAt(lastModified);
+                }
+				else
+                {
+                    var currentContent = Utf8Json.JsonSerializer.ToJsonString(currentRecord);
+					if (previousRecord.Content != currentRecord.)
+                }
+            }
 
 		}
+
+        private IDictionary<string, object> ParseAttributes(string comment)
+        {
+
+        }
 
 		public void Dispose()
 		{

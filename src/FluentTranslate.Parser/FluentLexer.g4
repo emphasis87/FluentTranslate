@@ -1,30 +1,30 @@
 ﻿lexer grammar FluentLexer;
 
 tokens { 
-	NL;
-	NL_INDENT;
-	INDENT;
-	TERM;
-	IDENTIFIER;
-	IDENTIFIER_REF;
-	EQUALS;
-	TEXT;
-	ATTRIBUTE;
-	PLACEABLE_OPEN;
-	PLACEABLE_CLOSE;
-	STRING_OPEN;
-	NUMBER_LITERAL;
-	VARIABLE_REF;
-	TERM_REF;
-	ATTRIBUTE_REF;
-	SELECTOR;
-	CALL_OPEN;
-	CALL_CLOSE;
-	CALL_ARG_SEP;
-	CALL_ARG_NAME_SEP;
-	VARIANT_DEFAULT;
-	VARIANT_OPEN;
-	VARIANT_CLOSE;
+	NL,
+	NL_INDENT,
+	INDENT,
+	TERM,
+	IDENTIFIER,
+	IDENTIFIER_REF,
+	EQUALS,
+	TEXT,
+	ATTRIBUTE,
+	PLACEABLE_OPEN,
+	PLACEABLE_CLOSE,
+	STRING_OPEN,
+	NUMBER_LITERAL,
+	VARIABLE_REF,
+	TERM_REF,
+	ATTRIBUTE_REF,
+	SELECTOR,
+	CALL_OPEN,
+	CALL_CLOSE,
+	CALL_ARG_SEP,
+	CALL_ARG_NAME_SEP,
+	VARIANT_DEFAULT,
+	VARIANT_OPEN,
+	VARIANT_CLOSE
 }
 
 fragment InlinePrintable: ~( '{' | '}' | '\r' | '\n' | ' ' ) ;
@@ -35,7 +35,7 @@ fragment Newline		: '\r\n' | '\n' ;
 fragment Identifier		: [a-zA-Z] ([a-zA-Z0-9] | '_' | '-')* ;
 fragment CommentPrefix	: '###' | '##' | '#' ;
 fragment CommentChar	: ~('\r' | '\n') ;
-fragment IndentChar		: [' '] ;
+fragment IndentChar		: ' ' ;
 fragment Indent			: IndentChar+ ;
 fragment Whitespace		: (IndentChar | Newline)+ ;
 fragment NumberLiteral	: '-'? [0-9]+ ( '.' [0-9]+ )? ;
