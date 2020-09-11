@@ -9,7 +9,7 @@ options {
  * Parser Rules
  */
 
-resource			: entry+ EOF ;
+resource			: entry* EOF ;
 
 entry				: ( term | message | comment | emptyLine ) ;
 

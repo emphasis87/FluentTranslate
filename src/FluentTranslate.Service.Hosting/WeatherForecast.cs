@@ -1,6 +1,6 @@
 using System;
 
-namespace FluentTranslate.Service.Host
+namespace FluentTranslate.Service.Hosting
 {
     public class WeatherForecast
     {
