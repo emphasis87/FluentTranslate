@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace FluentTranslate.Parser.Tests
+namespace FluentTranslate.Service.Tests
 {
 	public class WatcherTests
 	{
@@ -37,14 +37,7 @@ namespace FluentTranslate.Parser.Tests
 			var renamed = Observable.FromEventPattern<RenamedEventHandler, RenamedEventArgs>(
 					h => watcher.Renamed += h,
 					h => watcher.Renamed -= h)
-				.SelectMany(e =>
-				{
-					return new[]
-					{
-						e.EventArgs.OldName,
-						e.EventArgs.Name
-					};
-				});
+				.SelectMany(e => new[] {e.EventArgs.OldName,e.EventArgs.Name});
 
 			// Buffer events until there is a certain interval of inactivity
 			var events = Observable.Merge(changed, deleted, renamed);

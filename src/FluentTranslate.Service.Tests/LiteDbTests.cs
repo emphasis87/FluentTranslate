@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using FluentAssertions;
 using FluentTranslate.Service.Domain;
 using LiteDB;
 using NUnit.Framework;
 
-namespace FluentTranslate.Parser.Tests
+namespace FluentTranslate.Service.Tests
 {
 	public class LiteDbTests
 	{

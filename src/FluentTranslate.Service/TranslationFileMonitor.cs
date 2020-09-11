@@ -14,7 +14,7 @@ namespace FluentTranslate.Service
 {
 	public interface ITranslationFileMonitor
 	{
-		void Add(string path, string filter = "*.flt");
+		void Add(string path, string filter = "*.ftl");
 	}
 
 	public class TranslationFileMonitor : ITranslationFileMonitor, IDisposable
@@ -42,7 +42,7 @@ namespace FluentTranslate.Service
 			_logger = logger;
 		}
 
-		public void Add(string path, string filter = "*.flt")
+		public void Add(string path, string filter = "*.ftl")
 		{
 			if (path is null) 
 				throw new ArgumentNullException(nameof(path));
@@ -112,7 +112,7 @@ namespace FluentTranslate.Service
 
 				updatedFiles.Add(file);
 
-				using var loggerScope = _logger.BeginScope(new { File = file });
+				using var loggerScope = _logger?.BeginScope(new { File = file });
 
 				string content;
 				DateTime lastModified;
@@ -123,7 +123,7 @@ namespace FluentTranslate.Service
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError("Error while reading fluent resource file.", ex);
+					_logger?.LogError("Error while reading fluent resource file.", ex);
 					hasErrors = true;
 					continue;
 				}
@@ -135,7 +135,7 @@ namespace FluentTranslate.Service
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError("Error while deserializing fluent resource file.", ex);
+					_logger?.LogError("Error while deserializing fluent resource file.", ex);
 					hasErrors = true;
 					continue;
 				}
@@ -151,7 +151,7 @@ namespace FluentTranslate.Service
 					var items = grouping.ToList();
 					if (items.Count > 1)
 					{
-						_logger.LogError("Ambiguous definition of entry {Name}", name);
+						_logger?.LogError("Ambiguous definition of entry {Name}", name);
 						hasErrors = true;
 					}
 				}
