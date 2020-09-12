@@ -6,8 +6,9 @@ using System.Collections.Immutable;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentSelection : IFluentExpression, IEnumerable<FluentVariant>
-	{
-		public IFluentExpression Match { get; set; }
+    {
+        public string Type { get; } = "selection";
+        public IFluentExpression Match { get; set; }
 		public IList<FluentVariant> Variants { get; set; }
 
 		public FluentSelection()

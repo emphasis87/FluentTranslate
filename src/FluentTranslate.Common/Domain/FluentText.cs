@@ -5,8 +5,9 @@ using System.Linq;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentText : IFluentContent, IAggregable
-	{
-		public string Value { get; set; }
+    {
+        public string Type { get; } = "text";
+        public string Value { get; set; }
 
 		public FluentText()
 		{

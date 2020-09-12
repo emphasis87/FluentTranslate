@@ -3,8 +3,10 @@
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentMessageReference : FluentRecordReference
-	{
-		public FluentMessageReference()
+    {
+        public override string Type { get; } = "message-ref";
+
+        public FluentMessageReference()
 		{
 		}
 

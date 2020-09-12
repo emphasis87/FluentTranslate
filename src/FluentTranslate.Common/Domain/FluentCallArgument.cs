@@ -3,8 +3,9 @@
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentCallArgument : IFluentElement
-	{
-		public string Id { get; set; }
+    {
+        public string Type { get; } = "argument";
+        public string Id { get; set; }
 		public IFluentExpression Value { get; set; }
 
 		public FluentCallArgument()

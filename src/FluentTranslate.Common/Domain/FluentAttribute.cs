@@ -5,8 +5,9 @@ using System.Collections.Immutable;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentAttribute : IFluentContainer, IEnumerable<IFluentContent>
-	{
-		public string Id { get; set; }
+    {
+        public string Type { get; } = "attribute";
+        public string Id { get; set; }
 		public IList<IFluentContent> Content { get; set; }
 
 		public FluentAttribute()

@@ -3,8 +3,9 @@
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentPlaceable : IFluentContent, IFluentExpression
-	{
-		public IFluentExpression Content { get; set; }
+    {
+        public string Type { get; } = "placeable";
+        public IFluentExpression Content { get; set; }
 
 		public FluentPlaceable()
 		{

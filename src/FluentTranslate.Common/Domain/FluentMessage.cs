@@ -4,8 +4,9 @@ using System.Collections.Immutable;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentMessage : FluentRecord, IFluentEntry
-	{
-		public override string Reference => Id;
+    {
+        public override string Type { get; } = "message";
+        public override string Reference => Id;
 
 		public FluentMessage()
 		{

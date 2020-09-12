@@ -5,8 +5,9 @@ using System.Collections.Immutable;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentVariant : IFluentContainer, IEnumerable<IFluentContent>
-	{
-		public bool IsDefault { get; set; }
+    {
+        public string Type { get; } = "variant";
+        public bool IsDefault { get; set; }
 		public IFluentVariantKey Key { get; set; }
 		public IList<IFluentContent> Content { get; set; }
 

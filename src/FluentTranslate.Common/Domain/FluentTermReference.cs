@@ -7,8 +7,9 @@ using System.Linq;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentTermReference : FluentRecordReference, IFluentCallable, IAggregable, IEnumerable<FluentCallArgument>
-	{
-		public IList<FluentCallArgument> Arguments { get; set; }
+    {
+        public override string Type { get; } = "term-ref";
+        public IList<FluentCallArgument> Arguments { get; set; }
 
 		public FluentTermReference()
 		{

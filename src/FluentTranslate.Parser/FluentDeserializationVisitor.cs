@@ -495,8 +495,10 @@ namespace FluentTranslate.Parser
 	}
 
 	internal class FluentEmptyLines : IFluentEntry, IAggregable
-	{
-		public bool Equals(object other, IEqualityComparer comparer)
+    {
+        public string Type { get; } = "empty";
+
+        public bool Equals(object other, IEqualityComparer comparer)
 		{
 			return true;
 		}

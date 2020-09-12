@@ -4,8 +4,10 @@ using System.Collections.Immutable;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentTerm : FluentRecord, IFluentEntry, IFluentContainer, IFluentReference
-	{
-		public FluentTerm()
+    {
+        public override string Type { get; } = "term";
+
+        public FluentTerm()
 		{
 		}
 

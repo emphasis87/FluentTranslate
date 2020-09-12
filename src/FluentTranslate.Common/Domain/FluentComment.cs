@@ -5,8 +5,9 @@ using System.Linq;
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentComment : IFluentEntry, IAggregable
-	{
-		public int Level { get; set; }
+    {
+        public string Type { get; } = "comment";
+        public int Level { get; set; }
 		public string Value { get; set; }
 
 		public FluentComment()

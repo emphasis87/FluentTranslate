@@ -3,8 +3,9 @@
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentVariableReference : IFluentExpression
-	{
-		public string Id { get; set; }
+    {
+        public string Type { get; } = "variable-ref";
+        public string Id { get; set; }
 
 		public FluentVariableReference()
 		{

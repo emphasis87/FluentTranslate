@@ -3,8 +3,9 @@
 namespace FluentTranslate.Common.Domain
 {
 	public class FluentStringLiteral : IFluentExpression
-	{
-		public string Value { get; set; }
+    {
+        public string Type { get; } = "string";
+        public string Value { get; set; }
 
 		public FluentStringLiteral()
 		{

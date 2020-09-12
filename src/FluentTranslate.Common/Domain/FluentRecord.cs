@@ -5,7 +5,8 @@ namespace FluentTranslate.Common.Domain
 {
 	public abstract class FluentRecord : IFluentContainer, IEnumerable<IFluentContent>, IEnumerable<FluentAttribute>
 	{
-		public string Comment { get; set; }
+        public abstract string Type { get; }
+        public string Comment { get; set; }
 		public string Id { get; set; }
 		public IList<IFluentContent> Content { get; set; }
 		public IList<FluentAttribute> Attributes { get; set; }

@@ -6,6 +6,7 @@ namespace FluentTranslate.Common.Domain
 {
     public class FluentResource : IFluentElement, IEnumerable<IFluentEntry>
     {
+        public string Type { get; } = "resource";
         public IList<IFluentEntry> Entries { get; set; }
 
 		public FluentResource()
