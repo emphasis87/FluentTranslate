@@ -6,7 +6,7 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentFunctionCall : IFluentExpression, IFluentCallable, IEnumerable<FluentCallArgument>
     {
-        public string Type { get; } = "function";
+        public string Type => "function";
         public string Id { get; set; }
 		public IList<FluentCallArgument> Arguments { get; set; }
 

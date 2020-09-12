@@ -7,7 +7,7 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentSelection : IFluentExpression, IEnumerable<FluentVariant>
     {
-        public string Type { get; } = "selection";
+        public string Type => "selection";
         public IFluentExpression Match { get; set; }
 		public IList<FluentVariant> Variants { get; set; }
 

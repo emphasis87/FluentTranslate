@@ -6,7 +6,7 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentAttribute : IFluentContainer, IEnumerable<IFluentContent>
     {
-        public string Type { get; } = "attribute";
+        public string Type => "attribute";
         public string Id { get; set; }
 		public IList<IFluentContent> Content { get; set; }
 

@@ -10,6 +10,9 @@ using LiteDB;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Utf8Json;
+using JsonReader = Newtonsoft.Json.JsonReader;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using JsonWriter = Newtonsoft.Json.JsonWriter;
 
 namespace FluentTranslate.Service.Tests
 {
@@ -51,15 +54,31 @@ namespace FluentTranslate.Service.Tests
 
 			var record = (FluentRecord) message;
 			var result1 = Utf8Json.JsonSerializer.ToJsonString(record);
-			var result2 = Newtonsoft.Json.JsonConvert.SerializeObject(message, new JsonSerializerSettings()
-			{
-				
-			});
+			var result2 = Newtonsoft.Json.JsonConvert.SerializeObject(message, new FluentElementJsonConverter());
 			var serializer = Newtonsoft.Json.JsonSerializer.CreateDefault();
 			var sb = new StringBuilder();
 			serializer.Serialize(new StringWriter(sb), message);
 			var result4 = sb.ToString();
 			var result3 = System.Text.Json.JsonSerializer.Serialize(record);
+		}
+	}
+
+	public class FluentElementJsonConverter : Newtonsoft.Json.JsonConverter
+	{
+		public override bool CanConvert(Type objectType)
+		{
+			return true;
+		}
+
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+		{
+			
+			serializer.Serialize(writer, value);
+		}
+
+		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

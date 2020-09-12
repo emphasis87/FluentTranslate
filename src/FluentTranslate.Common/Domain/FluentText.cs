@@ -6,7 +6,7 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentText : IFluentContent, IAggregable
     {
-        public string Type { get; } = "text";
+        public string Type => "text";
         public string Value { get; set; }
 
 		public FluentText()

@@ -4,7 +4,7 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentIdentifier : IFluentVariantKey
     {
-        public string Type { get; } = "id";
+        public string Type => "id";
         public string Id { get; set; }
 
 		public FluentIdentifier()

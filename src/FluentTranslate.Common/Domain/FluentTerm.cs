@@ -5,9 +5,10 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentTerm : FluentRecord, IFluentEntry, IFluentContainer, IFluentReference
     {
-        public override string Type { get; } = "term";
+        public override string Type => "term";
+		public override string Reference => $"-{Id}";
 
-        public FluentTerm()
+		public FluentTerm()
 		{
 		}
 
@@ -36,7 +37,5 @@ namespace FluentTranslate.Common.Domain
         {
             return comparer.GetHashCode(Id);
         }
-
-		public override string Reference => $"-{Id}";
 	}
 }

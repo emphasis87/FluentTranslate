@@ -6,7 +6,7 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentComment : IFluentEntry, IAggregable
     {
-        public string Type { get; } = "comment";
+        public string Type => "comment";
         public int Level { get; set; }
 		public string Value { get; set; }
 

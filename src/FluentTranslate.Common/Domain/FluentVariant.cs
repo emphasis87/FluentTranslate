@@ -6,7 +6,7 @@ namespace FluentTranslate.Common.Domain
 {
 	public class FluentVariant : IFluentContainer, IEnumerable<IFluentContent>
     {
-        public string Type { get; } = "variant";
+        public string Type => "variant";
         public bool IsDefault { get; set; }
 		public IFluentVariantKey Key { get; set; }
 		public IList<IFluentContent> Content { get; set; }

@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Parser.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Service.Hosting", "FluentTranslate.Service.Hosting\FluentTranslate.Service.Hosting.csproj", "{A672A250-B1AB-4F34-90A6-486325BD68E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentTranslate.Service.Tests", "FluentTranslate.Service.Tests\FluentTranslate.Service.Tests.csproj", "{2E951419-B66A-4E38-940B-263A665F59BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Service.Tests", "FluentTranslate.Service.Tests\FluentTranslate.Service.Tests.csproj", "{2E951419-B66A-4E38-940B-263A665F59BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentTranslate.Json.Newtonsoft", "FluentTranslate.Json\FluentTranslate.Json.Newtonsoft.csproj", "{6DAD6377-867B-478A-9A25-ED71B857E5AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{2E951419-B66A-4E38-940B-263A665F59BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E951419-B66A-4E38-940B-263A665F59BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E951419-B66A-4E38-940B-263A665F59BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DAD6377-867B-478A-9A25-ED71B857E5AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DAD6377-867B-478A-9A25-ED71B857E5AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DAD6377-867B-478A-9A25-ED71B857E5AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DAD6377-867B-478A-9A25-ED71B857E5AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
