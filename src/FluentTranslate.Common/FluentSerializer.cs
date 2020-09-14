@@ -41,119 +41,162 @@ namespace FluentTranslate.Common
 
         public string Serialize(FluentResource resource, FluentSerializationContext context)
         {
-            var entries = resource.Entries
+            var entryItems = resource.Entries
                 .Select(entry => Serialize(entry, context))
                 .ToList();
-
-            return string.Join("", entries);
+			var entries = string.Join("\r\n", entryItems);
+			return entries;
         }
 
         public string Serialize(FluentComment comment, FluentSerializationContext context)
-        {
-            var prefix = new string('#', comment.Level);
-            return $"{prefix} {comment.Value?.Trim()}\r\n";
-        }
+		{
+			if (string.IsNullOrWhiteSpace(comment.Value))
+				return null;
+            var result = new StringBuilder();
+            var prefix = $"{new string('#', comment.Level)} ";
+			var lines = comment.Value.Split(new[] {"\r\n"}, StringSplitOptions.None);
+			foreach (var line in lines)
+				result.Append($"{prefix}{line.TrimEnd()}\r\n");
+			return $"{result}";
+		}
 
         public string Serialize(FluentMessage message, FluentSerializationContext context)
         {
-            var comment = string.IsNullOrWhiteSpace(message.Comment)
-                ? ""
-                : Serialize(new FluentComment(1, message.Comment), context);
+            var comment = string.IsNullOrWhiteSpace(message.Comment) ? null : Serialize(new FluentComment(1, message.Comment), context);
             var entry = $"{message.Reference} =";
-            var contents = message.Content
+            context.AddIndent();
+            var contentItems = message.Content
                 .Select(content => Serialize(content, context))
                 .ToList();
-            var entryIndent = contents.Contains("\r\n") ? "\r\n" : " ";
+			var contents = string.Join("", contentItems);
+			if (contents.Contains("\r\n"))
+				contents = $"\r\n{context.Indent}{contents}";
+			context.IsTextContinuation = false;
             var attributes = message.Attributes
                 .Select(attribute => Serialize(attribute, context))
                 .ToList();
-            return $"{comment}{entry}{entryIndent}{contents}{attributes}";
-        }
+            context.RemoveIndent();
+			return $"{comment}{entry}{contents}\r\n{string.Join("", attributes)}";
+		}
 
         public string Serialize(FluentTerm term, FluentSerializationContext context)
         {
-            var comment = string.IsNullOrWhiteSpace(term.Comment)
-                ? ""
-                : Serialize(new FluentComment(1, term.Comment), context);
+            var comment = string.IsNullOrWhiteSpace(term.Comment) ? null : Serialize(new FluentComment(1, term.Comment), context);
             var entry = $"{term.Reference} =";
-            var contents = term.Content
+            context.AddIndent();
+            var contentItems = term.Content
                 .Select(content => Serialize(content, context))
                 .ToList();
-            var entryIndent = contents.Contains("\r\n") ? "\r\n" : " ";
+			var contents = string.Join("", contentItems);
+			if (contents.Contains("\r\n"))
+				contents = $"\r\n{contents}";
+            context.IsTextContinuation = false;
             var attributes = term.Attributes
                 .Select(attribute => Serialize(attribute, context))
                 .ToList();
-            return $"{comment}{entry}{entryIndent}{contents}{attributes}";
+            context.RemoveIndent();
+            return $"{comment}{entry}{contents}\r\n{string.Join("", attributes)}";
         }
 
         public string Serialize(FluentAttribute attribute, FluentSerializationContext context)
         {
-            var entry = $".{attribute.Id} =";
+            var entry = $"{context.Indent}.{attribute.Id} =";
+            context.AddIndent();
             var contents = attribute.Content
                 .Select(content => Serialize(content, context))
                 .ToList();
             var entryIndent = contents.Contains("\r\n") ? "\r\n" : " ";
-            return $"{entry}{entryIndent}{contents}";
+            context.RemoveIndent();
+			context.IsTextContinuation = false;
+            return $"{entry}{entryIndent}{string.Join("", contents)}\r\n";
         }
 
         public string Serialize(FluentText text, FluentSerializationContext context)
-        {
-            return $"{text.Value}";
+		{
+			var lines = text.Value.Split(new[] {"\r\n"}, StringSplitOptions.None);
+			var result = string.Join($"\r\n{context.Indent}", lines);
+			context.IsTextContinuation = true;
+            return $"{result}";
         }
 
         public string Serialize(FluentPlaceable placeable, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			var content = Serialize(placeable.Content, context);
+			var isMultiline = content.Contains("\r\n");
+            var closingIndent = isMultiline ? $"{context.Indent}" : " ";
+			if (isMultiline)
+				context.IsTextContinuation = true;
+			return $"{{ {content}{closingIndent}}}";
+		}
 
         public string Serialize(FluentSelection selection, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			var match = Serialize(selection.Match, context);
+            context.AddIndent();
+			var variantItems = selection.Variants
+				.Select(variant => Serialize(variant, context))
+				.ToList();
+            context.RemoveIndent();
+			var variants = string.Join("", variantItems);
+			return $"{match} ->\r\n{variants}";
+		}
 
         public string Serialize(FluentVariant variant, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			var isDefault = variant.IsDefault ? "*" : " ";
+			var key = Serialize(variant.Key, context);
+			var contentItems = variant.Content
+				.Select(content => Serialize(content, context))
+				.ToList();
+			var contents = string.Join("", contentItems);
+			return $"{context.Indent}{isDefault}[{key}] {contents}\r\n";
+		}
 
         public string Serialize(FluentVariableReference variableReference, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			return $"${variableReference.Id}";
+		}
 
         public string Serialize(FluentMessageReference messageReference, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			return messageReference.Reference;
+		}
 
         public string Serialize(FluentTermReference termReference, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			var reference = termReference.Reference;
+			var call = Serialize(new FluentFunctionCall {Arguments = termReference.Arguments.ToList()}, context);
+			return $"{reference}{call}";
+		}
 
         public string Serialize(FluentFunctionCall functionCall, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			var arguments = functionCall.Arguments
+				.Select(argument => Serialize(argument, context))
+				.ToList();
+			return $"{functionCall.Id}({string.Join(", ", arguments)})";
+		}
 
         public string Serialize(FluentCallArgument callArgument, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			var name = string.IsNullOrWhiteSpace(callArgument.Id) ? null : $"{callArgument.Id}: ";
+			var value = Serialize(callArgument.Value, context);
+			return $"{name}{value}";
+		}
 
         public string Serialize(FluentStringLiteral stringLiteral, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			return $"\"{stringLiteral.Value}\"";
+		}
 
         public string Serialize(FluentNumberLiteral numberLiteral, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			return numberLiteral.Value;
+		}
 
         public string Serialize(FluentIdentifier identifier, FluentSerializationContext context)
-        {
-            throw new NotImplementedException();
-        }
+		{
+			return identifier.Id;
+		}
     }
 }

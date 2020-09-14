@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using System.Linq;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using FluentAssertions;
 using FluentTranslate.Common.Domain;
 using NUnit.Framework;
+using System;
+using System.Collections;
+using System.IO;
+using FluentTranslate.Common;
 
 namespace FluentTranslate.Parser.Tests
 {
@@ -27,18 +27,36 @@ namespace FluentTranslate.Parser.Tests
 			return FluentDeserializer.Deserialize(resource, lexer);
 		}
 
+		private static void Verify(FluentResource resource, FluentResource expected)
+		{
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
+
+			VerifySerialization(resource, expected);
+		}
+
+		private static void VerifySerialization(FluentResource resource, FluentResource expected)
+		{
+			IFluentSerializer fluentSerializer = new FluentSerializer();
+			var serialized = fluentSerializer.Serialize(resource, null);
+			var deserialized = Act(serialized);
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(deserialized, expected).Should().BeTrue();
+		}
+
 		[Test]
 		public void Hello()
 		{
 			var resource = Act(Resources.Hello);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("hello")
 				{
 					new FluentText("Hello, world!")
 				}
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -46,7 +64,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Attributes);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("login-input")
 				{
@@ -64,7 +82,9 @@ namespace FluentTranslate.Parser.Tests
 						new FluentText("Type your login email")
 					}
 				}
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -72,7 +92,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Comments);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentComment
 				{
@@ -128,7 +148,9 @@ namespace FluentTranslate.Parser.Tests
 				{
 					new FluentText("Saving your shot…")
 				}
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -136,7 +158,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Functions);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("emails")
 				{
@@ -173,7 +195,9 @@ namespace FluentTranslate.Parser.Tests
 					},
 					new FluentText(".")
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -181,7 +205,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.FunctionsDatetime);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("today-is")
 				{
@@ -197,7 +221,9 @@ namespace FluentTranslate.Parser.Tests
 						}
 					},
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -205,7 +231,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.FunctionsNumber);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("dpi-ratio")
 				{
@@ -219,7 +245,9 @@ namespace FluentTranslate.Parser.Tests
 						}
 					},
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -227,7 +255,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.MultilineText);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("multi")
 				{
@@ -263,7 +291,9 @@ namespace FluentTranslate.Parser.Tests
 						+"\r\n"
 						+"\r\nThe blank line above this line is preserved.")
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -271,7 +301,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Placeables);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("remove-bookmark", comment:
 					"$title (String) - The title of the bookmark to remove.")
@@ -280,7 +310,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentVariableReference("title")),
 					new FluentText("?")
 				},
-			}).Should().BeTrue();
+			};
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
 		}
 
 		[Test]
@@ -288,7 +320,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.PlaceablesInner);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("remove-bookmark", comment:
 					"$title (String) - The title of the bookmark to remove.")
@@ -299,7 +331,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentStringLiteral("this bookmark")),
 					new FluentText("?"),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -307,7 +341,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.PlaceablesInterpolation);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentTerm("brand-name")
 				{
@@ -329,7 +363,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentMessageReference("menu-save")),
 					new FluentText(" to save the file."),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -337,7 +373,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.PlaceablesSpecialCharacters);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("opening-brace")
 				{
@@ -351,7 +387,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentStringLiteral("}")),
 					new FluentText("."),
 				},
-			}).Should().BeTrue();
+			};
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
 		}
 
 		[Test]
@@ -359,7 +397,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.QuotedText);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("blank-is-removed")
 				{
@@ -370,7 +408,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentStringLiteral("    ")),
 					new FluentText("This message starts with 4 spaces."),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -378,7 +418,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.QuotedTextEscape);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("literal-quote1", comment:
 					"This is OK, but cryptic and hard to read and edit.")
@@ -394,7 +434,9 @@ namespace FluentTranslate.Parser.Tests
 				{
 					new FluentText("Text in \"double quotes\"."),
 				},
-			}).Should().BeTrue();
+			};
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
 		}
 
 		[Test]
@@ -402,7 +444,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.QuotedTextLeadingBracket);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("leading-bracket")
 				{
@@ -413,7 +455,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentStringLiteral("[")),
 					new FluentText("."),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -421,7 +465,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.QuotedTextLeadingDot);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("attribute-how-to")
 				{
@@ -435,7 +479,9 @@ namespace FluentTranslate.Parser.Tests
 						new FluentText("An actual attribute (not part of the text value above)")
 					}
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -443,7 +489,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.QuotedTextUnicodeDash);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("which-dash1", comment:
 					"The dash character is an EM DASH but depending on the font face,"
@@ -458,7 +504,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentStringLiteral("\\u2014")),
 					new FluentText("or is it?"),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -466,7 +514,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.QuotedTextUnicodeEscape);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("privacy-label")
 				{
@@ -474,7 +522,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentStringLiteral("\\u00A0")),
 					new FluentText("Policy"),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -482,7 +532,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Selectors);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("emails")
 				{
@@ -502,7 +552,9 @@ namespace FluentTranslate.Parser.Tests
 							}
 						}),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -510,7 +562,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.SelectorsNumber);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("your-score")
 				{
@@ -539,7 +591,9 @@ namespace FluentTranslate.Parser.Tests
 							}
 						}),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -547,7 +601,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.SelectorsOrdinal);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("your-rank")
 				{
@@ -589,7 +643,9 @@ namespace FluentTranslate.Parser.Tests
 							},
 						}),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -597,7 +653,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.TermsAttributes);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentTerm("brand-name")
 				{
@@ -630,7 +686,9 @@ namespace FluentTranslate.Parser.Tests
 							},
 						})
 				}
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -638,7 +696,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.TermsParameterized);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentTerm("https", comment:
 					"A contrived example to demonstrate how variables"
@@ -657,7 +715,9 @@ namespace FluentTranslate.Parser.Tests
 						}),
 					new FluentText(" for more information."),
 				}
-			}).Should().BeTrue();
+			};
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
 		}
 
 		[Test]
@@ -665,7 +725,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.TermsVariants);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentTerm("brand-name")
 				{
@@ -694,7 +754,9 @@ namespace FluentTranslate.Parser.Tests
 						}),
 					new FluentText("."),
 				}
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -702,7 +764,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.Variables);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("welcome")
 				{
@@ -717,7 +779,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentVariableReference("email-count")),
 					new FluentText(" unread emails."),
 				}
-			}).Should().BeTrue();
+			};
+
+			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
 		}
 
 		[Test]
@@ -725,7 +789,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.VariablesExplicitFormatting);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("time-elapsed", comment:
 					"$duration (Number) - The duration in seconds.")
@@ -739,7 +803,9 @@ namespace FluentTranslate.Parser.Tests
 						}),
 					new FluentText("s."),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 
 		[Test]
@@ -747,7 +813,7 @@ namespace FluentTranslate.Parser.Tests
 		{
 			var resource = Act(Resources.VariablesImplicitFormatting);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, new FluentResource
+			var expected = new FluentResource
 			{
 				new FluentMessage("time-elapsed", comment:
 					"$duration (Number) - The duration in seconds.")
@@ -756,7 +822,9 @@ namespace FluentTranslate.Parser.Tests
 					new FluentPlaceable(new FluentVariableReference("duration")),
 					new FluentText("s."),
 				},
-			}).Should().BeTrue();
+			};
+
+			Verify(resource, expected);
 		}
 	}
 }
