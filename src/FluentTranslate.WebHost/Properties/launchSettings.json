@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:57718",
-      "sslPort": 44355
+      "applicationUrl": "http://localhost:52091",
+      "sslPort": 44380
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "FluentTranslate.Service.Host": {
+    "FluentTranslate.WebHost": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",

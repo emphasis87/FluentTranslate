@@ -1,1 +1,0 @@
-﻿today-is = Today is { DATETIME($date, month: "long", year: "numeric", day: "numeric") }
