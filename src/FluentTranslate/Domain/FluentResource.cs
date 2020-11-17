@@ -8,6 +8,7 @@ namespace FluentTranslate.Domain
 	{
         public override string Type => "resource";
 
+		public string Name { get; set; }
         public List<IFluentEntry> Entries { get; set; }
 
 		public FluentResource()
