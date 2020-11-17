@@ -163,8 +163,8 @@ namespace FluentTranslate.Common
                 return f32;
             if (double.TryParse(numberLiteral.Value, out var f64))
                 return f64;
-            if (decimal.TryParse(numberLiteral.Value, out var f128))
-                return f128;
+            if (decimal.TryParse(numberLiteral.Value, out var d128))
+                return d128;
 
             throw new ArgumentOutOfRangeException(nameof(numberLiteral));
         }

@@ -21,14 +21,17 @@ namespace FluentTranslate.WebHost
 
 		private void OnOptionsChanged(FluentTranslateOptions options)
 		{
-			
+		
 		}
 
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			OnOptionsChanged(_optionsMonitor.CurrentValue);
 
-			return Task.CompletedTask;
+			while (!stoppingToken.IsCancellationRequested)
+			{
+				await Task.Delay(2000, stoppingToken);
+			}
 		}
 
 		public override void Dispose()

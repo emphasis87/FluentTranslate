@@ -17,18 +17,18 @@
     <Antlr4 Include="FluentLexer.g4">
       <Visitor>true</Visitor>
       <AntOutDir>.</AntOutDir>
-      <Listener>true</Listener>
+      <Listener>false</Listener>
     </Antlr4>
     <Antlr4 Include="FluentParser.g4">
       <Visitor>true</Visitor>
-      <Listener>true</Listener>
+      <Listener>false</Listener>
       <AntOutDir>.</AntOutDir>
     </Antlr4>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
-    <PackageReference Include="Antlr4BuildTasks" Version="8.3.0" />
+    <PackageReference Include="Antlr4BuildTasks" Version="8.7.0" />
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
 

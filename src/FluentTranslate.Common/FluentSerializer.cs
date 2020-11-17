@@ -8,14 +8,19 @@ namespace FluentTranslate.Common
 {
     public interface IFluentSerializer
     {
-        string Serialize(IFluentElement element, FluentSerializationContext context);
+        string Serialize(IFluentElement element, FluentSerializationContext context = null);
     }
 
+    /// <summary>
+    /// Serializer from <see cref="IFluentElement"/> to fluent syntax.
+    /// </summary>
     public class FluentSerializer : IFluentSerializer
     {
-        public string Serialize(IFluentElement element, FluentSerializationContext context)
+        protected virtual FluentSerializationContext CreateContext() => new FluentSerializationContext();
+
+        public virtual string Serialize(IFluentElement element, FluentSerializationContext context = null)
         {
-            context ??= new FluentSerializationContext();
+			context ??= CreateContext();
             return element switch
             {
                 FluentResource resource => Serialize(resource, context),
@@ -39,8 +44,9 @@ namespace FluentTranslate.Common
             };
         }
 
-        public string Serialize(FluentResource resource, FluentSerializationContext context)
-        {
+        public virtual string Serialize(FluentResource resource, FluentSerializationContext context = null)
+		{
+			context ??= CreateContext();
             var entryItems = resource.Entries
                 .Select(entry => Serialize(entry, context))
                 .ToList();
@@ -48,9 +54,9 @@ namespace FluentTranslate.Common
 			return entries;
         }
 
-        public string Serialize(FluentComment comment, FluentSerializationContext context)
+        public virtual string Serialize(FluentComment comment, FluentSerializationContext context = null)
 		{
-			if (string.IsNullOrWhiteSpace(comment.Value))
+            if (string.IsNullOrWhiteSpace(comment.Value))
 				return null;
             var result = new StringBuilder();
             var prefix = $"{new string('#', comment.Level)} ";
@@ -60,8 +66,9 @@ namespace FluentTranslate.Common
 			return $"{result}";
 		}
 
-        public string Serialize(FluentMessage message, FluentSerializationContext context)
+        public virtual string Serialize(FluentMessage message, FluentSerializationContext context = null)
         {
+			context ??= CreateContext();
             var comment = string.IsNullOrWhiteSpace(message.Comment) ? null : Serialize(new FluentComment(1, message.Comment), context);
             var entry = $"{message.Reference} =";
             context.AddIndent();
@@ -79,8 +86,9 @@ namespace FluentTranslate.Common
 			return $"{comment}{entry}{contents}\r\n{string.Join("", attributes)}";
 		}
 
-        public string Serialize(FluentTerm term, FluentSerializationContext context)
+        public virtual string Serialize(FluentTerm term, FluentSerializationContext context = null)
         {
+			context ??= CreateContext();
             var comment = string.IsNullOrWhiteSpace(term.Comment) ? null : Serialize(new FluentComment(1, term.Comment), context);
             var entry = $"{term.Reference} =";
             context.AddIndent();
@@ -98,8 +106,9 @@ namespace FluentTranslate.Common
             return $"{comment}{entry}{contents}\r\n{string.Join("", attributes)}";
         }
 
-        public string Serialize(FluentAttribute attribute, FluentSerializationContext context)
+        public virtual string Serialize(FluentAttribute attribute, FluentSerializationContext context = null)
         {
+			context ??= CreateContext();
             var entry = $"{context.Indent}.{attribute.Id} =";
             context.AddIndent();
             var contents = attribute.Content
@@ -111,17 +120,19 @@ namespace FluentTranslate.Common
             return $"{entry}{entryIndent}{string.Join("", contents)}\r\n";
         }
 
-        public string Serialize(FluentText text, FluentSerializationContext context)
+        public virtual string Serialize(FluentText text, FluentSerializationContext context = null)
 		{
-			var lines = text.Value.Split(new[] {"\r\n"}, StringSplitOptions.None);
+			context ??= CreateContext();
+            var lines = text.Value.Split(new[] {"\r\n"}, StringSplitOptions.None);
 			var result = string.Join($"\r\n{context.Indent}", lines);
 			context.IsTextContinuation = true;
             return $"{result}";
         }
 
-        public string Serialize(FluentPlaceable placeable, FluentSerializationContext context)
+        public virtual string Serialize(FluentPlaceable placeable, FluentSerializationContext context = null)
 		{
-			var content = Serialize(placeable.Content, context);
+			context ??= CreateContext();
+            var content = Serialize(placeable.Content, context);
 			var isMultiline = content.Contains("\r\n");
             var closingIndent = isMultiline ? $"{context.Indent}" : " ";
 			if (isMultiline)
@@ -129,9 +140,10 @@ namespace FluentTranslate.Common
 			return $"{{ {content}{closingIndent}}}";
 		}
 
-        public string Serialize(FluentSelection selection, FluentSerializationContext context)
+        public virtual string Serialize(FluentSelection selection, FluentSerializationContext context = null)
 		{
-			var match = Serialize(selection.Match, context);
+			context ??= CreateContext();
+            var match = Serialize(selection.Match, context);
             context.AddIndent();
 			var variantItems = selection.Variants
 				.Select(variant => Serialize(variant, context))
@@ -141,9 +153,10 @@ namespace FluentTranslate.Common
 			return $"{match} ->\r\n{variants}";
 		}
 
-        public string Serialize(FluentVariant variant, FluentSerializationContext context)
+        public virtual string Serialize(FluentVariant variant, FluentSerializationContext context = null)
 		{
-			var isDefault = variant.IsDefault ? "*" : " ";
+			context ??= CreateContext();
+            var isDefault = variant.IsDefault ? "*" : " ";
 			var key = Serialize(variant.Key, context);
 			var contentItems = variant.Content
 				.Select(content => Serialize(content, context))
@@ -152,51 +165,54 @@ namespace FluentTranslate.Common
 			return $"{context.Indent}{isDefault}[{key}] {contents}\r\n";
 		}
 
-        public string Serialize(FluentVariableReference variableReference, FluentSerializationContext context)
+        public virtual string Serialize(FluentVariableReference variableReference, FluentSerializationContext context = null)
 		{
-			return $"${variableReference.Id}";
+            return $"${variableReference.Id}";
 		}
 
-        public string Serialize(FluentMessageReference messageReference, FluentSerializationContext context)
+        public virtual string Serialize(FluentMessageReference messageReference, FluentSerializationContext context = null)
 		{
-			return messageReference.Reference;
+            return messageReference.Reference;
 		}
 
-        public string Serialize(FluentTermReference termReference, FluentSerializationContext context)
+        public virtual string Serialize(FluentTermReference termReference, FluentSerializationContext context = null)
 		{
-			var reference = termReference.Reference;
+			context ??= CreateContext();
+            var reference = termReference.Reference;
 			var call = Serialize(new FluentFunctionCall {Arguments = termReference.Arguments.ToList()}, context);
 			return $"{reference}{call}";
 		}
 
-        public string Serialize(FluentFunctionCall functionCall, FluentSerializationContext context)
+        public virtual string Serialize(FluentFunctionCall functionCall, FluentSerializationContext context = null)
 		{
-			var arguments = functionCall.Arguments
+			context ??= CreateContext();
+            var arguments = functionCall.Arguments
 				.Select(argument => Serialize(argument, context))
 				.ToList();
 			return $"{functionCall.Id}({string.Join(", ", arguments)})";
 		}
 
-        public string Serialize(FluentCallArgument callArgument, FluentSerializationContext context)
+        public virtual string Serialize(FluentCallArgument callArgument, FluentSerializationContext context = null)
 		{
-			var name = string.IsNullOrWhiteSpace(callArgument.Id) ? null : $"{callArgument.Id}: ";
+			context ??= CreateContext();
+            var name = string.IsNullOrWhiteSpace(callArgument.Id) ? null : $"{callArgument.Id}: ";
 			var value = Serialize(callArgument.Value, context);
 			return $"{name}{value}";
 		}
 
-        public string Serialize(FluentStringLiteral stringLiteral, FluentSerializationContext context)
+        public virtual string Serialize(FluentStringLiteral stringLiteral, FluentSerializationContext context = null)
 		{
-			return $"\"{stringLiteral.Value}\"";
+            return $"\"{stringLiteral.Value}\"";
 		}
 
-        public string Serialize(FluentNumberLiteral numberLiteral, FluentSerializationContext context)
+        public virtual string Serialize(FluentNumberLiteral numberLiteral, FluentSerializationContext context = null)
 		{
-			return numberLiteral.Value;
+            return numberLiteral.Value;
 		}
 
-        public string Serialize(FluentIdentifier identifier, FluentSerializationContext context)
+        public virtual string Serialize(FluentIdentifier identifier, FluentSerializationContext context = null)
 		{
-			return identifier.Id;
+            return identifier.Id;
 		}
     }
 }
