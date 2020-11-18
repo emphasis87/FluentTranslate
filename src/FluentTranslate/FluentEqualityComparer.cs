@@ -13,7 +13,7 @@ namespace FluentTranslate
 
 	public class FluentEqualityComparer : IFluentEqualityComparer
 	{
-		internal static FluentEqualityComparer Default { get; } = new FluentEqualityComparer();
+		public static FluentEqualityComparer Default { get; } = new FluentEqualityComparer();
 
 		public int GetHashCode(IFluentElement element)
 		{

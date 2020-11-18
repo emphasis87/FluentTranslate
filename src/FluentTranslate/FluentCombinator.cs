@@ -15,13 +15,15 @@ namespace FluentTranslate
 	/// Combines multiple resources into one.
 	/// Omits <see cref="FluentComment"/> entries.
 	/// </summary>
-	public class FluentCombinator
+	public class FluentCombinator : IFluentCombinator
 	{
+		public static FluentCombinator Default { get; } = new FluentCombinator();
+
 		private readonly IFluentFactory _factory;
 
 		public FluentCombinator(IFluentFactory factory = null)
 		{
-			_factory = factory ?? new FluentFactory();
+			_factory = factory ?? FluentFactory.Default;
 		}
 
 		public FluentResource Combine(IEnumerable<FluentResource> resources)
@@ -31,7 +33,13 @@ namespace FluentTranslate
 
 			var result = new FluentResource();
 			var names = new HashSet<string>();
-			foreach (var entry in resources.SelectMany(x => x.Entries).OfType<FluentRecord>())
+
+			var entries = resources
+				.Where(x => x?.Entries != null)
+				.SelectMany(x => x.Entries)
+				.OfType<FluentRecord>();
+
+			foreach (var entry in entries)
 			{
 				if (!names.Add(entry.Reference))
 					continue;

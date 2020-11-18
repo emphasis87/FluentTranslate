@@ -15,6 +15,8 @@ namespace FluentTranslate
 	/// </summary>
 	public class FluentFactory : IFluentFactory
 	{
+		public static FluentFactory Default { get; } = new FluentFactory();
+
 		public T Clone<T>(T element) where T : IFluentElement
 		{
 			return (T)Clone((IFluentElement)element);
