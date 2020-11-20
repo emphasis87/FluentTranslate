@@ -2,9 +2,9 @@
 using System.Linq;
 using FluentTranslate.Domain;
 
-namespace FluentTranslate
+namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentFactory
+	public interface IFluentCloneFactory
 	{
 		IFluentElement Clone(IFluentElement element);
 		T Clone<T>(T element) where T : IFluentElement;
@@ -13,9 +13,9 @@ namespace FluentTranslate
 	/// <summary>
 	/// Clones fluent elements.
 	/// </summary>
-	public class FluentFactory : IFluentFactory
+	public class FluentCloneFactory : IFluentCloneFactory
 	{
-		public static FluentFactory Default { get; } = new FluentFactory();
+		public static FluentCloneFactory Default { get; } = new FluentCloneFactory();
 
 		public T Clone<T>(T element) where T : IFluentElement
 		{

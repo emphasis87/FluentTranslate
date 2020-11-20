@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 
@@ -6,7 +7,7 @@ namespace FluentTranslate
 {
 	public interface IFluentClient
 	{
-		string Translate(string message, CultureInfo culture = null);
+		string Translate(string message, IDictionary<string, object> parameters = null, CultureInfo culture = null);
 	}
 
 	public class FluentClient : IFluentClient
@@ -20,7 +21,7 @@ namespace FluentTranslate
 			_configuration = configuration;
 		}
 
-		public string Translate(string message, CultureInfo culture = null)
+		public string Translate(string message, IDictionary<string, object> parameters = null, CultureInfo culture = null)
 		{
 			culture ??= DefaultCulture?.Invoke() ?? Thread.CurrentThread.CurrentCulture;
 			return message;

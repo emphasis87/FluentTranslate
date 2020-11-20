@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate.Domain
 {

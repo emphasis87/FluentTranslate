@@ -1,10 +1,11 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 
-namespace FluentTranslate
+namespace FluentTranslate.Evaluation
 {
 	public interface IFluentEngine
 	{
-		string Evaluate(string message, CultureInfo culture);
+		string Evaluate(string message, IDictionary<string, object> parameters, CultureInfo culture);
 	}
 
 	public class FluentEngine

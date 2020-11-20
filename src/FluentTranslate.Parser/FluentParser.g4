@@ -2,7 +2,7 @@
 
 options { 
 	tokenVocab = FluentLexer;
-	contextSuperClass = FluentTranslate.Parser.FluentContext; 
+	contextSuperClass = FluentTranslate.Parser.FluentParserContext; 
 }
 
 /*

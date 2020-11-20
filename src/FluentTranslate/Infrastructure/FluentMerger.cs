@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FluentTranslate.Domain;
 
-namespace FluentTranslate
+namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentCombinator
+	public interface IFluentMerger
 	{
 		FluentResource Combine(IEnumerable<FluentResource> resources);
 	}
@@ -15,15 +14,20 @@ namespace FluentTranslate
 	/// Combines multiple resources into one.
 	/// Omits <see cref="FluentComment"/> entries.
 	/// </summary>
-	public class FluentCombinator : IFluentCombinator
+	public class FluentMerger : IFluentMerger
 	{
-		public static FluentCombinator Default { get; } = new FluentCombinator();
+		public static FluentMerger Default { get; } = new FluentMerger();
 
-		private readonly IFluentFactory _factory;
+		protected IFluentConfiguration Configuration { get; }
 
-		public FluentCombinator(IFluentFactory factory = null)
+		protected IFluentCloneFactory Factory =>
+			Configuration.Services.GetService<IFluentCloneFactory>() ?? FluentCloneFactory.Default;
+
+		protected FluentMerger() { }
+
+		public FluentMerger(IFluentConfiguration configuration)
 		{
-			_factory = factory ?? FluentFactory.Default;
+			Configuration = configuration;
 		}
 
 		public FluentResource Combine(IEnumerable<FluentResource> resources)
@@ -44,7 +48,8 @@ namespace FluentTranslate
 				if (!names.Add(entry.Reference))
 					continue;
 
-				var clone = (IFluentEntry)_factory.Clone(entry);
+				var factory = Factory ?? FluentCloneFactory.Default;
+				var clone = (IFluentEntry)factory.Clone(entry);
 				result.Entries.Add(clone);
 			}
 
