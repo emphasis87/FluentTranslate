@@ -6,14 +6,14 @@ using File = System.IO.File;
 
 namespace FluentTranslate.Infrastructure
 {
-	public class FluentInvariantLocalFileProvider : FluentInvariantFileProvider
+	public class FluentLocalFileProvider : FluentFileProvider
 	{
-		public FluentInvariantLocalFileProvider(string path, IFluentConfiguration configuration)
+		public FluentLocalFileProvider(string path, IFluentConfiguration configuration)
 			: base(path, configuration)
 		{
 		}
 
-		protected override async Task<DateTime?> GetLastModifiedAsync(CultureInfo culture = null)
+		protected override Task<DateTime?> GetLastModifiedAsync(Context context, CultureInfo culture = null)
 		{
 			if (!File.Exists(RequestPath))
 				return null;
@@ -21,7 +21,7 @@ namespace FluentTranslate.Infrastructure
 			try
 			{
 				var lastWrite = File.GetLastWriteTime(RequestPath);
-				return lastWrite;
+				return Task.FromResult((DateTime?)lastWrite);
 			}
 			catch (Exception)
 			{
@@ -31,16 +31,14 @@ namespace FluentTranslate.Infrastructure
 			return null;
 		}
 
-		protected override async Task<Timestamped<string>> FindFileAsync(CultureInfo culture = null)
+		protected override async Task<string> FindFileAsync(Context context, CultureInfo culture = null)
 		{
 			try
 			{
 				using var stream = File.OpenRead(RequestPath);
 				using var reader = new StreamReader(stream);
 				var content = await reader.ReadToEndAsync();
-
-				var lastWrite = File.GetLastWriteTime(RequestPath);
-				return new Timestamped<string>(lastWrite, content);
+				return content;
 			}
 			catch (Exception)
 			{

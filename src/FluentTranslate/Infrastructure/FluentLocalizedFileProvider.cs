@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -7,19 +8,19 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentLocalizedFileProvider : FluentLocalizedProvider
+	public abstract class FluentLocalizedFileProvider : FluentProvider
 	{
 		public string RootPath { get; }
 
-		protected Dictionary<CultureInfo, IFluentCompositeProvider> ProviderByCulture { get; }
-		protected Dictionary<string, IFluentProvider> ProviderByPath { get; }
+		private readonly ConcurrentDictionary<string, IFluentProvider> _providerByPath = 
+			new ConcurrentDictionary<string, IFluentProvider>();
 
 		protected FluentLocalizedFileProvider(string rootPath, IFluentConfiguration configuration) 
 			: base(configuration)
 		{
 			RootPath = rootPath;
-			ProviderByCulture = new Dictionary<CultureInfo, IFluentCompositeProvider>();
-			ProviderByPath = new Dictionary<string, IFluentProvider>();
+
+			IsLocalized = true;
 		}
 
 		protected virtual IEnumerable<string> GetPaths(CultureInfo culture)
@@ -32,31 +33,45 @@ namespace FluentTranslate.Infrastructure
 
 		protected virtual IFluentCompositeProvider CreateProvider(CultureInfo culture)
 		{
-			return new FluentInvariantCompositeProvider(Configuration);
+			var compositeProvider = new FluentCompositeProvider(Configuration);
+			var paths = GetPaths(culture);
+			foreach (var path in paths)
+			{
+				if (_providerByPath.TryGetValue(path, out var provider))
+				{
+					provider = CreateProvider(path);
+					provider = _providerByPath.GetOrAdd(path, provider);
+				}
+				compositeProvider.Add(provider);
+			}
+
+			return compositeProvider;
 		}
 
 		protected abstract IFluentProvider CreateProvider(string path);
 		
-		protected override async Task<Timestamped<FluentResource>> FindResourceAsync(DateTime now, Timestamped<FluentResource> lastResult, CultureInfo culture)
+		protected override async Task<FluentResource> FindResourceAsync(Context context, CultureInfo culture)
 		{
-			if (!ProviderByCulture.TryGetValue(culture, out var compositeProvider))
-			{
-				compositeProvider = CreateProvider(culture);
-				var paths = GetPaths(culture);
-				foreach (var path in paths)
-				{
-					if (!ProviderByPath.TryGetValue(path, out var provider))
-					{
-						provider = CreateProvider(path);
-						ProviderByPath[path] = provider;
-					}
-					compositeProvider.Add(provider);
-				}
-				ProviderByCulture[culture] = compositeProvider;
-			}
-
+			var ctx = (LocalizedFileContext) context;
+			var compositeProvider = ctx.Provider;
 			var next = await compositeProvider.GetResourceAsync(culture);
 			return next;
+		}
+
+		protected override Context CreateContext(CultureInfo culture)
+		{
+			var compositeProvider = CreateProvider(culture);
+			return new LocalizedFileContext(compositeProvider, culture);
+		}
+
+		protected class LocalizedFileContext : Context
+		{
+			public IFluentCompositeProvider Provider { get; }
+
+			public LocalizedFileContext(IFluentCompositeProvider provider, CultureInfo culture) : base(culture)
+			{
+				Provider = provider;
+			}
 		}
 	}
 }

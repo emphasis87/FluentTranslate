@@ -136,6 +136,7 @@ namespace FluentTranslate.Infrastructure
 		public bool Equals(IFluentElement element1, IFluentElement element2)
 		{
 			if (element1 is null || element2 is null) return false;
+			if (ReferenceEquals(element1, element2)) return true;
 			if (element1.GetType() != element2.GetType()) return false;
 			var result = (element1, element2) switch
 			{

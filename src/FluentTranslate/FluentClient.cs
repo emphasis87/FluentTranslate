@@ -1,9 +1,7 @@
-﻿using System;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
-using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
@@ -15,14 +13,13 @@ namespace FluentTranslate
 
 	public class FluentClient : IFluentClient
 	{
-		protected SemaphoreSlim Semaphore { get; } = new SemaphoreSlim(1, 1);
-
 		protected IFluentConfiguration Configuration { get; }
+
+		private readonly ConcurrentDictionary<CultureInfo, Context> _contextByCulture =
+			new ConcurrentDictionary<CultureInfo, Context>();
 
 		protected IFluentProvider Provider =>
 			Configuration.Services.GetService<IFluentProvider>();
-
-		protected Timestamped<FluentResource> LastResult { get; set; }
 
 		public CultureInfo DefaultCulture { get; set; }
 
@@ -36,26 +33,41 @@ namespace FluentTranslate
 			return culture ?? DefaultCulture ?? CultureInfo.CurrentCulture;
 		}
 
+		protected virtual IFluentEngineCache CreateEngineCache(CultureInfo culture)
+		{
+			return new FluentEngineCache(Configuration);
+		}
+
+		protected virtual Context CreateContext(CultureInfo culture)
+		{
+			return new Context(CreateEngineCache(culture));
+		}
+
 		public async Task<string> Translate(string message, IDictionary<string, object> parameters = null, CultureInfo culture = null)
 		{
 			culture = GetCulture(culture);
 
-			var next = await Provider.GetResourceAsync(culture);
-			if (next?.Value is null)
-				return message;
-
-			await Semaphore.WaitAsync();
-			try
+			if (!_contextByCulture.TryGetValue(culture, out var context))
 			{
-				var lastResult = LastResult;
-				
-			}
-			finally
-			{
-				Semaphore.Release();
+				context = CreateContext(culture);
+				context = _contextByCulture.GetOrAdd(culture, context);
 			}
 
-			return message;
+			var engineCache = context.Cache;
+			var resource = await Provider.GetResourceAsync(culture);
+			var engine = engineCache.GetEngine(resource);
+			var result = engine.Evaluate(message, parameters);
+			return result;
+		}
+
+		protected class Context
+		{
+			public IFluentEngineCache Cache { get; }
+
+			public Context(IFluentEngineCache cache)
+			{
+				Cache = cache;
+			}
 		}
 	}
 }

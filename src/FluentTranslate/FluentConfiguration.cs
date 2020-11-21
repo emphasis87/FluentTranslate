@@ -24,7 +24,7 @@ namespace FluentTranslate
 		{
 			Services = new FluentServiceContainer();
 			Options = new FluentOptionsContainer();
-			Providers = new FluentInvariantCompositeProvider(this);
+			Providers = new FluentCompositeProvider(this) {IsLocalized = true};
 		}
 
 		public static FluentConfiguration Default
@@ -38,14 +38,14 @@ namespace FluentTranslate
 				configuration.Services.AddService<IFluentCloneFactory>(FluentCloneFactory.Default);
 				configuration.Services.AddService<IFluentMerger>(FluentMerger.Default);
 				configuration.Services.AddService<IFluentDeserializerContainer>(FluentDeserializerContainer.Default);
-				//configuration.Services.AddService<IFluentEngine>(new FluentEngine(configuration));
 
 				configuration.Services.AddService(new HttpClient());
 
 				configuration.Options.Add(
 					new FluentProviderOptions()
 					{
-						PollingInterval = TimeSpan.FromSeconds(5)
+						PollingInterval = TimeSpan.FromSeconds(5),
+						HttpPollingInterval = TimeSpan.FromMinutes(1),
 					});
 
 				return configuration;

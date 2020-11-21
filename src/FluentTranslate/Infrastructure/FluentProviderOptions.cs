@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FluentTranslate.Infrastructure
 {
@@ -10,5 +8,10 @@ namespace FluentTranslate.Infrastructure
 		/// Heuristic for limiting requesting updates from providers.
 		/// </summary>
 		public TimeSpan? PollingInterval { get; set; }
+
+		/// <summary>
+		/// Heuristic for limiting requesting updates from HTTP providers.
+		/// </summary>
+		public TimeSpan? HttpPollingInterval { get; set; }
 	}
 }

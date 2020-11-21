@@ -10,7 +10,7 @@
 
 		protected override IFluentProvider CreateProvider(string path)
 		{
-			return new FluentInvariantLocalFileProvider(path, Configuration);
+			return new FluentLocalFileProvider(path, Configuration);
 		}
 	}
 }

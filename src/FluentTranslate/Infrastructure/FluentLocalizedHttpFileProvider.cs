@@ -14,7 +14,7 @@ namespace FluentTranslate.Infrastructure
 
 		protected override IFluentProvider CreateProvider(string path)
 		{
-			return new FluentInvariantHttpFileProvider(path, Client, Configuration);
+			return new FluentHttpFileProvider(path, Client, Configuration);
 		}
 	}
 }
