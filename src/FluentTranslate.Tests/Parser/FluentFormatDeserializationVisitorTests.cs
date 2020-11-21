@@ -1,20 +1,28 @@
-﻿using Antlr4.Runtime;
-using FluentAssertions;
-using FluentTranslate.Common.Domain;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
-using FluentTranslate.Common;
+using System.Linq;
+using Antlr4.Runtime;
+using FluentAssertions;
+using FluentTranslate.Domain;
+using FluentTranslate.Infrastructure;
+using FluentTranslate.Parser;
+using FluentTranslate.Tests.Support;
+using NUnit.Framework;
 
-namespace FluentTranslate.Parser.Tests
+namespace FluentTranslate.Tests.Parser
 {
-	public class FluentVisitorTests
+	public class FluentFormatDeserializationVisitorTests
 	{
-		private static FluentResource Act(string resource)
+		private static FluentResource Act(string content)
 		{
-			var inputStream = new AntlrInputStream(new StringReader(resource));
-			var lexer = new FluentDebugLexer(inputStream);
+			var stream = new AntlrInputStream(new StringReader(content));
+			var lexer = new FluentDebugLexer(stream);
+			var parser = new FluentParser(new CommonTokenStream(lexer));
+
+			// Parse the result using deserialization visitor
+			var visitor = new FluentFormatDeserializationVisitor();
+			var resource = visitor.Visit(parser.resource()).FirstOrDefault() as FluentResource;
 
 			var mode = 0;
 			foreach (var modeName in lexer.ModeNames)
@@ -24,29 +32,25 @@ namespace FluentTranslate.Parser.Tests
 
 			Console.WriteLine();
 
-			return FluentDeserializer.Deserialize(resource, lexer);
+			return resource;
 		}
 
-		private static void Verify(FluentResource resource, FluentResource expected)
+		private static void ShouldBeEqual(FluentResource actual, FluentResource expected)
 		{
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
+			// Verify result is expected
+			FluentEqualityComparer.Default.Equals(actual, expected).Should().BeTrue();
 
-			VerifySerialization(resource, expected);
-		}
-
-		private static void VerifySerialization(FluentResource resource, FluentResource expected)
-		{
-			IFluentSerializer fluentSerializer = new FluentSerializer();
-			var serialized = fluentSerializer.Serialize(resource, null);
+			var serialized = FluentConverter.Serialize(actual);
 			var deserialized = Act(serialized);
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(deserialized, expected).Should().BeTrue();
+			// Verify that serialization and deserialization does not change the result
+			FluentEqualityComparer.Default.Equals(deserialized, expected).Should().BeTrue();
 		}
 
 		[Test]
 		public void Hello()
 		{
-			var resource = Act(Resources.Hello);
+			var actual = Act(Resources.Hello);
 
 			var expected = new FluentResource
 			{
@@ -56,13 +60,13 @@ namespace FluentTranslate.Parser.Tests
 				}
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void Attributes()
 		{
-			var resource = Act(Resources.Attributes);
+			var actual = Act(Resources.Attributes);
 
 			var expected = new FluentResource
 			{
@@ -84,13 +88,13 @@ namespace FluentTranslate.Parser.Tests
 				}
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void Comments()
 		{
-			var resource = Act(Resources.Comments);
+			var actual = Act(Resources.Comments);
 
 			var expected = new FluentResource
 			{
@@ -150,13 +154,13 @@ namespace FluentTranslate.Parser.Tests
 				}
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void Functions()
 		{
-			var resource = Act(Resources.Functions);
+			var actual = Act(Resources.Functions);
 
 			var expected = new FluentResource
 			{
@@ -197,13 +201,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void FunctionsDatetime()
 		{
-			var resource = Act(Resources.FunctionsDatetime);
+			var actual = Act(Resources.FunctionsDatetime);
 
 			var expected = new FluentResource
 			{
@@ -223,13 +227,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void FunctionsNumber()
 		{
-			var resource = Act(Resources.FunctionsNumber);
+			var actual = Act(Resources.FunctionsNumber);
 
 			var expected = new FluentResource
 			{
@@ -247,13 +251,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void MultilineText()
 		{
-			var resource = Act(Resources.MultilineText);
+			var actual = Act(Resources.MultilineText);
 
 			var expected = new FluentResource
 			{
@@ -293,13 +297,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void Placeables()
 		{
-			var resource = Act(Resources.Placeables);
+			var actual = Act(Resources.Placeables);
 
 			var expected = new FluentResource
 			{
@@ -312,13 +316,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void PlaceablesInner()
 		{
-			var resource = Act(Resources.PlaceablesInner);
+			var actual = Act(Resources.PlaceablesInner);
 
 			var expected = new FluentResource
 			{
@@ -333,13 +337,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void PlaceablesInterpolation()
 		{
-			var resource = Act(Resources.PlaceablesInterpolation);
+			var actual = Act(Resources.PlaceablesInterpolation);
 
 			var expected = new FluentResource
 			{
@@ -365,7 +369,7 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
@@ -395,7 +399,7 @@ namespace FluentTranslate.Parser.Tests
 		[Test]
 		public void QuotedText()
 		{
-			var resource = Act(Resources.QuotedText);
+			var actual = Act(Resources.QuotedText);
 
 			var expected = new FluentResource
 			{
@@ -410,13 +414,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void QuotedTextEscape()
 		{
-			var resource = Act(Resources.QuotedTextEscape);
+			var actual = Act(Resources.QuotedTextEscape);
 
 			var expected = new FluentResource
 			{
@@ -436,13 +440,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void QuotedTextLeadingBracket()
 		{
-			var resource = Act(Resources.QuotedTextLeadingBracket);
+			var actual = Act(Resources.QuotedTextLeadingBracket);
 
 			var expected = new FluentResource
 			{
@@ -457,13 +461,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void QuotedTextLeadingDot()
 		{
-			var resource = Act(Resources.QuotedTextLeadingDot);
+			var actual = Act(Resources.QuotedTextLeadingDot);
 
 			var expected = new FluentResource
 			{
@@ -481,13 +485,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void QuotedTextUnicodeDash()
 		{
-			var resource = Act(Resources.QuotedTextUnicodeDash);
+			var actual = Act(Resources.QuotedTextUnicodeDash);
 
 			var expected = new FluentResource
 			{
@@ -506,13 +510,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void QuotedTextUnicodeEscape()
 		{
-			var resource = Act(Resources.QuotedTextUnicodeEscape);
+			var actual = Act(Resources.QuotedTextUnicodeEscape);
 
 			var expected = new FluentResource
 			{
@@ -524,13 +528,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void Selectors()
 		{
-			var resource = Act(Resources.Selectors);
+			var actual = Act(Resources.Selectors);
 
 			var expected = new FluentResource
 			{
@@ -554,13 +558,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void SelectorsNumber()
 		{
-			var resource = Act(Resources.SelectorsNumber);
+			var actual = Act(Resources.SelectorsNumber);
 
 			var expected = new FluentResource
 			{
@@ -593,13 +597,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void SelectorsOrdinal()
 		{
-			var resource = Act(Resources.SelectorsOrdinal);
+			var actual = Act(Resources.SelectorsOrdinal);
 
 			var expected = new FluentResource
 			{
@@ -645,13 +649,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void TermsAttributes()
 		{
-			var resource = Act(Resources.TermsAttributes);
+			var actual = Act(Resources.TermsAttributes);
 
 			var expected = new FluentResource
 			{
@@ -688,13 +692,13 @@ namespace FluentTranslate.Parser.Tests
 				}
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void TermsParameterized()
 		{
-			var resource = Act(Resources.TermsParameterized);
+			var actual = Act(Resources.TermsParameterized);
 
 			var expected = new FluentResource
 			{
@@ -717,13 +721,13 @@ namespace FluentTranslate.Parser.Tests
 				}
 			};
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void TermsVariants()
 		{
-			var resource = Act(Resources.TermsVariants);
+			var actual = Act(Resources.TermsVariants);
 
 			var expected = new FluentResource
 			{
@@ -756,13 +760,13 @@ namespace FluentTranslate.Parser.Tests
 				}
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void Variables()
 		{
-			var resource = Act(Resources.Variables);
+			var actual = Act(Resources.Variables);
 
 			var expected = new FluentResource
 			{
@@ -781,13 +785,13 @@ namespace FluentTranslate.Parser.Tests
 				}
 			};
 
-			StructuralComparisons.StructuralEqualityComparer.Equals(resource, expected).Should().BeTrue();
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void VariablesExplicitFormatting()
 		{
-			var resource = Act(Resources.VariablesExplicitFormatting);
+			var actual = Act(Resources.VariablesExplicitFormatting);
 
 			var expected = new FluentResource
 			{
@@ -805,13 +809,13 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 
 		[Test]
 		public void VariablesImplicitFormatting()
 		{
-			var resource = Act(Resources.VariablesImplicitFormatting);
+			var actual = Act(Resources.VariablesImplicitFormatting);
 
 			var expected = new FluentResource
 			{
@@ -824,7 +828,7 @@ namespace FluentTranslate.Parser.Tests
 				},
 			};
 
-			Verify(resource, expected);
+			ShouldBeEqual(actual, expected);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -30,10 +30,6 @@
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
     <PackageReference Include="Antlr4BuildTasks" Version="8.7.0" />
     <PackageReference Include="morelinq" Version="3.3.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\FluentTranslate.Common\FluentTranslate.Common.csproj" />
   </ItemGroup>
 
 </Project>

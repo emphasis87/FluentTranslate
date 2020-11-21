@@ -7,12 +7,15 @@ namespace FluentTranslate.Infrastructure
 {
 	public class FluentInvariantHttpFileProvider : FluentInvariantFileProvider
 	{
-		protected HttpClient Client { get; }
+		private readonly HttpClient _client;
+
+		protected HttpClient Client => _client
+			?? Configuration.Services.GetService<HttpClient>();
 
 		public FluentInvariantHttpFileProvider(string path, HttpClient client, IFluentConfiguration configuration)
 			: base(path, configuration)
 		{
-			Client = client;
+			_client = client;
 		}
 
 		protected override bool CheckLastModified(CultureInfo culture = null) => false;

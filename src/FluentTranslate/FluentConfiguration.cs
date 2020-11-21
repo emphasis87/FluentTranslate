@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Http;
+using System.Threading.Tasks;
+using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
@@ -31,10 +34,13 @@ namespace FluentTranslate
 				var configuration = new FluentConfiguration();
 
 				configuration.Services.AddService<IFluentConfiguration>(configuration);
-
+				configuration.Services.AddService<IFluentProvider>(configuration.Providers);
 				configuration.Services.AddService<IFluentCloneFactory>(FluentCloneFactory.Default);
 				configuration.Services.AddService<IFluentMerger>(FluentMerger.Default);
 				configuration.Services.AddService<IFluentDeserializerContainer>(FluentDeserializerContainer.Default);
+				//configuration.Services.AddService<IFluentEngine>(new FluentEngine(configuration));
+
+				configuration.Services.AddService(new HttpClient());
 
 				configuration.Options.Add(
 					new FluentProviderOptions()
@@ -54,7 +60,6 @@ namespace FluentTranslate
 
 		public FluentConfiguration AddRemoteFile(string path, HttpClient client = null)
 		{
-			client ??= Services.GetOrAddService(() => new HttpClient());
 			Providers.Add(new FluentLocalizedHttpFileProvider(path, client, this));
 			return this;
 		}

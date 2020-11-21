@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Antlr4.Runtime;
 
-namespace FluentTranslate.Parser.Tests
+namespace FluentTranslate.Tests.Support
 {
 	public class FluentDebugLexer : FluentLexer
 	{

@@ -14,7 +14,7 @@ namespace FluentTranslate.Infrastructure
 
 	public class FluentEqualityComparer : IFluentEqualityComparer
 	{
-		public static FluentEqualityComparer Default { get; } = new FluentEqualityComparer();
+		public static IFluentEqualityComparer Default { get; } = new FluentEqualityComparer();
 
 		public int GetHashCode(IFluentElement element)
 		{
@@ -137,7 +137,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			if (element1 is null || element2 is null) return false;
 			if (element1.GetType() != element2.GetType()) return false;
-			return (element1, element2) switch
+			var result = (element1, element2) switch
 			{
 				(FluentResource x, FluentResource y) => Equals(x, y),
 				(FluentComment x, FluentComment y) => Equals(x, y),
@@ -158,6 +158,7 @@ namespace FluentTranslate.Infrastructure
 				(FluentStringLiteral x, FluentStringLiteral y) => Equals(x, y),
 				_ => throw new ArgumentOutOfRangeException(nameof(element1))
 			};
+			return result;
 		}
 
 		public bool Equals(FluentResource x, FluentResource y)
@@ -200,19 +201,19 @@ namespace FluentTranslate.Infrastructure
 
 		public bool Equals(FluentPlaceable x, FluentPlaceable y)
 		{
-			return x.Content == y.Content;
+			return AreEqual(x.Content, y.Content);
 		}
 
 		public bool Equals(FluentSelection x, FluentSelection y)
 		{
-			return x.Match == y.Match
+			return AreEqual(x.Match, y.Match)
 				&& AreEqual(x.Variants, y.Variants);
 		}
 
 		public bool Equals(FluentVariant x, FluentVariant y)
 		{
 			return x.IsDefault == y.IsDefault
-				&& x.Key == y.Key
+				&& AreEqual(x.Key, y.Key)
 				&& AreEqual(x.Content, y.Content);
 		}
 
@@ -225,7 +226,7 @@ namespace FluentTranslate.Infrastructure
 		public bool Equals(FluentCallArgument x, FluentCallArgument y)
 		{
 			return x.Id == y.Id
-				&& x.Value == y.Value;
+				&& AreEqual(x.Value, y.Value);
 		}
 
 		public bool Equals(FluentIdentifier x, FluentIdentifier y)
@@ -286,17 +287,18 @@ namespace FluentTranslate.Infrastructure
 			}
 		}
 
+		public static bool AreEqual(IEnumerable x, IEnumerable y)
+		{
+			if (x is null || y is null) return false;
+			var l1 = x.Cast<object>().ToArray();
+			var l2 = y.Cast<object>().ToArray();
+			return l1.Length == l2.Length
+				&& l1.Zip(l2, AreEqual).All(r => r);
+		}
+
 		public static bool AreEqual(object x, object y)
 		{
 			if (x is null || y is null) return false;
-			if (x is IEnumerable list1 && y is IEnumerable list2)
-			{
-				var l1 = list1.Cast<object>().ToArray();
-				var l2 = list2.Cast<object>().ToArray();
-				return l1.Length == l2.Length
-					&& l1.Zip(l2, AreEqual).All(r => r);
-			}
-
 			return x.Equals(y);
 		}
 	}

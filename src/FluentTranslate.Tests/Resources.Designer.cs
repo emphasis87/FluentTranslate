@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FluentTranslate.Parser.Tests {
+namespace FluentTranslate.Tests {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace FluentTranslate.Parser.Tests {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FluentTranslate.Parser.Tests.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FluentTranslate.Tests.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -173,7 +173,7 @@ namespace FluentTranslate.Parser.Tests {
         
         /// <summary>
         ///   Looks up a localized string similar to # $title (String) - The title of the bookmark to remove.
-        ///remove-bookmark = Are you sure you want to remove { { { $title } } }?.
+        ///remove-bookmark = Are you sure you want to remove { { { $title } } } { &quot;this bookmark&quot; }?.
         /// </summary>
         internal static string PlaceablesInner {
             get {

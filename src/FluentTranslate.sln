@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Common", "FluentTranslate.Common\FluentTranslate.Common.csproj", "{3862B5B3-0328-4706-9FF8-93388D347B48}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Parser", "FluentTranslate.Parser\FluentTranslate.Parser.csproj", "{F218AD05-2D9C-42D3-AD93-F92313B62CAB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Parser.Tests", "FluentTranslate.Parser.Tests\FluentTranslate.Parser.Tests.csproj", "{DC8FE84E-E4A2-4070-A2B3-BCAC7D178750}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.WebHost", "FluentTranslate.WebHost\FluentTranslate.WebHost.csproj", "{4E55D2E6-49DC-462C-8809-D7E4E173EF92}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate", "FluentTranslate\FluentTranslate.csproj", "{CDB8CD61-601F-4368-8AED-626594F70BA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Tests", "FluentTranslate.Tests\FluentTranslate.Tests.csproj", "{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,18 +17,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3862B5B3-0328-4706-9FF8-93388D347B48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3862B5B3-0328-4706-9FF8-93388D347B48}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3862B5B3-0328-4706-9FF8-93388D347B48}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3862B5B3-0328-4706-9FF8-93388D347B48}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F218AD05-2D9C-42D3-AD93-F92313B62CAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F218AD05-2D9C-42D3-AD93-F92313B62CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F218AD05-2D9C-42D3-AD93-F92313B62CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F218AD05-2D9C-42D3-AD93-F92313B62CAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC8FE84E-E4A2-4070-A2B3-BCAC7D178750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC8FE84E-E4A2-4070-A2B3-BCAC7D178750}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC8FE84E-E4A2-4070-A2B3-BCAC7D178750}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC8FE84E-E4A2-4070-A2B3-BCAC7D178750}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4E55D2E6-49DC-462C-8809-D7E4E173EF92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4E55D2E6-49DC-462C-8809-D7E4E173EF92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E55D2E6-49DC-462C-8809-D7E4E173EF92}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +29,10 @@ Global
 		{CDB8CD61-601F-4368-8AED-626594F70BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDB8CD61-601F-4368-8AED-626594F70BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDB8CD61-601F-4368-8AED-626594F70BA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
