@@ -13,7 +13,7 @@ namespace FluentTranslate.Infrastructure
 		{
 		}
 
-		protected override Task<DateTime?> GetLastModifiedAsync(Context context, CultureInfo culture = null)
+		protected override async Task<DateTime?> GetLastModifiedAsync(Context context, CultureInfo culture = null)
 		{
 			if (!File.Exists(RequestPath))
 				return null;
@@ -21,7 +21,7 @@ namespace FluentTranslate.Infrastructure
 			try
 			{
 				var lastWrite = File.GetLastWriteTime(RequestPath);
-				return Task.FromResult((DateTime?)lastWrite);
+				return lastWrite;
 			}
 			catch (Exception)
 			{

@@ -29,17 +29,20 @@ namespace FluentTranslate.Infrastructure
 
 		public IFluentDeserializer Get(string extension)
 		{
-			return _deserializers.TryGetValue(extension, out var deserializer) ? deserializer : default;
+			var ext = extension.TrimStart('.');
+			return _deserializers.TryGetValue(ext, out var deserializer) ? deserializer : default;
 		}
 
 		public void Add(string extension, IFluentDeserializer deserializer)
 		{
-			_deserializers[extension] = deserializer;
+			var ext = extension.TrimStart('.');
+			_deserializers[ext] = deserializer;
 		}
 
 		public void Remove(string extension)
 		{
-			_deserializers.Remove(extension);
+			var ext = extension.TrimStart('.');
+			_deserializers.Remove(ext);
 		}
 	}
 }

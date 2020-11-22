@@ -10,7 +10,7 @@ namespace FluentTranslate.Infrastructure
 	{
 		protected string RequestPath { get; }
 
-		private DateTime? _lastModified;
+		private DateTime? _lastModified = DateTime.MinValue;
 
 		protected IFluentDeserializerContainer Deserializers =>
 			Configuration.Services.GetService<IFluentDeserializerContainer>() ?? FluentDeserializerContainer.Default;

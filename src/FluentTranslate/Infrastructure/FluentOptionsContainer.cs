@@ -1,44 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.Concurrent;
 
 namespace FluentTranslate.Infrastructure
 {
 	public interface IFluentOptionsContainer
 	{
 		T Get<T>();
-		void Add(object options);
-		bool Remove(object options);
+		void Add<T>(T options);
+		bool Remove<T>(T options);
 	}
 
 	public class FluentOptionsContainer : IFluentOptionsContainer
 	{
-		private readonly List<object> _options =
-			new List<object>();
+		private readonly ConcurrentDictionary<Type, object> _options =
+			new ConcurrentDictionary<Type, object>();
 
 		public T Get<T>()
 		{
-			return _options.OfType<T>().FirstOrDefault(x => x.GetType() == typeof(T))
-				?? _options.OfType<T>().FirstOrDefault()
-				?? Activator.CreateInstance<T>();
+			var type = typeof(T);
+			if (_options.TryGetValue(type, out var options))
+				return (T) options;
+
+			options = Activator.CreateInstance<T>();
+			var result = _options.GetOrAdd(type, options);
+			return (T) result;
 		}
 
-		public void Add(object options)
+		public void Add<T>(T options)
 		{
 			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 
-			if (!_options.Contains(options))
-				_options.Add(options);
+			var type = typeof(T);
+			_options[type] = options;
 		}
 
-		public bool Remove(object options)
+		public bool Remove<T>(T options)
 		{
 			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 
-			return _options.Remove(options);
+			var type = typeof(T);
+			return _options.TryRemove(type, out _);
 		}
 	}
 }

@@ -79,13 +79,13 @@ namespace FluentTranslate.Infrastructure
 
 			if (context.LastResult is null)
 			{
-				var initialResult = new AsyncLazy<FluentResource>(() => FindResourceAsync(context, culture));
-				var actualResult = Interlocked.CompareExchange(ref context.InitialResult, initialResult, null);
-				var result = await actualResult.Value ?? new FluentResource();
-				Interlocked.CompareExchange(ref context.LastResult, result, null);
+				var initResult = new AsyncLazy<FluentResource>(() => FindResourceAsync(context, culture));
+				var prevResult = Interlocked.CompareExchange(ref context.InitialResult, initResult, null);
+				var result = await (prevResult ?? initResult) ?? new FluentResource();
+				var prev = Interlocked.CompareExchange(ref context.LastResult, result, null);
 				context.LastPolled = now;
 				context.InitialResult = null;
-				return result;
+				return prev ?? result;
 			}
 
 			var isUpdating = Interlocked.CompareExchange(ref context.IsUpdating, 1, 0);
@@ -98,7 +98,7 @@ namespace FluentTranslate.Infrastructure
 				}
 				Interlocked.Exchange(ref context.IsUpdating, 0);
 				context.LastPolled = now;
-				return result;
+				return context.LastResult;
 			}
 
 			return context.LastResult;
