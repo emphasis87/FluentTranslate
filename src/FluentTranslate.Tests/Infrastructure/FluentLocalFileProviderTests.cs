@@ -10,6 +10,7 @@ using NUnit.Framework;
 namespace FluentTranslate.Tests.Infrastructure
 {
 	[TestFixture]
+	[Parallelizable(ParallelScope.Self)]
 	public class FluentLocalFileProviderTests
 	{
 		private string WorkingDirectory { get; set; }
@@ -30,7 +31,7 @@ namespace FluentTranslate.Tests.Infrastructure
 		}
 
 		[Test]
-		public async Task Default_configuration_should_handle_empty_file_and_file_change()
+		public async Task Should_handle_empty_file_and_file_change()
 		{
 			var configuration = FluentConfiguration.Default;
 			var options = configuration.Options.Get<FluentProviderOptions>();
@@ -77,7 +78,6 @@ namespace FluentTranslate.Tests.Infrastructure
 			);
 			provider.CheckLastModifiedCount.Should().Be(3);
 			provider.FindFileAsyncCount.Should().Be(2);
-
 		}
 	}
 
@@ -89,7 +89,7 @@ namespace FluentTranslate.Tests.Infrastructure
 
 		
 		public int CheckLastModifiedCount { get; set; }
-		protected override bool CheckLastModified(Context context, CultureInfo culture)
+		protected override bool CheckLastModified(Context context, CultureInfo culture = null)
 		{
 			CheckLastModifiedCount++;
 			return base.CheckLastModified(context, culture);

@@ -13,9 +13,9 @@ namespace FluentTranslate.Infrastructure
 		private DateTime? _lastModified = DateTime.MinValue;
 
 		protected IFluentDeserializerContainer Deserializers =>
-			Configuration.Services.GetService<IFluentDeserializerContainer>() ?? FluentDeserializerContainer.Default;
+			Configuration?.Services.GetService<IFluentDeserializerContainer>() ?? FluentDeserializerContainer.Default;
 
-		protected FluentFileProvider(string path, IFluentConfiguration configuration) 
+		protected FluentFileProvider(string path, IFluentConfiguration configuration = null) 
 			: base(configuration)
 		{
 			RequestPath = path ?? throw new ArgumentNullException(nameof(path));
@@ -37,7 +37,7 @@ namespace FluentTranslate.Infrastructure
 			return result ?? new FluentResource();
 		}
 
-		protected virtual bool CheckLastModified(Context context, CultureInfo culture) => true;
+		protected virtual bool CheckLastModified(Context context, CultureInfo culture = null) => true;
 		protected abstract Task<DateTime?> GetLastModifiedAsync(Context context, CultureInfo culture = null);
 
 		protected abstract Task<string> FindFileAsync(Context context, CultureInfo culture = null);

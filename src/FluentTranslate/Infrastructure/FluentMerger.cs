@@ -21,11 +21,9 @@ namespace FluentTranslate.Infrastructure
 		protected IFluentConfiguration Configuration { get; }
 
 		protected IFluentCloneFactory Factory =>
-			Configuration.Services.GetService<IFluentCloneFactory>() ?? FluentCloneFactory.Default;
+			Configuration?.Services.GetService<IFluentCloneFactory>() ?? FluentCloneFactory.Default;
 
-		protected FluentMerger() { }
-
-		public FluentMerger(IFluentConfiguration configuration)
+		public FluentMerger(IFluentConfiguration configuration = null)
 		{
 			Configuration = configuration;
 		}

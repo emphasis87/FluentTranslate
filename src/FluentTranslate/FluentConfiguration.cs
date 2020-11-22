@@ -33,7 +33,7 @@ namespace FluentTranslate
 				configuration.Services.AddService<IFluentConfiguration>(configuration);
 				configuration.Services.AddService<IFluentProvider>(configuration.Providers);
 				configuration.Services.AddService<IFluentCloneFactory>(FluentCloneFactory.Default);
-				configuration.Services.AddService<IFluentMerger>(FluentMerger.Default);
+				configuration.Services.AddService<IFluentMerger>(new FluentMerger(configuration));
 				configuration.Services.AddService<IFluentDeserializerContainer>(FluentDeserializerContainer.Default);
 
 				configuration.Services.AddService(new HttpClient());

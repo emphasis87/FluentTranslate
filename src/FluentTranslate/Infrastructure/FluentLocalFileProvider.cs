@@ -8,7 +8,7 @@ namespace FluentTranslate.Infrastructure
 {
 	public class FluentLocalFileProvider : FluentFileProvider
 	{
-		public FluentLocalFileProvider(string path, IFluentConfiguration configuration)
+		public FluentLocalFileProvider(string path, IFluentConfiguration configuration = null)
 			: base(path, configuration)
 		{
 		}

@@ -18,7 +18,7 @@ namespace FluentTranslate.Infrastructure
 		protected IFluentConfiguration Configuration { get; }
 
 		protected IFluentEqualityComparer EqualityComparer =>
-			Configuration.Services.GetService<IFluentEqualityComparer>() ?? FluentEqualityComparer.Default;
+			Configuration?.Services.GetService<IFluentEqualityComparer>() ?? FluentEqualityComparer.Default;
 
 		private readonly ConcurrentDictionary<CultureInfo, Context> _contextByCulture =
 			new ConcurrentDictionary<CultureInfo, Context>();
@@ -28,14 +28,14 @@ namespace FluentTranslate.Infrastructure
 		/// </summary>
 		public bool IsLocalized { get; set; }
 		
-		protected FluentProvider(IFluentConfiguration configuration)
+		protected FluentProvider(IFluentConfiguration configuration = null)
 		{
-			Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+			Configuration = configuration;
 		}
 
 		protected virtual TimeSpan GetPollingInterval()
 		{
-			return Configuration.Options.Get<FluentProviderOptions>()?.PollingInterval
+			return Configuration?.Options.Get<FluentProviderOptions>()?.PollingInterval
 				?? TimeSpan.FromSeconds(5);
 		}
 

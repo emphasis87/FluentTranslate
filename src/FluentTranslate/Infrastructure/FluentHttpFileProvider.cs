@@ -9,10 +9,10 @@ namespace FluentTranslate.Infrastructure
 	{
 		private readonly HttpClient _client;
 
-		protected HttpClient Client => _client
-			?? Configuration.Services.GetService<HttpClient>();
+		protected HttpClient Client => _client 
+			?? Configuration?.Services.GetService<HttpClient>();
 
-		public FluentHttpFileProvider(string path, HttpClient client, IFluentConfiguration configuration)
+		public FluentHttpFileProvider(string path, HttpClient client, IFluentConfiguration configuration = null)
 			: base(path, configuration)
 		{
 			_client = client;

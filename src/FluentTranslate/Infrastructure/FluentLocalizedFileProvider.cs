@@ -15,7 +15,7 @@ namespace FluentTranslate.Infrastructure
 		private readonly ConcurrentDictionary<string, IFluentProvider> _providerByPath = 
 			new ConcurrentDictionary<string, IFluentProvider>();
 
-		protected FluentLocalizedFileProvider(string rootPath, IFluentConfiguration configuration) 
+		protected FluentLocalizedFileProvider(string rootPath, IFluentConfiguration configuration = null) 
 			: base(configuration)
 		{
 			RootPath = rootPath;
@@ -26,7 +26,8 @@ namespace FluentTranslate.Infrastructure
 		protected virtual IEnumerable<string> GetPaths(CultureInfo culture)
 		{
 			var extension = Path.GetExtension(RootPath);
-			yield return Path.ChangeExtension(RootPath, $"{culture.Name}{extension}");
+			if (!string.IsNullOrWhiteSpace(culture.Name))
+				yield return Path.ChangeExtension(RootPath, $"{culture.Name}{extension}");
 			yield return Path.ChangeExtension(RootPath, $"{culture.TwoLetterISOLanguageName}{extension}");
 			yield return RootPath;
 		}
@@ -37,7 +38,7 @@ namespace FluentTranslate.Infrastructure
 			var paths = GetPaths(culture);
 			foreach (var path in paths)
 			{
-				if (_providerByPath.TryGetValue(path, out var provider))
+				if (!_providerByPath.TryGetValue(path, out var provider))
 				{
 					provider = CreateProvider(path);
 					provider = _providerByPath.GetOrAdd(path, provider);

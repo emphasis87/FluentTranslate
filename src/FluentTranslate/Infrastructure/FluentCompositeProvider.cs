@@ -18,11 +18,11 @@ namespace FluentTranslate.Infrastructure
 		private readonly object _lock = new object();
 
 		protected IFluentMerger Merger =>
-			Configuration.Services.GetService<IFluentMerger>() ?? FluentMerger.Default;
+			Configuration?.Services.GetService<IFluentMerger>() ?? FluentMerger.Default;
 
 		private List<IFluentProvider> _providers = new List<IFluentProvider>();
 
-		public FluentCompositeProvider(IFluentConfiguration configuration)
+		public FluentCompositeProvider(IFluentConfiguration configuration = null)
 			: base(configuration)
 		{
 			

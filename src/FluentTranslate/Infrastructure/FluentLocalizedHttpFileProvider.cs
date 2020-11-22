@@ -6,7 +6,7 @@ namespace FluentTranslate.Infrastructure
 	{
 		protected HttpClient Client { get; }
 
-		public FluentLocalizedHttpFileProvider(string rootPath, HttpClient client, IFluentConfiguration configuration)
+		public FluentLocalizedHttpFileProvider(string rootPath, HttpClient client, IFluentConfiguration configuration = null)
 			: base(rootPath, configuration)
 		{
 			Client = client;

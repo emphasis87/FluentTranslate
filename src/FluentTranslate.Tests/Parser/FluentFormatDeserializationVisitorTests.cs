@@ -12,6 +12,7 @@ using NUnit.Framework;
 
 namespace FluentTranslate.Tests.Parser
 {
+	[Parallelizable(ParallelScope.All)]
 	public class FluentFormatDeserializationVisitorTests
 	{
 		private static FluentResource Act(string content)
@@ -27,10 +28,10 @@ namespace FluentTranslate.Tests.Parser
 			var mode = 0;
 			foreach (var modeName in lexer.ModeNames)
 			{
-				Console.WriteLine($"{mode++} {modeName}");
+				TestContext.WriteLine($"{mode++} {modeName}");
 			}
 
-			Console.WriteLine();
+			TestContext.WriteLine();
 
 			return resource;
 		}

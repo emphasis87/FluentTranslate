@@ -2,7 +2,7 @@
 {
 	public class FluentLocalizedLocalFileProvider : FluentLocalizedFileProvider
 	{
-		public FluentLocalizedLocalFileProvider(string rootPath, IFluentConfiguration configuration)
+		public FluentLocalizedLocalFileProvider(string rootPath, IFluentConfiguration configuration = null)
 			: base(rootPath, configuration)
 		{
 
