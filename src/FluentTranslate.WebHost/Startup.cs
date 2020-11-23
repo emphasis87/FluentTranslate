@@ -66,7 +66,7 @@ namespace FluentTranslate.WebHost
 					opt.RequestPath ??= "/translations";
 				});
 			
-			services.AddHostedService<FluentTranslateFileGenerator>();
+			services.AddHostedService<FluentFileGeneratorService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
