@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
@@ -27,7 +28,7 @@ namespace FluentTranslate.WebHost
 		public void ConfigureServices(IServiceCollection services)
 		{
 			var section = Configuration.GetSection(FluentTranslateOptions.Section);
-			var options = section.Get<FluentTranslateOptions>();
+			var options = section.Get<FluentTranslateOptions>() ?? new FluentTranslateOptions();
 			
 			var contentRootPath = HostEnvironment.ContentRootPath;
 
@@ -49,8 +50,6 @@ namespace FluentTranslate.WebHost
 					opt.SourceFilesPath = sourceFilesPath;
 					opt.GeneratedFilesPath = generatedFilesPath;
 					opt.StaticFilesPath = staticFilesPath;
-
-					opt.RequestPath ??= "/translations";
 
 					// Add default extension to file names and change to lowercase
 					var generateFiles = opt.GenerateFiles?
@@ -74,6 +73,7 @@ namespace FluentTranslate.WebHost
 				});
 			
 			services.AddHostedService<FluentFileGeneratorService>();
+			services.AddDirectoryBrowser();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,14 +93,18 @@ namespace FluentTranslate.WebHost
 			var opt = options.Value;
 
 			var compositeProvider = new CompositeFileProvider(
-				new PhysicalFileProvider(opt.GeneratedFilesPath),
+				new PhysicalFileProvider(opt.GeneratedFilesPath) {UseActivePolling = true},
 				new PhysicalFileProvider(opt.StaticFilesPath));
-			app.UseStaticFiles(new StaticFileOptions
+			var sharedOptions = new SharedOptions()
 			{
 				FileProvider = compositeProvider,
 				RequestPath = opt.RequestPath,
+			};
+			app.UseStaticFiles(new StaticFileOptions(sharedOptions)
+			{
 				ContentTypeProvider = contentTypeProvider,
 			});
+			app.UseDirectoryBrowser(new DirectoryBrowserOptions(sharedOptions));
 		}
 	}
 
