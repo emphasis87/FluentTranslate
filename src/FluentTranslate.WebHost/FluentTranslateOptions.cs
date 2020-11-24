@@ -10,10 +10,10 @@
 
 		public string RequestPath { get; set; }
 
-		public GenerateFileOptions[] GenerateFiles { get; set; }
+		public FluentGenerateFileOptions[] GenerateFiles { get; set; }
 	}
 
-	public class GenerateFileOptions
+	public class FluentGenerateFileOptions
 	{
 		public string Name { get; set; }
 		public string[] Sources { get; set; }

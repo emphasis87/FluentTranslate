@@ -41,7 +41,8 @@ namespace FluentTranslate
 				configuration.Options.Add(
 					new FluentProviderOptions()
 					{
-						PollingInterval = TimeSpan.FromSeconds(5),
+						PollingInterval = TimeSpan.FromSeconds(1),
+						FilePollingInterval = TimeSpan.FromSeconds(5),
 						HttpPollingInterval = TimeSpan.FromMinutes(1),
 					});
 

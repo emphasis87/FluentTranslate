@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentTranslate.Domain;
+using FluentTranslate.WebHost.Infrastructure;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -13,20 +19,26 @@ namespace FluentTranslate.WebHost
 {
 	public class FluentFileGeneratorService : BackgroundService
 	{
-		public IHostEnvironment HostEnvironment { get; }
-
 		private readonly IOptionsMonitor<FluentTranslateOptions> _optionsMonitor;
-		private readonly Subject<int> _updateSubject = new Subject<int>();
 
-		private FileSystemWatcher _watcher;
-		private IDisposable _optionsSubscription;
-		private IDisposable _updateSubscription;
+		private readonly Subject<int> _sourceSubject = new Subject<int>();
+		private readonly Subject<FluentTranslateOptions> _optionsSubject = new Subject<FluentTranslateOptions>();
 
+		private FileSystemWatcher _sourceWatcher;
+		
+		private IDisposable _subscriptions;
 
-		public FluentFileGeneratorService(IHostEnvironment hostEnvironment, IOptionsMonitor<FluentTranslateOptions> optionsMonitor)
+		private readonly ConcurrentDictionary<string, GenerateFileContext> _generateContextByPath = 
+			new ConcurrentDictionary<string, GenerateFileContext>();
+
+		private readonly ConcurrentDictionary<string, SourceFileContext> _sourceContextByPath =
+			new ConcurrentDictionary<string, SourceFileContext>();
+
+		private ISet<string> _cultureNames;
+		private ISet<string> _cultureTwoLetterIsoNames;
+
+		public FluentFileGeneratorService(IOptionsMonitor<FluentTranslateOptions> optionsMonitor)
 		{
-			HostEnvironment = hostEnvironment;
-
 			_optionsMonitor = optionsMonitor;	
 		}
 
@@ -34,61 +46,186 @@ namespace FluentTranslate.WebHost
 		{
 			var options = _optionsMonitor.CurrentValue;
 
-			_watcher = new FileSystemWatcher()
+			_sourceWatcher = new FileSystemWatcher()
 			{
 				Path = options.SourceFilesPath,
 				IncludeSubdirectories = true,
 			};
-			_watcher.Changed += (sender, args) => _updateSubject.OnNext(0);
-			_watcher.Created += (sender, args) => _updateSubject.OnNext(0);
-			_watcher.Deleted += (sender, args) => _updateSubject.OnNext(0);
-			_watcher.Renamed += (sender, args) => _updateSubject.OnNext(0);
+			_sourceWatcher.Changed += (sender, args) => _sourceSubject.OnNext(0);
+			_sourceWatcher.Created += (sender, args) => _sourceSubject.OnNext(0);
+			_sourceWatcher.Deleted += (sender, args) => _sourceSubject.OnNext(0);
+			_sourceWatcher.Renamed += (sender, args) => _sourceSubject.OnNext(0);
 
-			_watcher.EnableRaisingEvents = true;
+			_sourceWatcher.EnableRaisingEvents = true;
 
-			_optionsSubscription = _optionsMonitor.OnChange(_ => _updateSubject.OnNext(0));
+			// Monitor options changes, report only distinct generated files
+			var optionsMonitorSubscription = _optionsMonitor
+				.OnChange(opt => _optionsSubject.OnNext(opt));
+			var optionChanges = _optionsSubject
+				.DistinctUntilChanged(FluentFileGeneratorOptionsEqualityComparer.Default)
+				.Select(_ => 0);
 
-			_updateSubscription = _updateSubject
-				.Throttle(TimeSpan.FromSeconds(1))
+			// Throttle updating generated files to 5s
+			var updateSubscription = _sourceSubject.Merge(optionChanges)
+				.Throttle(TimeSpan.FromSeconds(5))
 				.Subscribe(_ => UpdateGeneratedFiles());
+			
+			_subscriptions = new CompositeDisposable(
+				optionsMonitorSubscription, updateSubscription);
+
+			var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+			_cultureNames = cultures.Select(x => x.Name).ToImmutableHashSet();
+			_cultureTwoLetterIsoNames = cultures.Select(x => x.TwoLetterISOLanguageName).ToImmutableHashSet();
 
 			UpdateGeneratedFiles();
 
 			while (!stoppingToken.IsCancellationRequested)
 			{
-				await Task.Delay(2000, stoppingToken);
+				await Task.Delay(TimeSpan.FromSeconds(4), stoppingToken);
 			}
 		}
-
+		
 		private void UpdateGeneratedFiles()
 		{
 			var options = _optionsMonitor.CurrentValue;
-
 			var sourceFilesPath = options.SourceFilesPath;
-			var generatedFilesPath = options.GeneratedFilesPath;
-			var sources = options.GenerateFiles
-				.SelectMany(x => x.Sources)
-				.Select(x => Path.IsPathRooted(x) ? x : Path.Combine(sourceFilesPath, x))
-				.ToHashSet();
 
-			var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+			// Get context for generated files
+			var generateFiles = options.GenerateFiles;
+			var generateContexts = generateFiles
+				.Select(GetGenerateFileContext)
+				.ToArray();
+			// Remove old generated files
+			var generatePaths = generateFiles.Select(gen => gen.Name).ToArray();
+			foreach (var generatePath in _generateContextByPath.Keys.Except(generatePaths))
+			{
+				_generateContextByPath.TryRemove(generatePath, out _);
+			}
+
+			// Get context for source files
+			var sourceFiles = Directory.GetFiles(sourceFilesPath, "*",
+				new EnumerationOptions() {RecurseSubdirectories = true});
+			
+			var sourceContexts = sourceFiles
+				.Select(GetSourceFileContext)
+				.ToArray();
+			var sourceContextsByInvariantPath = sourceContexts
+				.ToLookup(x => x.InvariantPath);
+			var sourceInvariantPaths = sourceContexts
+				.SelectMany(x => new []{x.InvariantPath, x.Path})
+				.Select(path => path[(sourceFilesPath.Length + 1)..])
+				.Distinct()
+				.ToArray();
+
+			foreach (var generateContext in generateContexts)
+			{
+				
+			}
 		}
 
-		private void Cleanup()
+		private GenerateFileContext GetGenerateFileContext(FluentGenerateFileOptions generate)
 		{
-			var watcher = Interlocked.Exchange(ref _watcher, null);
-			watcher?.Dispose();
-			
-			var optionsSub = Interlocked.Exchange(ref _optionsSubscription, null);
-			optionsSub?.Dispose();
+			if (_generateContextByPath.TryGetValue(generate.Name, out var context))
+				return context;
 
-			var updateSub = Interlocked.Exchange(ref _updateSubscription, null);
-			updateSub?.Dispose();
+			context = CreateGenerateFileContext(generate);
+			context = _generateContextByPath.GetOrAdd(generate.Name, context);
+			return context;
+		}
+
+		private GenerateFileContext CreateGenerateFileContext(FluentGenerateFileOptions generate)
+		{
+			var path = generate.Name;
+			var sources = generate.Sources;
+			var context = new GenerateFileContext(path, sources);
+			return context;
+		}
+
+		private SourceFileContext GetSourceFileContext(string path)
+		{
+			if (_sourceContextByPath.TryGetValue(path, out var context)) 
+				return context;
+
+			context = CreateSourceFileContext(path);
+			context = _sourceContextByPath.GetOrAdd(path, context);
+			return context;
+		}
+
+		private SourceFileContext CreateSourceFileContext(string path)
+		{
+			// Find the invariant path and cultures specified in the file name
+			var invariantPath = path;
+			var cultures = new HashSet<string>();
+			var extensions = new Stack<string>();
+			string extension;
+			while (!string.IsNullOrEmpty(extension = Path.GetExtension(invariantPath)))
+			{
+				extension = extension.TrimStart('.');
+
+				if (_cultureTwoLetterIsoNames.Contains(extension))
+				{
+					cultures.Add(extension);
+				}
+				else if (_cultureNames.Contains(extension))
+				{
+					cultures.Add(extension.Substring(0, 2));
+					cultures.Add(extension);
+				}
+				else
+				{
+					extensions.Push(extension);
+				}
+
+				invariantPath = Path.ChangeExtension(invariantPath, null);
+			}
+
+			while (extensions.TryPop(out extension))
+			{
+				invariantPath = $"{invariantPath}.{extension}";
+			}
+
+			var context = new SourceFileContext(path, invariantPath, cultures.ToImmutableHashSet());
+			return context;
+		}
+
+		private class SourceFileContext
+		{
+			public string Path { get; }
+			public string InvariantPath { get; }
+			public ImmutableHashSet<string> Cultures { get; }
+
+			public FluentResource LastResult;
+			public DateTime? LastModified;
+
+			public SourceFileContext(string path, string invariantPath, ImmutableHashSet<string> cultures)
+			{
+				Path = path;
+				InvariantPath = invariantPath;
+				Cultures = cultures;
+			}
+		}
+
+		private class GenerateFileContext
+		{
+			public string Path { get; }
+			public ImmutableList<string> Sources { get; }
+
+			public DateTime? LastModified;
+
+			public GenerateFileContext(string path, IEnumerable<string> sources)
+			{
+				Path = path;
+				Sources = sources.ToImmutableList();
+			}
 		}
 
 		public override void Dispose()
 		{
-			Cleanup();
+			var watcher = Interlocked.Exchange(ref _sourceWatcher, null);
+			watcher?.Dispose();
+
+			var subscriptions = Interlocked.Exchange(ref _subscriptions, null);
+			subscriptions?.Dispose();
 
 			base.Dispose();
 		}

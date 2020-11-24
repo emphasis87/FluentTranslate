@@ -36,7 +36,7 @@ namespace FluentTranslate.Tests.Infrastructure
 		{
 			var configuration = FluentConfiguration.Default;
 			var options = configuration.Options.Get<FluentProviderOptions>();
-			options.PollingInterval = TimeSpan.FromSeconds(1);
+			options.FilePollingInterval = TimeSpan.FromSeconds(1);
 
 			var fn = Path.Combine(WorkingDirectory, "translations.ftl");
 

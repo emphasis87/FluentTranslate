@@ -13,6 +13,12 @@ namespace FluentTranslate.Infrastructure
 		{
 		}
 
+		protected override TimeSpan GetPollingInterval()
+		{
+			return Configuration?.Options.Get<FluentProviderOptions>()?.FilePollingInterval
+				?? TimeSpan.FromSeconds(5);
+		}
+
 		protected override async Task<DateTime?> GetLastModifiedAsync(Context context, CultureInfo culture = null)
 		{
 			if (!File.Exists(RequestPath))

@@ -1,16 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -33,24 +28,15 @@ namespace FluentTranslate.WebHost
 		{
 			var section = Configuration.GetSection(FluentTranslateOptions.Section);
 			var options = section.Get<FluentTranslateOptions>();
+			
+			var contentRootPath = HostEnvironment.ContentRootPath;
 
-			var sourceFilesPath = options.SourceFilesPath;
-			var generatedFilesPath = options.GeneratedFilesPath;
-			var staticFilesPath = options.StaticFilesPath;
-
-			if (string.IsNullOrWhiteSpace(sourceFilesPath))
-				sourceFilesPath = Path.Combine("translations", "source");
-			if (string.IsNullOrWhiteSpace(generatedFilesPath))
-				generatedFilesPath = Path.Combine("translations", "generated");
-			if (string.IsNullOrWhiteSpace(staticFilesPath))
-				staticFilesPath = Path.Combine("translations", "static");
-
-			if (!Path.IsPathRooted(sourceFilesPath))
-				sourceFilesPath = Path.Combine(HostEnvironment.ContentRootPath, sourceFilesPath);
-			if (!Path.IsPathRooted(generatedFilesPath))
-				generatedFilesPath = Path.Combine(HostEnvironment.ContentRootPath, generatedFilesPath);
-			if (!Path.IsPathRooted(staticFilesPath))
-				staticFilesPath = Path.Combine(HostEnvironment.ContentRootPath, staticFilesPath);
+			var sourceFilesPath = (options.SourceFilesPath.TrimOrNull() ?? Path.Combine("translations", "source"))
+				.Rooted(contentRootPath).ToLowerInvariant();
+			var generatedFilesPath = (options.GeneratedFilesPath.TrimOrNull() ?? Path.Combine("translations", "generated"))
+				.Rooted(contentRootPath).ToLowerInvariant();
+			var staticFilesPath = (options.StaticFilesPath.TrimOrNull() ?? Path.Combine("translations", "static"))
+				.Rooted(contentRootPath).ToLowerInvariant();
 
 			Directory.CreateDirectory(generatedFilesPath);
 			Directory.CreateDirectory(staticFilesPath);
@@ -63,7 +49,28 @@ namespace FluentTranslate.WebHost
 					opt.SourceFilesPath = sourceFilesPath;
 					opt.GeneratedFilesPath = generatedFilesPath;
 					opt.StaticFilesPath = staticFilesPath;
+
 					opt.RequestPath ??= "/translations";
+
+					// Add default extension to file names and change to lowercase
+					var generateFiles = opt.GenerateFiles?
+						.Where(generate => !string.IsNullOrWhiteSpace(generate?.Name))
+						.Select(generate =>
+						{
+							generate.Name = generate.Name
+								.Rooted(generatedFilesPath).WithExtension(".ftl").ToLowerInvariant();
+
+							var sources = generate.Sources?
+								.Where(source => !string.IsNullOrWhiteSpace(source))
+								.Select(source => source.WithExtension(".ftl").ToLowerInvariant())
+								.ToArray();
+							generate.Sources = sources ?? new string[0];
+							return generate;
+						})
+						.OrderBy(x => x.Name, StringComparer.InvariantCultureIgnoreCase)
+						.ToArray();
+
+					opt.GenerateFiles = generateFiles ?? new FluentGenerateFileOptions[0];
 				});
 			
 			services.AddHostedService<FluentFileGeneratorService>();
@@ -93,5 +100,12 @@ namespace FluentTranslate.WebHost
 				ContentTypeProvider = contentTypeProvider,
 			});
 		}
+	}
+
+	internal static class PathHelper
+	{
+		public static string TrimOrNull(this string path) => string.IsNullOrWhiteSpace(path) ? null : path.Trim();
+		public static string Rooted(this string path, string root) => !Path.IsPathRooted(path) ? Path.Combine(root, path) : path;
+		public static string WithExtension(this string path, string extension) => !Path.HasExtension(path) ? Path.ChangeExtension(path, extension) : path;
 	}
 }

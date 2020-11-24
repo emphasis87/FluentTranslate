@@ -10,6 +10,11 @@ namespace FluentTranslate.Infrastructure
 		public TimeSpan? PollingInterval { get; set; }
 
 		/// <summary>
+		/// Heuristic for limiting requesting updates from file providers.
+		/// </summary>
+		public TimeSpan? FilePollingInterval { get; set; }
+
+		/// <summary>
 		/// Heuristic for limiting requesting updates from HTTP providers.
 		/// </summary>
 		public TimeSpan? HttpPollingInterval { get; set; }

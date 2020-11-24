@@ -36,7 +36,7 @@ namespace FluentTranslate.Infrastructure
 		protected virtual TimeSpan GetPollingInterval()
 		{
 			return Configuration?.Options.Get<FluentProviderOptions>()?.PollingInterval
-				?? TimeSpan.FromSeconds(5);
+				?? TimeSpan.FromSeconds(1);
 		}
 
 		protected virtual CultureInfo GetCulture(CultureInfo culture = null)
