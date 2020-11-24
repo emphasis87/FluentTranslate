@@ -72,7 +72,7 @@ namespace FluentTranslate.Serialization
         {
 			context ??= CreateContext();
             var comment = string.IsNullOrWhiteSpace(message.Comment) ? null : Serialize(new FluentComment(1, message.Comment), context);
-            var entry = $"{message.Reference} =";
+            var entry = $"{message.Reference} = ";
             context.AddIndent();
             var contentItems = message.Content
                 .Select(content => Serialize(content, context))

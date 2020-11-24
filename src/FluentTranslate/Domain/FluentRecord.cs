@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FluentTranslate.Domain
 {
-	public abstract class FluentRecord : FluentElement, IFluentContainer, IEnumerable<IFluentContent>, IEnumerable<FluentAttribute>
+	public abstract class FluentRecord : FluentElement, IFluentContainer, IFluentEntry, IFluentReference, IEnumerable<IFluentContent>, IEnumerable<FluentAttribute>
 	{
         public string Comment { get; set; }
 		public string Id { get; set; }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
@@ -25,6 +26,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FluentTranslate\FluentTranslate.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="translations\generated\" />
   </ItemGroup>
 
 

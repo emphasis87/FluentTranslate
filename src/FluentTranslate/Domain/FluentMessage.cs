@@ -1,11 +1,8 @@
-﻿using System.Collections;
-
-namespace FluentTranslate.Domain
+﻿namespace FluentTranslate.Domain
 {
-	public class FluentMessage : FluentRecord, IFluentEntry
+	public class FluentMessage : FluentRecord
     {
         public override string Type => "message";
-
         public override string Reference => Id;
 
 		public FluentMessage()

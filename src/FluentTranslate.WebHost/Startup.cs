@@ -91,11 +91,13 @@ namespace FluentTranslate.WebHost
 			contentTypeProvider.Mappings.Add(".ftl", "text/plain");
 
 			var opt = options.Value;
+
+			var compositeProvider = new CompositeFileProvider(
+				new PhysicalFileProvider(opt.GeneratedFilesPath),
+				new PhysicalFileProvider(opt.StaticFilesPath));
 			app.UseStaticFiles(new StaticFileOptions
 			{
-				FileProvider = new CompositeFileProvider(
-					new PhysicalFileProvider(opt.GeneratedFilesPath),
-					new PhysicalFileProvider(opt.StaticFilesPath)),
+				FileProvider = compositeProvider,
 				RequestPath = opt.RequestPath,
 				ContentTypeProvider = contentTypeProvider,
 			});

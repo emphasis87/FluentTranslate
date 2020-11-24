@@ -34,7 +34,7 @@ namespace FluentTranslate.Infrastructure
 				throw new ArgumentNullException(nameof(resources));
 
 			var result = new FluentResource();
-			var names = new HashSet<string>();
+			var entryByName = new Dictionary<string, FluentRecord>();
 
 			var entries = resources
 				.Where(x => x?.Entries != null)
@@ -43,12 +43,17 @@ namespace FluentTranslate.Infrastructure
 
 			foreach (var entry in entries)
 			{
-				if (!names.Add(entry.Reference))
+				if (entryByName.TryGetValue(entry.Reference, out var prev))
+				{
+					// Coalesce L1 comments
+					prev.Comment ??= entry.Comment;
 					continue;
+				}
 
 				var factory = Factory ?? FluentCloneFactory.Default;
-				var clone = (IFluentEntry)factory.Clone(entry);
+				var clone = factory.Clone(entry);
 				result.Entries.Add(clone);
+				entryByName[entry.Reference] = clone;
 			}
 
 			return result;

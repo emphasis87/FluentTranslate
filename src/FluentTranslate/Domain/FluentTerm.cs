@@ -1,8 +1,6 @@
-﻿using System.Collections;
-
-namespace FluentTranslate.Domain
+﻿namespace FluentTranslate.Domain
 {
-	public class FluentTerm : FluentRecord, IFluentEntry, IFluentContainer, IFluentReference
+	public class FluentTerm : FluentRecord
     {
         public override string Type => "term";
 		public override string Reference => $"-{Id}";
