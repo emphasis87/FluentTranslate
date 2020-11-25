@@ -4,6 +4,7 @@
 	<TargetFrameworks>net452;netstandard1.3</TargetFrameworks>
 	<LangVersion>preview</LangVersion>
 	<DefaultItemExcludes>$(DefaultItemExcludes);**\*.interp;**\*.tokens</DefaultItemExcludes>
+	<Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
