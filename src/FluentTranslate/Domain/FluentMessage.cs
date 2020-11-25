@@ -2,7 +2,7 @@
 {
 	public class FluentMessage : FluentRecord
     {
-        public override string Type => "message";
+        public override string Type => FluentElementTypes.Message;
         public override string Reference => Id;
 
 		public FluentMessage()

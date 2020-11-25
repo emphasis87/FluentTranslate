@@ -2,7 +2,7 @@
 {
 	public class FluentTerm : FluentRecord
     {
-        public override string Type => "term";
+        public override string Type => FluentElementTypes.Term;
 		public override string Reference => $"-{Id}";
 
 		public FluentTerm()

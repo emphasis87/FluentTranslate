@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FluentTranslate.Domain;
+using FluentTranslate.Parser;
 
 namespace FluentTranslate.Infrastructure
 {
 	public interface IFluentEngine
 	{
-		string Evaluate(string message, IDictionary<string, object> parameters);
+		string Evaluate(string query, IDictionary<string, object> parameters = null);
+		string Evaluate(IEnumerable<IFluentElement> elements, IDictionary<string, object> parameters = null);
 	}
 
 	public class FluentEngine : IFluentEngine, IEquatable<FluentEngine>
@@ -16,14 +18,14 @@ namespace FluentTranslate.Infrastructure
 		protected IFluentConfiguration Configuration { get; }
 
 		protected IFluentCloneFactory Factory =>
-			Configuration.Services.GetService<IFluentCloneFactory>() ?? FluentCloneFactory.Default;
+			Configuration?.Services.GetService<IFluentCloneFactory>() ?? FluentCloneFactory.Default;
 
 		protected FluentResource Resource { get; }
 		protected Dictionary<string, FluentRecord> RecordByReference { get; }
 
-		public FluentEngine(FluentResource resource, IFluentConfiguration configuration)
+		public FluentEngine(FluentResource resource, IFluentConfiguration configuration = null)
 		{
-			Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+			Configuration = configuration;
 
 			Resource = resource is null ? new FluentResource() : Factory.Clone(resource);
 			RecordByReference = new Dictionary<string, FluentRecord>();
@@ -39,14 +41,37 @@ namespace FluentTranslate.Infrastructure
 			}
 		}
 
-		public string Evaluate(string message, IDictionary<string, object> parameters)
+		public string Evaluate(string query, IDictionary<string, object> parameters = null)
 		{
-			if (!RecordByReference.TryGetValue(message, out var record)) 
-				throw new ArgumentException("Unable to resolve message.", nameof(message));
+			if (query is null)
+				return null;
 
+			List<IFluentElement> elements;
+			try
+			{
+				elements = FluentConverter.Deserialize(query, (lexer, parser) =>
+				{
+					lexer.PushMode(FluentLexer.SINGLELINE);
+					return parser.expressionList();
+				});
+			}
+			catch (Exception ex)
+			{
+				throw new ArgumentException($"Unable to deserialize query: '{query}'.", ex);
+			}
+
+			var result = Evaluate(elements, parameters);
+			return result;
+		}
+
+		public string Evaluate(IEnumerable<IFluentElement> elements, IDictionary<string, object> parameters = null)
+		{
 			var context = new FluentEvaluationContext(parameters);
-			var result = Evaluate(record, context);
-			return result.ToString();
+			var results = elements
+				.Select(x => Evaluate(x, context))
+				.Select(x => x.ToString())
+				.ToArray();
+			return string.Concat(results);
 		}
 
 		public object Evaluate(IFluentElement element, FluentEvaluationContext context)
@@ -54,39 +79,47 @@ namespace FluentTranslate.Infrastructure
 			context ??= new FluentEvaluationContext();
 			return element switch
 			{
-				FluentMessage message => Evaluate(message, context),
-				FluentTerm term => Evaluate(term, context),
 				FluentText text => Evaluate(text, context),
-				//FluentPlaceable placeable => Evaluate(placeable, context),
+				FluentPlaceable placeable => Evaluate(placeable, context),
 				//FluentSelection selection => Evaluate(selection, context),
 				//FluentVariableReference variableReference => Evaluate(variableReference, context),
-				//FluentMessageReference messageReference => Evaluate(messageReference, context),
-				//FluentTermReference termReference => Evaluate(termReference, context),
+				FluentMessageReference messageReference => Evaluate(messageReference, context),
+				FluentTermReference termReference => Evaluate(termReference, context),
 				//FluentFunctionCall functionCall => Evaluate(functionCall, context),
 				FluentStringLiteral stringLiteral => Evaluate(stringLiteral, context),
 				FluentNumberLiteral numberLiteral => Evaluate(numberLiteral, context),
-				_ => throw new ArgumentOutOfRangeException(nameof(element))
+				_ => throw new ArgumentOutOfRangeException(nameof(element), element, "Element is not supported for string evaluation.")
 			};
 		}
 
-		public virtual string Evaluate(FluentMessage message, FluentEvaluationContext context)
+		public virtual object Evaluate(FluentPlaceable placeable, FluentEvaluationContext context)
 		{
-			var values = message.Content
-				.Select(x => Evaluate(x, context))
-				.ToArray();
-
-			var result = Serialize(values);
-			return result;
+			return Evaluate(placeable.Content, context);
 		}
 
-		public virtual string Evaluate(FluentTerm term, FluentEvaluationContext context)
+		public virtual string Evaluate(FluentMessageReference messageReference, FluentEvaluationContext context)
 		{
-			var values = term.Content
-				.Select(x => Evaluate(x, context))
-				.ToArray();
+			return Evaluate((FluentRecordReference) messageReference, context);
+		}
 
-			var result = Serialize(values);
-			return result;
+		public virtual string Evaluate(FluentTermReference termReference, FluentEvaluationContext context)
+		{
+			return Evaluate((FluentRecordReference)termReference, context);
+		}
+
+		protected virtual string Evaluate(FluentRecordReference reference, FluentEvaluationContext context)
+		{
+			if (RecordByReference.TryGetValue(reference.Reference, out var record))
+			{
+				var values = record.Content
+					.Select(x => Evaluate(x, context))
+					.ToArray();
+
+				var result = Serialize(values);
+				return result;
+			}
+
+			return $"{{{reference.Reference}}}";
 		}
 
 		public virtual string Evaluate(FluentText text, FluentEvaluationContext context)
@@ -149,7 +182,7 @@ namespace FluentTranslate.Infrastructure
 
 		public override int GetHashCode()
 		{
-			return (Resource != null ? Resource.GetHashCode() : 0);
+			return EqualityHelper.Hash(Resource);
 		}
 	}
 }

@@ -5,7 +5,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentAttribute : FluentElement, IFluentContainer, IEnumerable<IFluentContent>
     {
-        public override string Type => "attribute";
+        public override string Type => FluentElementTypes.Attribute;
 
         public string Id { get; set; }
 		public List<IFluentContent> Content { get; set; }

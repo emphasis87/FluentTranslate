@@ -4,7 +4,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentMessageReference : FluentRecordReference
     {
-        public override string Type => "message-ref";
+        public override string Type => FluentElementTypes.MessageReference;
 
         public FluentMessageReference()
 		{

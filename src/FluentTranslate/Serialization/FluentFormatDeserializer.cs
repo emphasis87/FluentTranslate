@@ -11,6 +11,7 @@ namespace FluentTranslate.Serialization
 	public interface IFluentDeserializer
 	{
 		FluentResource Deserialize(string content);
+		List<IFluentElement> Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse);
 	}
 
 	public class FluentFormatDeserializer : IFluentDeserializer
@@ -19,14 +20,24 @@ namespace FluentTranslate.Serialization
 
 		public FluentResource Deserialize(string content)
 		{
+			return (FluentResource) Deserialize(content, (_, x) => x.resource()).FirstOrDefault();
+		}
+
+		public List<IFluentElement> Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse)
+		{
 			var stream = new AntlrInputStream(new StringReader(content));
 			var lexer = new FluentLexer(stream);
 			var parser = new FluentParser(new CommonTokenStream(lexer));
+			var context = parse(lexer, parser);
+			var result = Deserialize(context);
+			return result;
+		}
 
+		public List<IFluentElement> Deserialize(FluentParserContext parserContext)
+		{
 			var visitor = new FluentFormatDeserializationVisitor();
-			var resource = visitor.Visit(parser.resource()).FirstOrDefault() as FluentResource;
-
-			return resource;
+			var result = visitor.Visit(parserContext);
+			return result;
 		}
 	}
 }

@@ -5,7 +5,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentVariant : FluentElement, IFluentContainer, IEnumerable<IFluentContent>
     {
-        public override string Type => "variant";
+        public override string Type => FluentElementTypes.Variant;
 
         public bool IsDefault { get; set; }
 		public IFluentVariantKey Key { get; set; }

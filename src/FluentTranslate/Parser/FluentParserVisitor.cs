@@ -19,6 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
+namespace FluentTranslate.Parser {
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using IToken = Antlr4.Runtime.IToken;
@@ -146,6 +147,12 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVariant([NotNull] FluentParser.VariantContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.identifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIdentifier([NotNull] FluentParser.IdentifierContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.inlineExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -230,3 +237,4 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitEmptyLine([NotNull] FluentParser.EmptyLineContext context);
 }
+} // namespace FluentTranslate.Parser

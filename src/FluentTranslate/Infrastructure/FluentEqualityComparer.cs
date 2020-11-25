@@ -269,6 +269,7 @@ namespace FluentTranslate.Infrastructure
 			return item switch
 			{
 				null => 0,
+				IFluentElement element => element.GetHashCode(),
 				IEnumerable list => Combine(list.Cast<object>().ToArray()),
 				{ } other => other.GetHashCode(),
 			};
@@ -300,6 +301,7 @@ namespace FluentTranslate.Infrastructure
 		public static bool AreEqual(object x, object y)
 		{
 			if (x is null || y is null) return false;
+			if (ReferenceEquals(x, y)) return true;
 			return x.Equals(y);
 		}
 	}

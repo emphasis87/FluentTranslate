@@ -7,7 +7,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentTermReference : FluentRecordReference, IFluentCallable, IFluentAggregable, IEnumerable<FluentCallArgument>
     {
-        public override string Type { get; } = "term-ref";
+        public override string Type { get; } = FluentElementTypes.TermReference;
 
         public List<FluentCallArgument> Arguments { get; set; }
 

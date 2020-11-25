@@ -18,11 +18,13 @@
       <Visitor>true</Visitor>
       <AntOutDir>../FluentTranslate/Parser</AntOutDir>
       <Listener>false</Listener>
+      <Package>FluentTranslate.Parser</Package>
     </Antlr4>
     <Antlr4 Include="FluentParser.g4">
       <Visitor>true</Visitor>
       <Listener>false</Listener>
       <AntOutDir>../FluentTranslate/Parser</AntOutDir>
+      <Package>FluentTranslate.Parser</Package>
     </Antlr4>
   </ItemGroup>
 

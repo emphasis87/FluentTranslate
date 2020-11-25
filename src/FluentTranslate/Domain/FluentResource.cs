@@ -6,7 +6,7 @@ namespace FluentTranslate.Domain
 {
     public class FluentResource : FluentElement, IEnumerable<IFluentEntry>
 	{
-        public override string Type => "resource";
+        public override string Type => FluentElementTypes.Resource;
 
         public List<IFluentEntry> Entries { get; set; }
 

@@ -5,7 +5,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentVariableReference : FluentElement, IFluentExpression
 	{
-        public override string Type => "variable-ref";
+        public override string Type => FluentElementTypes.VariableReference;
 
         public string Id { get; set; }
 

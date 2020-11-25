@@ -8,6 +8,7 @@ namespace FluentTranslate.Tests
 	public class FluentClientTests
 	{
 		[Test]
+		[Explicit]
 		[SetCulture("en")]
 		public async Task Test()
 		{

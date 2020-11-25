@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Antlr4.Runtime;
+using FluentTranslate.Parser;
 
 namespace FluentTranslate.Tests.Support
 {

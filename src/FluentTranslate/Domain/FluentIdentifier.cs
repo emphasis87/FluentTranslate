@@ -4,7 +4,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentIdentifier : FluentElement, IFluentVariantKey
     {
-        public override string Type => "id";
+        public override string Type => FluentElementTypes.Identifier;
 
         public string Id { get; set; }
 

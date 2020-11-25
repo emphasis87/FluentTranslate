@@ -4,7 +4,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentCallArgument : FluentElement
     {
-        public override string Type => "argument";
+        public override string Type => FluentElementTypes.CallArgument;
 
         public string Id { get; set; }
 		public IFluentExpression Value { get; set; }

@@ -19,6 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
+namespace FluentTranslate.Parser {
 using System;
 using System.IO;
 using System.Text;
@@ -627,3 +628,4 @@ public partial class FluentLexer : Lexer {
 
 
 }
+} // namespace FluentTranslate.Parser

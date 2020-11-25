@@ -5,7 +5,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentFunctionCall : FluentElement, IFluentExpression, IFluentCallable, IEnumerable<FluentCallArgument>
     {
-        public override string Type => "function";
+        public override string Type => FluentElementTypes.FunctionCall;
 
         public string Id { get; set; }
 		public List<FluentCallArgument> Arguments { get; set; }

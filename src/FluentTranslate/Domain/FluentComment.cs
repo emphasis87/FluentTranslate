@@ -6,7 +6,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentComment : FluentElement, IFluentEntry, IFluentAggregable
 	{
-        public override string Type => "comment";
+        public override string Type => FluentElementTypes.Comment;
 
         public int Level { get; set; }
 		public string Value { get; set; }

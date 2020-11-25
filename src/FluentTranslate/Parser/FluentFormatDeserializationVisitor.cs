@@ -324,9 +324,13 @@ namespace FluentTranslate.Parser
 			var result = base.VisitVariant(context);
 
 			var variant = new FluentVariant();
-			var id = context.IDENTIFIER_REF()?.GetText();
-			if (id != null) 
-				variant.Key = new FluentIdentifier {Id = id};
+
+			var id = result.OfType<FluentIdentifier>().FirstOrDefault();
+			if (id != null)
+			{
+				result.Remove(id);
+				variant.Key = id;
+			}
 
 			var numberLiteral = context.NUMBER_LITERAL()?.GetText();
 			if (numberLiteral != null)
@@ -338,6 +342,17 @@ namespace FluentTranslate.Parser
 				throw UnsupportedChildTypeException(result[0]);
 
 			result.Add(variant);
+			return result;
+		}
+
+		public override List<IFluentElement> VisitIdentifier(FluentParser.IdentifierContext context)
+		{
+			var result = DefaultResult;
+			var identifier = new FluentIdentifier()
+			{
+				Id = context.GetText(),
+			};
+			result.Add(identifier);
 			return result;
 		}
 

@@ -5,7 +5,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentSelection : FluentElement, IFluentExpression, IEnumerable<FluentVariant>
     {
-        public override string Type => "selection";
+        public override string Type => FluentElementTypes.Selection;
 
         public IFluentExpression Match { get; set; }
 		public List<FluentVariant> Variants { get; set; }

@@ -3,13 +3,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
 {
 	public interface IFluentClient
 	{
-		Task<string> Translate(string message, IDictionary<string, object> parameters = null, CultureInfo culture = null);
+		Task<string> Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
 	}
 
 	public class FluentClient : IFluentClient
@@ -44,7 +45,7 @@ namespace FluentTranslate
 			return new Context(CreateEngineCache(culture));
 		}
 
-		public async Task<string> Translate(string message, IDictionary<string, object> parameters = null, CultureInfo culture = null)
+		public async Task<string> Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null)
 		{
 			culture = GetCulture(culture);
 
@@ -57,15 +58,15 @@ namespace FluentTranslate
 			var engineCache = context.Cache;
 			var resource = await Provider.GetResourceAsync(culture);
 			var engine = engineCache.GetEngine(resource);
-
+			
 			try
 			{
-				var result = engine.Evaluate(message, parameters);
+				var result = engine.Evaluate(query, parameters);
 				return result;
 			}
 			catch (Exception)
 			{
-				return $"[{message}]";
+				return query;
 			}
 		}
 

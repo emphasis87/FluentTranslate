@@ -38,7 +38,8 @@ selectExpression	: inlineExpression ws SELECTOR ws variantList ;
 
 variantList			: (ws variant)* ws defaultVariant (ws variant)* ;
 defaultVariant		: VARIANT_DEFAULT variant ;
-variant				: VARIANT_OPEN INDENT? ( IDENTIFIER_REF | NUMBER_LITERAL ) INDENT? VARIANT_CLOSE expressionList ;
+variant				: VARIANT_OPEN INDENT? ( identifier | NUMBER_LITERAL ) INDENT? VARIANT_CLOSE expressionList ;
+identifier			: IDENTIFIER_REF ;
 
 inlineExpression	: stringLiteral
 					| numberLiteral
