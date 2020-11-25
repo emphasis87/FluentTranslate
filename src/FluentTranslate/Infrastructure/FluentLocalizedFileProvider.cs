@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentTranslate.Domain;
 
@@ -35,7 +36,7 @@ namespace FluentTranslate.Infrastructure
 		protected virtual IFluentCompositeProvider CreateProvider(CultureInfo culture)
 		{
 			var compositeProvider = new FluentCompositeProvider(Configuration);
-			var paths = GetPaths(culture);
+			var paths = GetPaths(culture).Distinct().ToArray();
 			foreach (var path in paths)
 			{
 				if (!_providerByPath.TryGetValue(path, out var provider))

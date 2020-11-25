@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -56,8 +57,16 @@ namespace FluentTranslate
 			var engineCache = context.Cache;
 			var resource = await Provider.GetResourceAsync(culture);
 			var engine = engineCache.GetEngine(resource);
-			var result = engine.Evaluate(message, parameters);
-			return result;
+
+			try
+			{
+				var result = engine.Evaluate(message, parameters);
+				return result;
+			}
+			catch (Exception)
+			{
+				return $"[{message}]";
+			}
 		}
 
 		protected class Context

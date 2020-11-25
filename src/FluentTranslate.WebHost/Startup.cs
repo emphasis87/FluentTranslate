@@ -84,7 +84,7 @@ namespace FluentTranslate.WebHost
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseHttpsRedirection();
+			//app.UseHttpsRedirection();
 
 			var contentTypeProvider = new FileExtensionContentTypeProvider();
 			contentTypeProvider.Mappings.Clear();
