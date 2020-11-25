@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Security;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
@@ -51,15 +54,62 @@ namespace FluentTranslate
 			}
 		}
 
-		public FluentConfiguration AddLocalFile(string path)
+		public virtual FluentConfiguration AddLocalFile(string path)
 		{
 			Providers.Add(new FluentLocalizedLocalFileProvider(path, this));
 			return this;
 		}
 
-		public FluentConfiguration AddRemoteFile(string path, HttpClient client = null)
+		public virtual FluentConfiguration AddRemoteFile(string path, HttpClient client = null)
 		{
 			Providers.Add(new FluentLocalizedHttpFileProvider(path, client, this));
+			return this;
+		}
+
+		public FluentConfiguration AddFiles(IEnumerable<string> paths)
+		{
+			foreach (var path in paths)
+			{
+				AddFile(path);
+			}
+
+			return this;
+		}
+
+		public virtual FluentConfiguration AddFile(string path)
+		{
+			if (string.IsNullOrWhiteSpace(path))
+				throw new ArgumentOutOfRangeException(nameof(path), "Unable to add null or whitespace path.");
+
+			try
+			{
+				var uri = new Uri(path, UriKind.RelativeOrAbsolute);
+				var scheme = uri.Scheme;
+				if (scheme.StartsWith("http"))
+					AddRemoteFile(path);
+
+				return this;
+			}
+			catch (InvalidOperationException)
+			{
+
+			}
+
+			try
+			{
+				var _ = new FileInfo(path);
+				return this;
+			}
+			catch (ArgumentException)
+			{
+				throw new ArgumentException($"Unable to add file: '{path}'.", nameof(path));
+			}
+			catch (Exception)
+			{
+
+			}
+
+			AddLocalFile(path);
 			return this;
 		}
 	}
