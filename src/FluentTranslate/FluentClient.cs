@@ -3,14 +3,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
 {
 	public interface IFluentClient
 	{
-		Task<string> Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
+		string Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
+		Task<string> TranslateAsync(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
 	}
 
 	public class FluentClient : IFluentClient
@@ -23,7 +23,8 @@ namespace FluentTranslate
 		protected IFluentProvider Provider =>
 			Configuration.Services.GetService<IFluentProvider>();
 
-		public CultureInfo DefaultCulture { get; set; }
+		protected ICurrentCultureProvider CultureProvider =>
+			Configuration.Services.GetService<ICurrentCultureProvider>();
 
 		public FluentClient(IFluentConfiguration configuration)
 		{
@@ -32,7 +33,7 @@ namespace FluentTranslate
 
 		protected virtual CultureInfo GetCulture(CultureInfo culture = null)
 		{
-			return culture ?? DefaultCulture ?? CultureInfo.CurrentCulture;
+			return culture ?? CultureProvider?.Culture ?? CultureInfo.CurrentUICulture;
 		}
 
 		protected virtual IFluentEngineCache CreateEngineCache(CultureInfo culture)
@@ -45,15 +46,18 @@ namespace FluentTranslate
 			return new Context(CreateEngineCache(culture));
 		}
 
-		public async Task<string> Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null)
+		public string Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null)
+		{
+			var task = Task.Run(() => TranslateAsync(query, parameters, culture));
+			var result = task.Result;
+			return result;
+		}
+
+		public async Task<string> TranslateAsync(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null)
 		{
 			culture = GetCulture(culture);
 
-			if (!_contextByCulture.TryGetValue(culture, out var context))
-			{
-				context = CreateContext(culture);
-				context = _contextByCulture.GetOrAdd(culture, context);
-			}
+			var context = GetContext(culture);
 
 			var engineCache = context.Cache;
 			var resource = await Provider.GetResourceAsync(culture);
@@ -68,6 +72,17 @@ namespace FluentTranslate
 			{
 				return query;
 			}
+		}
+
+		protected virtual Context GetContext(CultureInfo culture)
+		{
+			if (!_contextByCulture.TryGetValue(culture, out var context))
+			{
+				context = CreateContext(culture);
+				context = _contextByCulture.GetOrAdd(culture, context);
+			}
+
+			return context;
 		}
 
 		protected class Context

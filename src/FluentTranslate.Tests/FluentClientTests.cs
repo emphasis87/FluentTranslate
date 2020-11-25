@@ -16,7 +16,7 @@ namespace FluentTranslate.Tests
 				.AddRemoteFile("http://localhost:5000/generated.ftl");
 			var client = new FluentClient(configuration);
 
-			var greeting = await client.Translate("hello", culture: new CultureInfo("iv"));
+			var greeting = await client.TranslateAsync("hello", culture: new CultureInfo("iv"));
 			greeting.Should().Be("Hello, everyone!");
 		}
 	}

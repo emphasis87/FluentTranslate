@@ -35,6 +35,7 @@ namespace FluentTranslate
 				configuration.Services.AddService<IFluentCloneFactory>(FluentCloneFactory.Default);
 				configuration.Services.AddService<IFluentMerger>(new FluentMerger(configuration));
 				configuration.Services.AddService<IFluentDeserializerContainer>(FluentDeserializerContainer.Default);
+				configuration.Services.AddService<ICurrentCultureProvider>(new CurrentCultureProvider());
 
 				configuration.Services.AddService(new HttpClient());
 

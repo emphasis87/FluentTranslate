@@ -27,6 +27,9 @@ namespace FluentTranslate.Infrastructure
 		/// If true creates context for each culture.
 		/// </summary>
 		public bool IsLocalized { get; set; }
+
+		protected ICurrentCultureProvider CultureProvider =>
+			Configuration?.Services.GetService<ICurrentCultureProvider>();
 		
 		protected FluentProvider(IFluentConfiguration configuration = null)
 		{
@@ -42,7 +45,7 @@ namespace FluentTranslate.Infrastructure
 		protected virtual CultureInfo GetCulture(CultureInfo culture = null)
 		{
 			return IsLocalized 
-				? culture ?? CultureInfo.InvariantCulture 
+				? culture ?? CultureProvider?.Culture ?? CultureInfo.InvariantCulture 
 				: CultureInfo.InvariantCulture;
 		}
 

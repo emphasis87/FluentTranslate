@@ -32,6 +32,7 @@ namespace FluentTranslate.Tests.Infrastructure
 		}
 
 		[Test]
+		[SetUICulture("iv")]
 		public async Task Should_combine_files_based_on_culture_suffix()
 		{
 			var configuration = FluentConfiguration.Default;
