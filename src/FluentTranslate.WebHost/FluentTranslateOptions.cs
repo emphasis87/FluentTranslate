@@ -8,7 +8,11 @@
 		public string SourceFilesPath { get; set; }
 		public string GeneratedFilesPath { get; set; }
 
+		public string Encoding { get; set; }
+
 		public string RequestPath { get; set; }
+		public string CacheControl { get; set; }
+		public bool UseCompression { get; set; }
 
 		public FluentGenerateFileOptions[] GenerateFiles { get; set; }
 	}

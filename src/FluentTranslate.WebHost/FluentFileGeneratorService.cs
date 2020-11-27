@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentTranslate.Domain;
@@ -22,6 +23,8 @@ namespace FluentTranslate.WebHost
 	public class FluentFileGeneratorService : BackgroundService
 	{
 		private readonly IOptionsMonitor<FluentTranslateOptions> _optionsMonitor;
+
+		protected FluentTranslateOptions Options => _optionsMonitor.CurrentValue;
 
 		private readonly Subject<int> _sourceSubject = new Subject<int>();
 		private readonly Subject<FluentTranslateOptions> _optionsSubject = new Subject<FluentTranslateOptions>();
@@ -49,7 +52,7 @@ namespace FluentTranslate.WebHost
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			var options = _optionsMonitor.CurrentValue;
+			var options = Options;
 
 			_sourceWatcher = new FileSystemWatcher()
 			{
@@ -92,7 +95,7 @@ namespace FluentTranslate.WebHost
 		
 		private void UpdateGeneratedFiles()
 		{
-			var options = _optionsMonitor.CurrentValue;
+			var options = Options;
 			var sourceFilesPath = options.SourceFilesPath;
 
 			// Get context for generated files
@@ -327,14 +330,32 @@ namespace FluentTranslate.WebHost
 			base.Dispose();
 		}
 
-		private static FluentResource DeserializeFile(string path)
+		private Encoding GetEncoding()
+		{
+			var options = Options;
+			var encoding = Encoding.Default;
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(options.Encoding))
+					encoding = Encoding.GetEncoding(options.Encoding.Trim());
+			}
+			catch (Exception)
+			{
+
+			}
+
+			return encoding;
+		}
+
+		private FluentResource DeserializeFile(string path)
 		{
 			if (!File.Exists(path))
 				return null;
-
+			
 			try
 			{
-				var content = File.ReadAllText(path);
+				var encoding = GetEncoding();
+				var content = File.ReadAllText(path, encoding);
 				var resource = FluentConverter.Deserialize(content);
 				return resource;
 			}
@@ -344,7 +365,7 @@ namespace FluentTranslate.WebHost
 			}
 		}
 
-		private static void SerializeFile(string path, FluentResource resource)
+		private void SerializeFile(string path, FluentResource resource)
 		{
 			try
 			{
@@ -353,7 +374,8 @@ namespace FluentTranslate.WebHost
 					Directory.CreateDirectory(directory);
 
 				var content = FluentConverter.Serialize(resource);
-				File.WriteAllText(path, content);
+				var encoding = GetEncoding();
+				File.WriteAllText(path, content, encoding);
 			}
 			catch (Exception)
 			{

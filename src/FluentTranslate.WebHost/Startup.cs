@@ -6,10 +6,13 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
 
 namespace FluentTranslate.WebHost
 {
@@ -51,6 +54,14 @@ namespace FluentTranslate.WebHost
 					opt.GeneratedFilesPath = generatedFilesPath;
 					opt.StaticFilesPath = staticFilesPath;
 
+					if (!Configuration
+						.GetSection(FluentTranslateOptions.Section)
+						.GetSection(nameof(FluentTranslateOptions.UseCompression))
+						.Exists())
+						opt.UseCompression = true;
+
+					opt.CacheControl ??= $"public,max-age={TimeSpan.FromMinutes(10).TotalSeconds}";
+
 					// Add default extension to file names and change to lowercase
 					var generateFiles = opt.GenerateFiles?
 						.Where(generate => !string.IsNullOrWhiteSpace(generate?.Name))
@@ -74,10 +85,15 @@ namespace FluentTranslate.WebHost
 			
 			services.AddHostedService<FluentFileGeneratorService>();
 			services.AddDirectoryBrowser();
+			services.AddResponseCompression(opt =>
+			{
+				opt.Providers.Add<BrotliCompressionProvider>();
+				opt.Providers.Add<GzipCompressionProvider>();
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<FluentTranslateOptions> options)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptionsMonitor<FluentTranslateOptions> optionsMonitor)
 		{
 			if (env.IsDevelopment())
 			{
@@ -90,21 +106,32 @@ namespace FluentTranslate.WebHost
 			contentTypeProvider.Mappings.Clear();
 			contentTypeProvider.Mappings.Add(".ftl", "text/plain");
 
-			var opt = options.Value;
+			var options = optionsMonitor.CurrentValue;
+
+			if (options.UseCompression)
+				app.UseResponseCompression();
 
 			var compositeProvider = new CompositeFileProvider(
-				new PhysicalFileProvider(opt.GeneratedFilesPath) {UseActivePolling = true},
-				new PhysicalFileProvider(opt.StaticFilesPath));
+				new PhysicalFileProvider(options.GeneratedFilesPath) {UseActivePolling = true},
+				new PhysicalFileProvider(options.StaticFilesPath));
 			var sharedOptions = new SharedOptions()
 			{
 				FileProvider = compositeProvider,
-				RequestPath = opt.RequestPath,
+				RequestPath = options.RequestPath,
 			};
 			app.UseStaticFiles(new StaticFileOptions(sharedOptions)
 			{
 				ContentTypeProvider = contentTypeProvider,
+				OnPrepareResponse = (ctx) => OnPrepareResponse(ctx, optionsMonitor)
 			});
 			app.UseDirectoryBrowser(new DirectoryBrowserOptions(sharedOptions));
+		}
+
+		private void OnPrepareResponse(StaticFileResponseContext context, IOptionsMonitor<FluentTranslateOptions> optionsMonitor)
+		{
+			var options = optionsMonitor.CurrentValue;
+			var headers = context.Context.Response.Headers;
+			headers[HeaderNames.CacheControl] = options.CacheControl;
 		}
 	}
 

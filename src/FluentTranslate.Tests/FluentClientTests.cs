@@ -9,7 +9,7 @@ namespace FluentTranslate.Tests
 	{
 		[Test]
 		[Explicit]
-		[SetCulture("en")]
+		[SetUICulture("en-US")]
 		public async Task Test()
 		{
 			var configuration = FluentConfiguration.Default
