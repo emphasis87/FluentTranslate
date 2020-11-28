@@ -9,12 +9,12 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentLocalizedFileProvider : FluentProvider
+	public abstract class FluentLocalizedFileProvider : FluentPollingProvider
 	{
 		public string RootPath { get; }
 
-		private readonly ConcurrentDictionary<string, IFluentProvider> _providerByPath = 
-			new ConcurrentDictionary<string, IFluentProvider>();
+		private readonly ConcurrentDictionary<string, IFluentResourceProvider> _providerByPath = 
+			new ConcurrentDictionary<string, IFluentResourceProvider>();
 
 		protected FluentLocalizedFileProvider(string rootPath, IFluentConfiguration configuration = null) 
 			: base(configuration)
@@ -50,7 +50,7 @@ namespace FluentTranslate.Infrastructure
 			return compositeProvider;
 		}
 
-		protected abstract IFluentProvider CreateProvider(string path);
+		protected abstract IFluentResourceProvider CreateProvider(string path);
 		
 		protected override async Task<FluentResource> FindResourceAsync(Context context, CultureInfo culture)
 		{

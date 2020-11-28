@@ -105,7 +105,7 @@ namespace FluentTranslate.Tests.Infrastructure
 
 			public List<string> Providers { get; } = new List<string>();
 
-			protected override IFluentProvider CreateProvider(string path)
+			protected override IFluentResourceProvider CreateProvider(string path)
 			{
 				Providers.Add(path);
 				return new TestFluentLocalFileProvider(path, Configuration);

@@ -34,7 +34,7 @@ namespace FluentTranslate
 				var configuration = new FluentConfiguration();
 
 				configuration.Services.AddService<IFluentConfiguration>(configuration);
-				configuration.Services.AddService<IFluentProvider>(configuration.Providers);
+				configuration.Services.AddService<IFluentResourceProvider>(configuration.Providers);
 				configuration.Services.AddService<IFluentCloneFactory>(FluentCloneFactory.Default);
 				configuration.Services.AddService<IFluentMerger>(new FluentMerger(configuration));
 				configuration.Services.AddService<IFluentDeserializerContainer>(FluentDeserializerContainer.Default);

@@ -8,12 +8,7 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentProvider
-	{
-		Task<FluentResource> GetResourceAsync(CultureInfo culture = null);
-	}
-
-	public abstract class FluentProvider : IFluentProvider
+	public abstract class FluentPollingProvider : IFluentProvider
 	{
 		protected IFluentConfiguration Configuration { get; }
 
@@ -31,7 +26,7 @@ namespace FluentTranslate.Infrastructure
 		protected ICurrentCultureProvider CultureProvider =>
 			Configuration?.Services.GetService<ICurrentCultureProvider>();
 		
-		protected FluentProvider(IFluentConfiguration configuration = null)
+		protected FluentPollingProvider(IFluentConfiguration configuration = null)
 		{
 			Configuration = configuration;
 		}

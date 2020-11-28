@@ -8,7 +8,7 @@
 
 		}
 
-		protected override IFluentProvider CreateProvider(string path)
+		protected override IFluentResourceProvider CreateProvider(string path)
 		{
 			return new FluentLocalFileProvider(path, Configuration);
 		}

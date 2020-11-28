@@ -6,7 +6,7 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentFileProvider : FluentProvider
+	public abstract class FluentFileProvider : FluentPollingProvider
 	{
 		protected string RequestPath { get; }
 

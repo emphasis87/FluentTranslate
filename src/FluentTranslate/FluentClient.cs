@@ -20,8 +20,8 @@ namespace FluentTranslate
 		private readonly ConcurrentDictionary<CultureInfo, Context> _contextByCulture =
 			new ConcurrentDictionary<CultureInfo, Context>();
 
-		protected IFluentProvider Provider =>
-			Configuration.Services.GetService<IFluentProvider>();
+		protected IFluentResourceProvider Provider =>
+			Configuration.Services.GetService<IFluentResourceProvider>();
 
 		protected ICurrentCultureProvider CultureProvider =>
 			Configuration.Services.GetService<ICurrentCultureProvider>();

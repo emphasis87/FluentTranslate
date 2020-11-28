@@ -7,20 +7,20 @@ using static FluentTranslate.Infrastructure.EqualityHelper;
 
 namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentCompositeProvider : IFluentProvider
+	public interface IFluentCompositeProvider : IFluentResourceProvider
 	{
-		void Add(IFluentProvider provider);
-		void Remove(IFluentProvider provider);
+		void Add(IFluentResourceProvider provider);
+		void Remove(IFluentResourceProvider provider);
 	}
 
-	public class FluentCompositeProvider : FluentProvider, IFluentCompositeProvider
+	public class FluentCompositeProvider : FluentPollingProvider, IFluentCompositeProvider
 	{
 		private readonly object _lock = new object();
 
 		protected IFluentMerger Merger =>
 			Configuration?.Services.GetService<IFluentMerger>() ?? FluentMerger.Default;
 
-		private List<IFluentProvider> _providers = new List<IFluentProvider>();
+		private List<IFluentResourceProvider> _providers = new List<IFluentResourceProvider>();
 
 		public FluentCompositeProvider(IFluentConfiguration configuration = null)
 			: base(configuration)
@@ -28,7 +28,7 @@ namespace FluentTranslate.Infrastructure
 			
 		}
 
-		public void Add(IFluentProvider provider)
+		public void Add(IFluentResourceProvider provider)
 		{
 			lock (_lock)
 			{
@@ -40,7 +40,7 @@ namespace FluentTranslate.Infrastructure
 			}
 		}
 
-		public void Remove(IFluentProvider provider)
+		public void Remove(IFluentResourceProvider provider)
 		{
 			lock (_lock)
 			{
@@ -74,12 +74,12 @@ namespace FluentTranslate.Infrastructure
 
 		protected class CompositeContext : Context
 		{
-			public List<IFluentProvider> Providers;
+			public List<IFluentResourceProvider> Providers;
 			public FluentResource[] LastResults;
 
 			public CompositeContext(CultureInfo culture) : base(culture)
 			{
-				Providers = new List<IFluentProvider>();
+				Providers = new List<IFluentResourceProvider>();
 				LastResults = new FluentResource[0];
 			}
 		}
