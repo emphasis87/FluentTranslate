@@ -8,7 +8,7 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentPollingProvider : IFluentProvider
+	public abstract class FluentPollingProvider : IFluentResourceProvider
 	{
 		protected IFluentConfiguration Configuration { get; }
 
