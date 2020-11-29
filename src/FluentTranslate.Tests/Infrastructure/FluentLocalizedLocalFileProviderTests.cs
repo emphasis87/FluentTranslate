@@ -36,12 +36,12 @@ namespace FluentTranslate.Tests.Infrastructure
 		public async Task Should_combine_files_based_on_culture_suffix()
 		{
 			var configuration = FluentConfiguration.Default;
-			var options = configuration.Options.Get<FluentProviderOptions>();
+			var options = configuration.Options.Get<FluentResourceProviderOptions>();
 			options.FilePollingInterval = TimeSpan.FromSeconds(1);
 
 			var fn = Path.Combine(WorkingDirectory, "translations.ftl");
 
-			var provider = new TestFluentLocalizedLocalFileProvider(fn, configuration);
+			var provider = new TestFluentLocalizedLocalFileResourceProvider(fn, configuration);
 
 			// When files are missing should return an empty resource
 			var r0 = await provider.GetResourceAsync();
@@ -97,9 +97,9 @@ namespace FluentTranslate.Tests.Infrastructure
 				fn.Replace("ftl", "en.ftl"), fn.Replace("ftl", "en-US.ftl"));
 		}
 
-		internal class TestFluentLocalizedLocalFileProvider : FluentLocalizedLocalFileProvider
+		internal class TestFluentLocalizedLocalFileResourceProvider : FluentLocalizedLocalFileResourceProvider
 		{
-			public TestFluentLocalizedLocalFileProvider(string path, IFluentConfiguration configuration) : base(path, configuration)
+			public TestFluentLocalizedLocalFileResourceProvider(string path, IFluentConfiguration configuration) : base(path, configuration)
 			{
 			}
 
@@ -108,7 +108,7 @@ namespace FluentTranslate.Tests.Infrastructure
 			protected override IFluentResourceProvider CreateProvider(string path)
 			{
 				Providers.Add(path);
-				return new TestFluentLocalFileProvider(path, Configuration);
+				return new TestFluentLocalFileResourceProvider(path, Configuration);
 			}
 
 			public int FindResourceAsyncCount { get; set; }

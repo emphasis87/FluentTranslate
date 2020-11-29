@@ -9,7 +9,7 @@ namespace FluentTranslate
 {
 	public interface IFluentConfiguration
 	{
-		IFluentCompositeProvider Providers { get; }
+		IFluentCompositeResourceProvider Providers { get; }
 		IFluentOptionsContainer Options { get; }
 		IFluentServiceContainer Services { get; }
 	}
@@ -18,13 +18,13 @@ namespace FluentTranslate
 	{
 		public IFluentServiceContainer Services { get; }
 		public IFluentOptionsContainer Options { get; }
-		public IFluentCompositeProvider Providers { get; }
+		public IFluentCompositeResourceProvider Providers { get; }
 
 		public FluentConfiguration()
 		{
 			Services = new FluentServiceContainer();
 			Options = new FluentOptionsContainer();
-			Providers = new FluentCompositeProvider(this) {IsLocalized = true};
+			Providers = new FluentCompositeResourceProvider(this) {IsLocalized = true};
 		}
 
 		public static FluentConfiguration Default
@@ -43,7 +43,7 @@ namespace FluentTranslate
 				configuration.Services.AddService(new HttpClient());
 
 				configuration.Options.Add(
-					new FluentProviderOptions()
+					new FluentResourceProviderOptions()
 					{
 						PollingInterval = TimeSpan.FromSeconds(1),
 						FilePollingInterval = TimeSpan.FromSeconds(5),
@@ -56,13 +56,13 @@ namespace FluentTranslate
 
 		public virtual FluentConfiguration AddLocalFile(string path)
 		{
-			Providers.Add(new FluentLocalizedLocalFileProvider(path, this));
+			Providers.Add(new FluentLocalizedLocalFileResourceProvider(path, this));
 			return this;
 		}
 
 		public virtual FluentConfiguration AddRemoteFile(string path, HttpClient client = null)
 		{
-			Providers.Add(new FluentLocalizedHttpFileProvider(path, client, this));
+			Providers.Add(new FluentLocalizedHttpFileResourceProvider(path, client, this));
 			return this;
 		}
 

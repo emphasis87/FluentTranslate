@@ -34,12 +34,12 @@ namespace FluentTranslate.Tests.Infrastructure
 		public async Task Should_handle_empty_file_and_file_change()
 		{
 			var configuration = FluentConfiguration.Default;
-			var options = configuration.Options.Get<FluentProviderOptions>();
+			var options = configuration.Options.Get<FluentResourceProviderOptions>();
 			options.FilePollingInterval = TimeSpan.FromSeconds(1);
 
 			var fn = Path.Combine(WorkingDirectory, "translations.ftl");
 
-			var provider = new TestFluentLocalFileProvider(fn, configuration);
+			var provider = new TestFluentLocalFileResourceProvider(fn, configuration);
 
 			// When file is missing should return an empty resource
 			var r0 = await provider.GetResourceAsync();
@@ -81,9 +81,9 @@ namespace FluentTranslate.Tests.Infrastructure
 		}
 	}
 
-	internal class TestFluentLocalFileProvider : FluentLocalFileProvider
+	internal class TestFluentLocalFileResourceProvider : FluentLocalFileResourceProvider
 	{
-		public TestFluentLocalFileProvider(string path, IFluentConfiguration configuration) : base(path, configuration)
+		public TestFluentLocalFileResourceProvider(string path, IFluentConfiguration configuration) : base(path, configuration)
 		{
 		}
 

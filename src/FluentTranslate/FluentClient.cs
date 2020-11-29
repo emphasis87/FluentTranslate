@@ -3,14 +3,18 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
 {
 	public interface IFluentClient
 	{
-		string Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
-		Task<string> TranslateAsync(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
+		string Reference(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
+		Task<string> ReferenceAsync(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null);
+
+		string Expression(string expression, IDictionary<string, object> parameters = null, CultureInfo culture = null);
+		Task<string> ExpressionAsync(string expression, IDictionary<string, object> parameters = null, CultureInfo culture = null);
 	}
 
 	public class FluentClient : IFluentClient
@@ -46,14 +50,14 @@ namespace FluentTranslate
 			return new Context(CreateEngineCache(culture));
 		}
 
-		public string Translate(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null)
+		public string Expression(string expression, IDictionary<string, object> parameters = null, CultureInfo culture = null)
 		{
-			var task = Task.Run(() => TranslateAsync(query, parameters, culture));
+			var task = Task.Run(() => ExpressionAsync(expression, parameters, culture));
 			var result = task.Result;
 			return result;
 		}
 
-		public async Task<string> TranslateAsync(string query, IDictionary<string, object> parameters = null, CultureInfo culture = null)
+		public async Task<string> ExpressionAsync(string expression, IDictionary<string, object> parameters = null, CultureInfo culture = null)
 		{
 			culture = GetCulture(culture);
 
@@ -62,15 +66,45 @@ namespace FluentTranslate
 			var engineCache = context.Cache;
 			var resource = await Provider.GetResourceAsync(culture);
 			var engine = engineCache.GetEngine(resource);
-			
+
 			try
 			{
-				var result = engine.Evaluate(query, parameters);
+				var result = engine.Evaluate(expression, parameters);
 				return result;
 			}
 			catch (Exception)
 			{
-				return query;
+				return expression;
+			}
+		}
+
+		public string Reference(string reference, IDictionary<string, object> parameters = null, CultureInfo culture = null)
+		{
+			var task = Task.Run(() => ReferenceAsync(reference, parameters, culture));
+			var result = task.Result;
+			return result;
+		}
+
+		public async Task<string> ReferenceAsync(string reference, IDictionary<string, object> parameters = null, CultureInfo culture = null)
+		{
+			culture = GetCulture(culture);
+
+			var context = GetContext(culture);
+
+			var engineCache = context.Cache;
+			var resource = await Provider.GetResourceAsync(culture);
+			var engine = engineCache.GetEngine(resource);
+
+			var recordReference = FluentRecordReference.Create(reference);
+
+			try
+			{
+				var result = engine.Evaluate(new[] {recordReference}, parameters);
+				return result;
+			}
+			catch (Exception)
+			{
+				return reference;
 			}
 		}
 

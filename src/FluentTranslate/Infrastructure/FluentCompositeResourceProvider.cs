@@ -7,13 +7,13 @@ using static FluentTranslate.Infrastructure.EqualityHelper;
 
 namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentCompositeProvider : IFluentResourceProvider
+	public interface IFluentCompositeResourceProvider : IFluentResourceProvider
 	{
 		void Add(IFluentResourceProvider provider);
 		void Remove(IFluentResourceProvider provider);
 	}
 
-	public class FluentCompositeProvider : FluentPollingProvider, IFluentCompositeProvider
+	public class FluentCompositeResourceProvider : FluentPollingResourceProvider, IFluentCompositeResourceProvider
 	{
 		private readonly object _lock = new object();
 
@@ -22,7 +22,7 @@ namespace FluentTranslate.Infrastructure
 
 		private List<IFluentResourceProvider> _providers = new List<IFluentResourceProvider>();
 
-		public FluentCompositeProvider(IFluentConfiguration configuration = null)
+		public FluentCompositeResourceProvider(IFluentConfiguration configuration = null)
 			: base(configuration)
 		{
 			

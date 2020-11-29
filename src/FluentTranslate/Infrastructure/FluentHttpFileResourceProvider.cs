@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace FluentTranslate.Infrastructure
 {
-	public class FluentHttpFileProvider : FluentFileProvider
+	public class FluentHttpFileResourceProvider : FluentFileResourceProvider
 	{
 		private readonly HttpClient _client;
 
 		protected HttpClient Client => _client 
 			?? Configuration?.Services.GetService<HttpClient>();
 
-		public FluentHttpFileProvider(string path, HttpClient client, IFluentConfiguration configuration = null)
+		public FluentHttpFileResourceProvider(string path, HttpClient client, IFluentConfiguration configuration = null)
 			: base(path, configuration)
 		{
 			_client = client;
@@ -20,7 +20,7 @@ namespace FluentTranslate.Infrastructure
 
 		protected override TimeSpan GetPollingInterval()
 		{
-			return Configuration.Options.Get<FluentProviderOptions>()?.HttpPollingInterval
+			return Configuration.Options.Get<FluentResourceProviderOptions>()?.HttpPollingInterval
 				?? TimeSpan.FromMinutes(1);
 		}
 

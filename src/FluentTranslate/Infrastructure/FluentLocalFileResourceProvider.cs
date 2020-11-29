@@ -6,16 +6,16 @@ using File = System.IO.File;
 
 namespace FluentTranslate.Infrastructure
 {
-	public class FluentLocalFileProvider : FluentFileProvider
+	public class FluentLocalFileResourceProvider : FluentFileResourceProvider
 	{
-		public FluentLocalFileProvider(string path, IFluentConfiguration configuration = null)
+		public FluentLocalFileResourceProvider(string path, IFluentConfiguration configuration = null)
 			: base(path, configuration)
 		{
 		}
 
 		protected override TimeSpan GetPollingInterval()
 		{
-			return Configuration?.Options.Get<FluentProviderOptions>()?.FilePollingInterval
+			return Configuration?.Options.Get<FluentResourceProviderOptions>()?.FilePollingInterval
 				?? TimeSpan.FromSeconds(5);
 		}
 

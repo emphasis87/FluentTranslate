@@ -8,7 +8,7 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentPollingProvider : IFluentResourceProvider
+	public abstract class FluentPollingResourceProvider : IFluentResourceProvider
 	{
 		protected IFluentConfiguration Configuration { get; }
 
@@ -26,14 +26,14 @@ namespace FluentTranslate.Infrastructure
 		protected ICurrentCultureProvider CultureProvider =>
 			Configuration?.Services.GetService<ICurrentCultureProvider>();
 		
-		protected FluentPollingProvider(IFluentConfiguration configuration = null)
+		protected FluentPollingResourceProvider(IFluentConfiguration configuration = null)
 		{
 			Configuration = configuration;
 		}
 
 		protected virtual TimeSpan GetPollingInterval()
 		{
-			return Configuration?.Options.Get<FluentProviderOptions>()?.PollingInterval
+			return Configuration?.Options.Get<FluentResourceProviderOptions>()?.PollingInterval
 				?? TimeSpan.FromSeconds(1);
 		}
 

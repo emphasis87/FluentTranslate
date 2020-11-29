@@ -9,14 +9,14 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentLocalizedFileProvider : FluentPollingProvider
+	public abstract class FluentLocalizedFileResourceProvider : FluentPollingResourceProvider
 	{
 		public string RootPath { get; }
 
 		private readonly ConcurrentDictionary<string, IFluentResourceProvider> _providerByPath = 
 			new ConcurrentDictionary<string, IFluentResourceProvider>();
 
-		protected FluentLocalizedFileProvider(string rootPath, IFluentConfiguration configuration = null) 
+		protected FluentLocalizedFileResourceProvider(string rootPath, IFluentConfiguration configuration = null) 
 			: base(configuration)
 		{
 			RootPath = rootPath;
@@ -33,9 +33,9 @@ namespace FluentTranslate.Infrastructure
 			yield return RootPath;
 		}
 
-		protected virtual IFluentCompositeProvider CreateProvider(CultureInfo culture)
+		protected virtual IFluentCompositeResourceProvider CreateProvider(CultureInfo culture)
 		{
-			var compositeProvider = new FluentCompositeProvider(Configuration);
+			var compositeProvider = new FluentCompositeResourceProvider(Configuration);
 			var paths = GetPaths(culture).Distinct().ToArray();
 			foreach (var path in paths)
 			{
@@ -68,9 +68,9 @@ namespace FluentTranslate.Infrastructure
 
 		protected class LocalizedFileContext : Context
 		{
-			public IFluentCompositeProvider Provider { get; }
+			public IFluentCompositeResourceProvider Provider { get; }
 
-			public LocalizedFileContext(IFluentCompositeProvider provider, CultureInfo culture) : base(culture)
+			public LocalizedFileContext(IFluentCompositeResourceProvider provider, CultureInfo culture) : base(culture)
 			{
 				Provider = provider;
 			}

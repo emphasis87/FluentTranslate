@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Infrastructure
 {
-	public class FluentProviderOptions
+	public class FluentResourceProviderOptions
 	{
 		/// <summary>
 		/// Heuristic for limiting requesting updates from providers.

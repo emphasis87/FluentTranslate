@@ -6,7 +6,7 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentFileProvider : FluentPollingProvider
+	public abstract class FluentFileResourceProvider : FluentPollingResourceProvider
 	{
 		protected string RequestPath { get; }
 
@@ -15,7 +15,7 @@ namespace FluentTranslate.Infrastructure
 		protected IFluentDeserializerContainer Deserializers =>
 			Configuration?.Services.GetService<IFluentDeserializerContainer>() ?? FluentDeserializerContainer.Default;
 
-		protected FluentFileProvider(string path, IFluentConfiguration configuration = null) 
+		protected FluentFileResourceProvider(string path, IFluentConfiguration configuration = null) 
 			: base(configuration)
 		{
 			RequestPath = path ?? throw new ArgumentNullException(nameof(path));
