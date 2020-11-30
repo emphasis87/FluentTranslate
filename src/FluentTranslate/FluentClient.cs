@@ -99,7 +99,7 @@ namespace FluentTranslate
 
 			try
 			{
-				var result = engine.Evaluate(new[] {recordReference}, parameters);
+				var result = engine.Evaluate(recordReference, parameters);
 				return result;
 			}
 			catch (Exception)

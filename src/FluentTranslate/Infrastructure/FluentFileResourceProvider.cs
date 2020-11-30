@@ -12,9 +12,6 @@ namespace FluentTranslate.Infrastructure
 
 		private DateTime? _lastModified = DateTime.MinValue;
 
-		protected IFluentDeserializerContainer Deserializers =>
-			Configuration?.Services.GetService<IFluentDeserializerContainer>() ?? FluentDeserializerContainer.Default;
-
 		protected FluentFileResourceProvider(string path, IFluentConfiguration configuration = null) 
 			: base(configuration)
 		{
@@ -33,7 +30,8 @@ namespace FluentTranslate.Infrastructure
 			}
 
 			var content = await FindFileAsync(context, culture);
-			var result = Deserialize(content);
+			var extension = Path.GetExtension(RequestPath);
+			var result = Configuration.Deserialize(content, extension);
 			return result ?? new FluentResource();
 		}
 
@@ -41,19 +39,5 @@ namespace FluentTranslate.Infrastructure
 		protected abstract Task<DateTime?> GetLastModifiedAsync(Context context, CultureInfo culture = null);
 
 		protected abstract Task<string> FindFileAsync(Context context, CultureInfo culture = null);
-
-		private FluentResource Deserialize(string content)
-		{
-			if (content is null)
-				return null;
-
-			var extension = Path.GetExtension(RequestPath);
-			var deserializer = Deserializers.Get(extension);
-			if (deserializer is null)
-				throw new InvalidOperationException($"Extension '{extension}' is not supported for deserialization.");
-
-			var resource = deserializer.Deserialize(content);
-			return resource;
-		}
 	}
 }

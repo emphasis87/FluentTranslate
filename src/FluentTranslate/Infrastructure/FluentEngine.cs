@@ -10,7 +10,7 @@ namespace FluentTranslate.Infrastructure
 	public interface IFluentEngine
 	{
 		string Evaluate(string query, IDictionary<string, object> parameters = null);
-		string Evaluate(IEnumerable<IFluentElement> elements, IDictionary<string, object> parameters = null);
+		string Evaluate(IFluentElement element, IDictionary<string, object> parameters = null);
 	}
 
 	public class FluentEngine : IFluentEngine, IEquatable<FluentEngine>
@@ -64,7 +64,14 @@ namespace FluentTranslate.Infrastructure
 			return result;
 		}
 
-		public string Evaluate(IEnumerable<IFluentElement> elements, IDictionary<string, object> parameters = null)
+		public string Evaluate(IFluentElement element, IDictionary<string, object> parameters = null)
+		{
+			var context = new FluentEvaluationContext(parameters);
+			var result = Evaluate(element, context);
+			return result.ToString();
+		}
+
+		private string Evaluate(IEnumerable<IFluentElement> elements, IDictionary<string, object> parameters = null)
 		{
 			var context = new FluentEvaluationContext(parameters);
 			var results = elements

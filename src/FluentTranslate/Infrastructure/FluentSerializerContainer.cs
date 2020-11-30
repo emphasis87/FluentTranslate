@@ -21,7 +21,8 @@ namespace FluentTranslate.Infrastructure
 			get
 			{
 				var container = new FluentDeserializerContainer();
-				container.Add("ftl", new FluentFormatDeserializer());
+				var fluentFormatDeserializer = new FluentFormatDeserializer();
+				container.Add("ftl", fluentFormatDeserializer);
 				return container;
 			}
 		}

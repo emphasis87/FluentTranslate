@@ -10,6 +10,9 @@ namespace FluentTranslate.Infrastructure
 
 	public class CurrentCultureProvider : ICurrentCultureProvider
 	{
+		public static ICurrentCultureProvider Default { get; } =
+			new CurrentCultureProvider(() => CultureInfo.CurrentUICulture);
+
 		private readonly Func<CultureInfo> _provider;
 		public CultureInfo Culture => _provider?.Invoke() ?? CultureInfo.CurrentUICulture;
 

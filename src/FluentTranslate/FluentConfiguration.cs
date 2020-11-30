@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Security;
+using System.Reflection;
+using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
@@ -66,6 +67,12 @@ namespace FluentTranslate
 			return this;
 		}
 
+		public virtual FluentConfiguration AddEmbeddedResource(Assembly assembly, string path)
+		{
+			Providers.Add(new FluentLocalizedEmbeddedResourceProvider(assembly, path, this));
+			return this;
+		}
+
 		public FluentConfiguration AddFiles(IEnumerable<string> paths)
 		{
 			foreach (var path in paths)
@@ -111,6 +118,30 @@ namespace FluentTranslate
 
 			AddLocalFile(path);
 			return this;
+		}
+	}
+
+	public static class FluentConfigurationExtensions
+	{
+		public static FluentResource Deserialize(this IFluentConfiguration configuration, string content)
+		{
+			var resource = configuration.Deserialize(content, "ftl");
+			return resource;
+		}
+
+		public static FluentResource Deserialize(this IFluentConfiguration configuration, string content, string extension)
+		{
+			if (content is null) 
+				return null;
+
+			var deserializers = configuration?.Services.GetService<IFluentDeserializerContainer>()
+				?? FluentDeserializerContainer.Default;
+			var deserializer = deserializers.Get(extension);
+			if (deserializer is null)
+				throw new InvalidOperationException($"Extension '{extension}' is not supported for deserialization.");
+
+			var resource = deserializer.Deserialize(content);
+			return resource;
 		}
 	}
 }

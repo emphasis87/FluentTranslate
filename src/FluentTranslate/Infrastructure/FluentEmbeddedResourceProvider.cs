@@ -9,14 +9,19 @@ namespace FluentTranslate.Infrastructure
 {
 	public class FluentEmbeddedResourceProvider : IFluentResourceProvider
 	{
-		private readonly Assembly _assembly;
-		private readonly string _path;
+		protected IFluentConfiguration Configuration { get; }
+
+		protected Assembly Assembly { get; }
+		protected string ResourcePath { get; }
+
 		private readonly Lazy<FluentResource> _resource;
 
-		public FluentEmbeddedResourceProvider(Assembly assembly, string path)
+		public FluentEmbeddedResourceProvider(Assembly assembly, string path, IFluentConfiguration configuration = null)
 		{
-			_assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
-			_path = path ?? throw new ArgumentNullException(nameof(path));
+			Configuration = configuration;
+
+			Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+			ResourcePath = path ?? throw new ArgumentNullException(nameof(path));
 			_resource = new Lazy<FluentResource>(FindResource);
 		}
 
@@ -27,13 +32,17 @@ namespace FluentTranslate.Infrastructure
 
 		private FluentResource FindResource()
 		{
-			using var stream = _assembly.GetManifestResourceStream(_path);
+			using var stream = Assembly.GetManifestResourceStream(ResourcePath);
 			if (stream is null)
-				throw new ArgumentException($"Unable to find embedded resource '{_path}' in {_assembly}");
+			{
+				//throw new ArgumentException($"Unable to find embedded resource '{ResourcePath}' in {Assembly}");
+				return null;
+			}
 
 			using var reader = new StreamReader(stream);
 			var source = reader.ReadToEnd();
-			var result = FluentConverter.Deserialize(source);
+			var extension = Path.GetExtension(ResourcePath);
+			var result = Configuration.Deserialize(source, extension);
 			return result;
 		}
 	}

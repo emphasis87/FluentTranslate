@@ -19,12 +19,17 @@ namespace FluentTranslate.Infrastructure
 			new ConcurrentDictionary<CultureInfo, Context>();
 
 		/// <summary>
-		/// If true creates context for each culture.
+		/// Sets or gets whether the provider should create caching context for each requested culture.
 		/// </summary>
 		public bool IsLocalized { get; set; }
 
+		/// <summary>
+		/// Sets or gets whether the provider should periodically poll the underlying resource for changes.
+		/// </summary>
+		public bool IsPollingEnabled { get; set; } = true;
+
 		protected ICurrentCultureProvider CultureProvider =>
-			Configuration?.Services.GetService<ICurrentCultureProvider>();
+			Configuration?.Services.GetService<ICurrentCultureProvider>() ?? CurrentCultureProvider.Default;
 		
 		protected FluentPollingResourceProvider(IFluentConfiguration configuration = null)
 		{
@@ -72,10 +77,19 @@ namespace FluentTranslate.Infrastructure
 
 			var pollingInterval = GetPollingInterval();
 			var now = DateTime.Now;
-			if (context.LastPolled + pollingInterval > now)
-				return context.LastResult;
 
-			if (context.LastResult is null)
+			var lastResult = context.LastResult;
+			if (IsPollingEnabled)
+			{
+				if (context.LastPolled + pollingInterval > now)
+					return lastResult;
+			}
+			else if (lastResult != null)
+			{
+				return lastResult;
+			}
+
+			if (lastResult is null)
 			{
 				var initResult = new AsyncLazy<FluentResource>(() => FindResourceAsync(context, culture));
 				var prevResult = Interlocked.CompareExchange(ref context.InitialResult, initResult, null);
