@@ -359,5 +359,8 @@ MigrationBackup/
 # JetBrains idea files
 .idea
 
+# Antlr runtime
+src/FluentTranslate/Parser/Java
+
 # Generated files
 src/FluentTranslate.WebHost/translations/generated/
