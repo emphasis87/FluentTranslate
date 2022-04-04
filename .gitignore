@@ -360,7 +360,7 @@ MigrationBackup/
 .idea
 
 # Antlr runtime
-src/FluentTranslate/Parser/Java
+**/Java/jre*
 
 # Generated files
 src/FluentTranslate.WebHost/translations/generated/

@@ -6,24 +6,25 @@
 
 	<PropertyGroup>
 		<DefaultItemExcludes>$(DefaultItemExcludes);**\*.interp;**\*.tokens</DefaultItemExcludes>
-		<LangVersion>8.0</LangVersion>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="FluentLexer.g4" />
+        <None Remove="grammars/*" />
+	    <None Remove="Java/*" />
 	</ItemGroup>
 
 	<ItemGroup>
-    <Antlr4 Include="FluentLexer.g4">
+    <Antlr4 Include="grammars\FluentLexer.g4">
       <Visitor>true</Visitor>
-      <AntOutDir>../FluentTranslate/Parser</AntOutDir>
+      <AntOutDir>../FluentTranslate.Parser</AntOutDir>
       <Listener>false</Listener>
       <Package>FluentTranslate.Parser</Package>
     </Antlr4>
-    <Antlr4 Include="FluentParser.g4">
+    <Antlr4 Include="grammars\FluentParser.g4">
       <Visitor>true</Visitor>
       <Listener>false</Listener>
-      <AntOutDir>../FluentTranslate/Parser</AntOutDir>
+      <AntOutDir>../FluentTranslate.Parser</AntOutDir>
       <Package>FluentTranslate.Parser</Package>
     </Antlr4>
   </ItemGroup>
