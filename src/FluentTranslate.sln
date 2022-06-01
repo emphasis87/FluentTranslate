@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Tests", "Fl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{72F47E34-C7D5-45D5-B6D2-C559260B2D70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentTranslate.Model", "FluentTranslate.Model\FluentTranslate.Model.csproj", "{E14FA02A-B5EB-4BC5-B7C1-1412BAD4CF28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentTranslate.Domain", "FluentTranslate.Domain\FluentTranslate.Domain.csproj", "{FABC115F-11DD-49C0-8712-AD211F7ACD82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +36,10 @@ Global
 		{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BD4FE64-676D-4A38-B09F-8FE9E0FE915F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E14FA02A-B5EB-4BC5-B7C1-1412BAD4CF28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E14FA02A-B5EB-4BC5-B7C1-1412BAD4CF28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E14FA02A-B5EB-4BC5-B7C1-1412BAD4CF28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E14FA02A-B5EB-4BC5-B7C1-1412BAD4CF28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FABC115F-11DD-49C0-8712-AD211F7ACD82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FABC115F-11DD-49C0-8712-AD211F7ACD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FABC115F-11DD-49C0-8712-AD211F7ACD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FABC115F-11DD-49C0-8712-AD211F7ACD82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

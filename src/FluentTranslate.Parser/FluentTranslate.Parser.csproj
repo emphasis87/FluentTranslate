@@ -10,28 +10,29 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-        <None Remove="grammars/*" />
-	    <None Remove="Java/*" />
+        <Compile Remove="Java\**" />
+        <EmbeddedResource Remove="Java\**" />
+	    <None Remove="Java\**" />
 	</ItemGroup>
 
 	<ItemGroup>
     <Antlr4 Include="grammars\FluentLexer.g4">
       <Visitor>true</Visitor>
       <AntOutDir>../FluentTranslate.Parser</AntOutDir>
-      <Listener>false</Listener>
+      <Listener>False</Listener>
       <Package>FluentTranslate.Parser</Package>
     </Antlr4>
     <Antlr4 Include="grammars\FluentParser.g4">
       <Visitor>true</Visitor>
-      <Listener>false</Listener>
+      <Listener>False</Listener>
       <AntOutDir>../FluentTranslate.Parser</AntOutDir>
       <Package>FluentTranslate.Parser</Package>
     </Antlr4>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.3" />
-    <PackageReference Include="Antlr4BuildTasks" Version="9.0.0" />
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.10.1" />
+    <PackageReference Include="Antlr4BuildTasks" Version="10.6.0" />
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
 
