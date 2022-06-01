@@ -36,4 +36,8 @@
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FluentTranslate.Domain\FluentTranslate.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
