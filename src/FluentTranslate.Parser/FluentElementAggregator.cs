@@ -7,9 +7,9 @@ namespace FluentTranslate.Parser
 {
     public class FluentElementAggregator
     {
-        public static bool TryAggregate(IFluentElement item0, IFluentElement item1)
+        public static bool TryAggregate(IFluentElement item0, IFluentElement item1, out IFluentElement result)
         {
-
+            
         }
     }
 }
