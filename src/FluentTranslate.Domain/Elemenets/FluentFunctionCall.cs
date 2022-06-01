@@ -3,10 +3,14 @@ using System.Collections.Generic;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentFunctionCall : FluentElement, IFluentExpression, IFluentCallable, IEnumerable<FluentCallArgument>
-    {
-        public override string Type => FluentElementTypes.FunctionCall;
+	public interface IFluentFunctionCall : IFluentElement, IFluentExpression, IFluentCallable
+	{
+		
+	}
 
+	public class FluentFunctionCall : IFluentFunctionCall, IEnumerable<FluentCallArgument>
+    {
+        public string Type => FluentElementTypes.FunctionCall;
         public string Id { get; set; }
 		public List<FluentCallArgument> Arguments { get; set; }
 
@@ -20,19 +24,12 @@ namespace FluentTranslate.Domain
 			Id = id;
 		}
 
-		public IEnumerator<FluentCallArgument> GetEnumerator()
-		{
-			return Arguments.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-
 		public void Add(FluentCallArgument argument)
 		{
 			Arguments.Add(argument);
 		}
-	}
+
+        public IEnumerator<FluentCallArgument> GetEnumerator() => Arguments.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }

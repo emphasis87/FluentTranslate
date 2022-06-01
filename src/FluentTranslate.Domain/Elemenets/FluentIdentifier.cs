@@ -1,11 +1,13 @@
-﻿using System.Collections;
-
-namespace FluentTranslate.Domain
+﻿namespace FluentTranslate.Domain
 {
-	public class FluentIdentifier : FluentElement, IFluentVariantKey
+    public interface IFluentIdentifier : IFluentElement, IFluentVariantKey
+	{
+
+    }
+
+	public class FluentIdentifier : FluentElement, IFluentIdentifier
     {
         public override string Type => FluentElementTypes.Identifier;
-
         public string Id { get; set; }
 
 		public FluentIdentifier()

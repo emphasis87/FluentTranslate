@@ -6,7 +6,6 @@ namespace FluentTranslate.Domain
 	public class FluentAttribute : FluentElement, IFluentContainer, IEnumerable<IFluentContent>
     {
         public override string Type => FluentElementTypes.Attribute;
-
         public string Id { get; set; }
 		public List<IFluentContent> Content { get; set; }
 
@@ -20,19 +19,12 @@ namespace FluentTranslate.Domain
 			Id = id;
 		}
 
-		public IEnumerator<IFluentContent> GetEnumerator()
-		{
-			return Content.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-
 		public void Add(IFluentContent content)
 		{
 			Content.Add(content);
 		}
-	}
+
+        public IEnumerator<IFluentContent> GetEnumerator() => Content.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }

@@ -12,7 +12,7 @@ namespace FluentTranslate.Parser
 {
 	public class FluentFormatDeserializationVisitor : FluentParserBaseVisitor<List<IFluentElement>>
 	{
-		private static readonly Regex WhitespaceIndent = new Regex(@"[\r\n\u0020]*?\r?\n(\u0020*[^\r\n\u0020])", RegexOptions.Compiled | RegexOptions.Singleline);
+		private static readonly Regex WhitespaceIndent = new(@"[\r\n\u0020]*?\r?\n(\u0020*[^\r\n\u0020])", RegexOptions.Compiled | RegexOptions.Singleline);
 
 		public override List<IFluentElement> Visit(IParseTree tree)
 		{

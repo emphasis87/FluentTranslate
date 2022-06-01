@@ -1,11 +1,13 @@
-﻿using System.Collections;
-
-namespace FluentTranslate.Domain
+﻿namespace FluentTranslate.Domain
 {
-	public class FluentCallArgument : FluentElement
+	public interface IFluentCallAttribute : IFluentElement
+    {
+
+    }
+
+    public class FluentCallArgument : FluentElement, IFluentCallAttribute
     {
         public override string Type => FluentElementTypes.CallArgument;
-
         public string Id { get; set; }
 		public IFluentExpression Value { get; set; }
 

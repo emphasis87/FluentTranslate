@@ -5,7 +5,7 @@
         public override string Type => FluentElementTypes.Message;
         public override string Reference => Id;
 
-		public FluentMessage()
+        public FluentMessage()
 		{
 		}
 
