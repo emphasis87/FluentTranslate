@@ -16,16 +16,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <Antlr4 Include="grammars\FluentLexer.g4">
+    <Antlr4 Include="Grammars\FluentLexer.g4">
       <Visitor>true</Visitor>
-      <AntOutDir>../FluentTranslate.Parser</AntOutDir>
+      <AntOutDir>../FluentTranslate.Parser/Generated</AntOutDir>
       <Listener>False</Listener>
       <Package>FluentTranslate.Parser</Package>
     </Antlr4>
-    <Antlr4 Include="grammars\FluentParser.g4">
+    <Antlr4 Include="Grammars\FluentParser.g4">
       <Visitor>true</Visitor>
       <Listener>False</Listener>
-      <AntOutDir>../FluentTranslate.Parser</AntOutDir>
+      <AntOutDir>../FluentTranslate.Parser/Generated</AntOutDir>
       <Package>FluentTranslate.Parser</Package>
     </Antlr4>
   </ItemGroup>
@@ -38,6 +38,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FluentTranslate.Domain\FluentTranslate.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Generated\" />
   </ItemGroup>
 
 </Project>

@@ -7,7 +7,6 @@ namespace FluentTranslate.Domain
 	public class FluentText : FluentElement, IFluentContent, IFluentAggregable
     {
         public override string Type => FluentElementTypes.Text;
-
         public string Value { get; set; }
 
 		public FluentText()

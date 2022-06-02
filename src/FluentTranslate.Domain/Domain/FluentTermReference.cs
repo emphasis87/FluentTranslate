@@ -7,8 +7,12 @@ namespace FluentTranslate.Domain
 {
 	public class FluentTermReference : FluentRecordReference, IFluentCallable, IFluentAggregable, IEnumerable<FluentCallArgument>
     {
-        public override string Type { get; } = FluentElementTypes.TermReference;
-
+        public override string Type => FluentElementTypes.TermReference;
+        public override string Reference => AttributeId switch
+        {
+            null => $"-{Id}",
+            _ => $"-{Id}.{AttributeId}"
+        };
         public List<FluentCallArgument> Arguments { get; set; }
 
 		public FluentTermReference()
@@ -27,26 +31,13 @@ namespace FluentTranslate.Domain
 			AttributeId = attributeId;
 		}
 
-        public override string Reference => AttributeId switch
-        {
-            null => $"-{Id}",
-            _ => $"-{Id}.{AttributeId}"
-        };
-
-		public IEnumerator<FluentCallArgument> GetEnumerator()
-		{
-			return Arguments.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-
-		public void Add(FluentCallArgument argument)
+        public void Add(FluentCallArgument argument)
 		{
 			Arguments.Add(argument);
 		}
+
+        public IEnumerator<FluentCallArgument> GetEnumerator() => Arguments.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public bool CanAggregate(object other)
         {

@@ -7,7 +7,6 @@ namespace FluentTranslate.Domain
     public class FluentResource : FluentElement, IEnumerable<IFluentEntry>
 	{
         public override string Type => FluentElementTypes.Resource;
-
         public List<IFluentEntry> Entries { get; set; }
 
 		public FluentResource()
@@ -15,19 +14,12 @@ namespace FluentTranslate.Domain
 			Entries = new List<IFluentEntry>();
 		}
 
-		public IEnumerator<IFluentEntry> GetEnumerator()
-		{
-			return Entries.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-
-		public void Add(IFluentEntry entry)
+        public void Add(IFluentEntry entry)
 		{
 			Entries.Add(entry);
 		}
+
+		public IEnumerator<IFluentEntry> GetEnumerator() => Entries.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

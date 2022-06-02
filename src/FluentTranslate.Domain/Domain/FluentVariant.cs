@@ -4,9 +4,8 @@ using System.Collections.Generic;
 namespace FluentTranslate.Domain
 {
 	public class FluentVariant : FluentElement, IFluentContainer, IEnumerable<IFluentContent>
-    {
+	{
         public override string Type => FluentElementTypes.Variant;
-
         public bool IsDefault { get; set; }
 		public IFluentVariantKey Key { get; set; }
 		public List<IFluentContent> Content { get; internal set; }
@@ -27,19 +26,12 @@ namespace FluentTranslate.Domain
 			IsDefault = isDefault;
 		}
 
-		public IEnumerator<IFluentContent> GetEnumerator()
-		{
-			return Content.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-
 		public void Add(IFluentContent content)
 		{
 			Content.Add(content);
 		}
+
+		public IEnumerator<IFluentContent> GetEnumerator() => Content.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

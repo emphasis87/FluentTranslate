@@ -2,22 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FluentTranslate.WebHost.Infrastructure
+namespace FluentTranslate.Helpers
 {
-	internal class EqualityHelper
+	public class EqualityHelper
 	{
 		public static int Hash(object item)
 		{
 			return item switch
 			{
 				null => 0,
-				IEnumerable list => Combine(list.Cast<object>().ToArray()),
+				IEnumerable list => Combine(list),
 				{ } other => other.GetHashCode(),
 			};
 		}
 
-		public static int Combine(params object[] items)
-		{
+		public static int Combine(IEnumerable items)
+        {
+			if (items is null)
+				return 0;
+
 			unchecked
 			{
 				var hash = 17;
@@ -28,6 +31,11 @@ namespace FluentTranslate.WebHost.Infrastructure
 
 				return hash;
 			}
+		}
+
+		public static int Combine(params object[] items)
+		{
+			return Combine(items as IEnumerable);
 		}
 
 		public static bool AreEqual<T>(IEnumerable<T> x, IEnumerable<T> y, IEqualityComparer<T> comparer)
