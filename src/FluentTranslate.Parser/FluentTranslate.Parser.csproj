@@ -37,10 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FluentTranslate.Domain\FluentTranslate.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Generated\" />
   </ItemGroup>
 

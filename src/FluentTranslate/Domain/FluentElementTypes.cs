@@ -3,6 +3,7 @@
 	public class FluentElementTypes
 	{
 		public const string Resource = "resource";
+		public const string EmptyLines = "empty";
 		public const string Comment = "comment";
 		public const string Message = "message";
 		public const string Term = "term";
