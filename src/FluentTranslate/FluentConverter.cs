@@ -20,7 +20,7 @@ namespace FluentTranslate
 
 		public static string Serialize(FluentResource resource)
 		{
-			return FluentFormatSerializer.Default.Serialize(resource);
+			return FluentSerializer.Default.Serialize(resource);
 		}
 	}
 }

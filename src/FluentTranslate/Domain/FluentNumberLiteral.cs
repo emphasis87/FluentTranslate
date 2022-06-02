@@ -1,11 +1,9 @@
-﻿using System.Collections;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentNumberLiteral : FluentElement, IFluentExpression, IFluentVariantKey
+	public class FluentNumberLiteral : FluentElement, IFluentExpression, IFluentVariantIdentifier
     {
-        public override string Type => FluentElementTypes.NumberLiteral;
-
         public string Value { get; set; }
 
 		public FluentNumberLiteral()

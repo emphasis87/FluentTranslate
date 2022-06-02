@@ -1,17 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+using FluentTranslate.Domain.Common;
+
 namespace FluentTranslate.Domain
 {
-	public interface IFluentFunctionCall : IFluentElement, IFluentExpression, IFluentCallable
+    public interface IFluentFunctionCall : IFluentElement, IFluentExpression, IFluentCallable
 	{
 		
 	}
 
-	public class FluentFunctionCall : IFluentFunctionCall, IEnumerable<FluentCallArgument>
+	public class FluentFunctionCall : FluentElement, IFluentFunctionCall, IEnumerable<FluentCallArgument>
     {
-        public string Type => FluentElementTypes.FunctionCall;
-        public string Id { get; set; }
+        public string TargetId { get; set; }
 		public List<FluentCallArgument> Arguments { get; set; }
 
 		public FluentFunctionCall()
@@ -21,14 +22,10 @@ namespace FluentTranslate.Domain
 
 		public FluentFunctionCall(string id) : this()
 		{
-			Id = id;
+			TargetId = id;
 		}
 
-		public void Add(FluentCallArgument argument)
-		{
-			Arguments.Add(argument);
-		}
-
+        public void Add(FluentCallArgument argument) => Arguments.Add(argument);
         public IEnumerator<FluentCallArgument> GetEnumerator() => Arguments.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

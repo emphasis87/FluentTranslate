@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentVariableReference : FluentElement, IFluentExpression
+    public class FluentVariableReference : FluentElement, IFluentExpression, IFluentTargetReference
 	{
-        public override string Type => FluentElementTypes.VariableReference;
+        public string TargetId { get; set; }
+		public string TargetReference => TargetId;
 
-        public string Id { get; set; }
-
-		public FluentVariableReference()
+        public FluentVariableReference()
 		{
 		}
 
-		public FluentVariableReference(string id) : this()
+		public FluentVariableReference(string targetId) : this()
 		{
-			Id = id;
+			TargetId = targetId;
 		}
 	}
 }

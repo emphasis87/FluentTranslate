@@ -43,7 +43,7 @@ namespace FluentTranslate.Infrastructure
 
 			foreach (var entry in entries)
 			{
-				if (entryByName.TryGetValue(entry.Reference, out var prev))
+				if (entryByName.TryGetValue(entry.TargetReference, out var prev))
 				{
 					// Coalesce L1 comments
 					prev.Comment ??= entry.Comment;
@@ -53,7 +53,7 @@ namespace FluentTranslate.Infrastructure
 				var factory = Factory ?? FluentCloneFactory.Default;
 				var clone = factory.Clone(entry);
 				result.Entries.Add(clone);
-				entryByName[entry.Reference] = clone;
+				entryByName[entry.TargetReference] = clone;
 			}
 
 			return result;

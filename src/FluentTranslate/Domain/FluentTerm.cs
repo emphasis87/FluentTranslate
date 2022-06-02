@@ -1,9 +1,13 @@
-﻿namespace FluentTranslate.Domain
+﻿using System.Collections;
+using System.Linq;
+
+using FluentTranslate.Domain.Common;
+
+namespace FluentTranslate.Domain
 {
 	public class FluentTerm : FluentRecord
     {
-        public override string Type => FluentElementTypes.Term;
-		public override string Reference => $"-{Id}";
+		public override string Reference => $"-{Identifier}";
 
 		public FluentTerm()
 		{
@@ -11,13 +15,15 @@
 
 		public FluentTerm(string id) : this()
 		{
-			Id = id;
+			Identifier = id;
 		}
 
 		public FluentTerm(string id, string comment) : this()
 		{
-			Id = id;
+			Identifier = id;
 			Comment = comment;
 		}
+
+		public override IEnumerator GetEnumerator() => Attributes.Cast<IFluentElement>().Concat(Content).GetEnumerator();
 	}
 }

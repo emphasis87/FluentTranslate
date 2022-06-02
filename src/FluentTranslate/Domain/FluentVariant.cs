@@ -1,37 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+using FluentTranslate.Domain.Common;
+
 namespace FluentTranslate.Domain
 {
-	public class FluentVariant : FluentElement, IFluentContainer, IEnumerable<IFluentContent>
+    public class FluentVariant : FluentContainer, IFluentContainer, IEnumerable<IFluentContent>
 	{
-        public override string Type => FluentElementTypes.Variant;
         public bool IsDefault { get; set; }
-		public IFluentVariantKey Key { get; set; }
-		public List<IFluentContent> Content { get; internal set; }
+		public IFluentVariantIdentifier Identifier { get; set; }
 
 		public FluentVariant()
 		{
-			Content = new List<IFluentContent>();
+			
 		}
 
-		public FluentVariant(IFluentVariantKey key) : this()
+		public FluentVariant(IFluentVariantIdentifier identifier) : this()
 		{
-			Key = key;
+			Identifier = identifier;
 		}
 
-		public FluentVariant(IFluentVariantKey key, bool isDefault) : this()
+		public FluentVariant(IFluentVariantIdentifier identifier, bool isDefault) : this(identifier)
 		{
-			Key = key;
 			IsDefault = isDefault;
 		}
 
-		public void Add(IFluentContent content)
-		{
-			Content.Add(content);
-		}
-
-		public IEnumerator<IFluentContent> GetEnumerator() => Content.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
+		public override IEnumerator GetEnumerator() => Content.GetEnumerator();
+    }
 }

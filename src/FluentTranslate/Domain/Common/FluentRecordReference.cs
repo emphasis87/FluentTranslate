@@ -1,13 +1,12 @@
-﻿using System.Collections;
+﻿using FluentTranslate.Domain;
 
-namespace FluentTranslate.Domain
+namespace FluentTranslate.Domain.Common
 {
-	public abstract class FluentRecordReference : FluentElement, IFluentExpression, IFluentReference
+	public abstract class FluentRecordReference : FluentElement, IFluentExpression, IFluentTargetReference
 	{
-        public string Id { get; set; }
-		public string AttributeId { get; set; }
-
-		public abstract string Reference { get; }
+        public string TargetId { get; set; }
+		public string TargetAttributeId { get; set; }
+		public abstract string TargetReference { get; }
 
 		public static FluentRecordReference Create(string reference)
 		{
@@ -19,11 +18,11 @@ namespace FluentTranslate.Domain
 			if (dotIndex != -1)
 			{
 				var attribute = reference.Substring(dotIndex + 1);
-				result.AttributeId = attribute;
+				result.TargetAttributeId = attribute;
 				reference = reference.Substring(0, dotIndex);
 			}
 
-			result.Id = reference;
+			result.TargetId = reference;
 			return result;
 		}
     }

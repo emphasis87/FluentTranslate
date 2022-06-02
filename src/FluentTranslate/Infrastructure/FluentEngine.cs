@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
+using FluentTranslate.Domain.Helpers;
 using FluentTranslate.Parser;
 
 namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentEngine
+    public interface IFluentEngine
 	{
 		string Evaluate(string query, IDictionary<string, object> parameters = null);
 		string Evaluate(IFluentElement element, IDictionary<string, object> parameters = null);
@@ -37,7 +39,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			foreach (var record in Resource.Entries.OfType<FluentRecord>())
 			{
-				RecordByReference[record.Reference] = record;
+				RecordByReference[record.TargetReference] = record;
 			}
 		}
 
@@ -116,7 +118,7 @@ namespace FluentTranslate.Infrastructure
 
 		protected virtual string Evaluate(FluentRecordReference reference, FluentEvaluationContext context)
 		{
-			if (RecordByReference.TryGetValue(reference.Reference, out var record))
+			if (RecordByReference.TryGetValue(reference.TargetReference, out var record))
 			{
 				var values = record.Content
 					.Select(x => Evaluate(x, context))
@@ -126,7 +128,7 @@ namespace FluentTranslate.Infrastructure
 				return result;
 			}
 
-			return $"{{{reference.Reference}}}";
+			return $"{{{reference.TargetReference}}}";
 		}
 
 		public virtual string Evaluate(FluentText text, FluentEvaluationContext context)

@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using Antlr4.Runtime;
 using FluentAssertions;
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
+using FluentTranslate.Domain.Helpers;
 using FluentTranslate.Infrastructure;
 using FluentTranslate.Parser;
 using FluentTranslate.Tests.Support;
@@ -12,7 +14,7 @@ using NUnit.Framework;
 
 namespace FluentTranslate.Tests.Parser
 {
-	[Parallelizable(ParallelScope.All)]
+    [Parallelizable(ParallelScope.All)]
 	public class FluentFormatDeserializationVisitorTests
 	{
 		private static FluentResource Act(string content)

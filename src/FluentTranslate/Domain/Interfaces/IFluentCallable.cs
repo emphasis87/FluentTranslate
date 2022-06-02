@@ -2,9 +2,11 @@
 
 namespace FluentTranslate.Domain
 {
-	public interface IFluentCallable : IFluentElement
+	public interface IFluentCallable : IFluentElement, IEnumerable<FluentCallArgument>
 	{
-		string Id { get; }
+		string TargetId { get; }
+
 		List<FluentCallArgument> Arguments { get; }
+		void Add(FluentCallArgument argument);
 	}
 }

@@ -3,15 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using FluentTranslate.Domain.Common;
+
 namespace FluentTranslate.Domain
 {
 	public class FluentTermReference : FluentRecordReference, IFluentCallable, IFluentAggregable, IEnumerable<FluentCallArgument>
     {
-        public override string Type => FluentElementTypes.TermReference;
-        public override string Reference => AttributeId switch
+        public override string TargetReference => TargetAttributeId switch
         {
-            null => $"-{Id}",
-            _ => $"-{Id}.{AttributeId}"
+            null => $"-{TargetId}",
+            _ => $"-{TargetId}.{TargetAttributeId}"
         };
         public List<FluentCallArgument> Arguments { get; set; }
 
@@ -22,13 +23,13 @@ namespace FluentTranslate.Domain
 
 		public FluentTermReference(string id) : this()
 		{
-			Id = id;
+			TargetId = id;
 		}
 
 		public FluentTermReference(string id, string attributeId) : this()
 		{
-			Id = id;
-			AttributeId = attributeId;
+			TargetId = id;
+			TargetAttributeId = attributeId;
 		}
 
         public void Add(FluentCallArgument argument)
@@ -52,7 +53,7 @@ namespace FluentTranslate.Domain
             {
                 case FluentTermReference reference:
                 {
-                    Id ??= reference.Id;
+                    TargetId ??= reference.TargetId;
                     Arguments = Arguments.Concat(reference.Arguments).ToList();
                     return this;
                 }

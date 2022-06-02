@@ -1,30 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+using FluentTranslate.Domain.Common;
+
 namespace FluentTranslate.Domain
 {
-	public class FluentAttribute : FluentElement, IFluentContainer, IEnumerable<IFluentContent>
+	public class FluentAttribute : FluentContainer, IEnumerable<IFluentContent>
     {
-        public override string Type => FluentElementTypes.Attribute;
-        public string Id { get; set; }
-		public List<IFluentContent> Content { get; set; }
+        public string Identifier { get; set; }
 
 		public FluentAttribute()
 		{
-			Content = new List<IFluentContent>();
+			
 		}
 
 		public FluentAttribute(string id) : this()
 		{
-			Id = id;
+			Identifier = id;
 		}
 
-		public void Add(IFluentContent content)
-		{
-			Content.Add(content);
-		}
-
-        public IEnumerator<IFluentContent> GetEnumerator() => Content.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public override IEnumerator GetEnumerator() => Content.GetEnumerator();
     }
 }

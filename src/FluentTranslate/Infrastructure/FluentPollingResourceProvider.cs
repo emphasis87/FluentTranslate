@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
+using FluentTranslate.Domain.Helpers;
 
 namespace FluentTranslate.Infrastructure
 {
-	public abstract class FluentPollingResourceProvider : IFluentResourceProvider
+    public abstract class FluentPollingResourceProvider : IFluentResourceProvider
 	{
 		protected IFluentConfiguration Configuration { get; }
 

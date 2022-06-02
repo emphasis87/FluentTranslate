@@ -1,14 +1,11 @@
-﻿namespace FluentTranslate.Domain
+﻿using FluentTranslate.Domain.Common;
+
+namespace FluentTranslate.Domain
 {
-	public interface IFluentCallAttribute : IFluentElement
-    {
 
-    }
-
-    public class FluentCallArgument : FluentElement, IFluentCallAttribute
+	public class FluentCallArgument : FluentElement
     {
-        public override string Type => FluentElementTypes.CallArgument;
-        public string Id { get; set; }
+        public string Identifier { get; set; }
 		public IFluentExpression Value { get; set; }
 
 		public FluentCallArgument()
@@ -22,7 +19,7 @@
 
 		public FluentCallArgument(string id, IFluentExpression value) : this()
 		{
-			Id = id;
+			Identifier = id;
 			Value = value;
 		}
     }

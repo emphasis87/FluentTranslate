@@ -71,7 +71,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentMessage
 			{
-				Id = message.Id,
+				Identifier = message.Identifier,
 				Comment = message.Comment,
 				Content = message.Content.Select(Clone).ToList(),
 				Attributes = message.Attributes.Select(Clone).ToList(),
@@ -83,7 +83,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentTerm
 			{
-				Id = term.Id,
+				Identifier = term.Identifier,
 				Comment = term.Comment,
 				Content = term.Content.Select(Clone).ToList(),
 				Attributes = term.Attributes.Select(Clone).ToList(),
@@ -95,7 +95,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentAttribute
 			{
-				Id = attribute.Id,
+				Identifier = attribute.Identifier,
 				Content = attribute.Content.Select(Clone).ToList()
 			};
 			return clone;
@@ -134,7 +134,7 @@ namespace FluentTranslate.Infrastructure
 			var clone = new FluentVariant
 			{
 				IsDefault = variant.IsDefault,
-				Key = Clone(variant.Key),
+				Identifier = Clone(variant.Identifier),
 				Content = variant.Content.Select(Clone).ToList(),
 			};
 			return clone;
@@ -144,7 +144,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentFunctionCall
 			{
-				Id = functionCall.Id,
+				TargetId = functionCall.TargetId,
 				Arguments = functionCall.Arguments.Select(Clone).ToList()
 			};
 			return clone;
@@ -154,7 +154,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentCallArgument
 			{
-				Id = argument.Id,
+				Identifier = argument.Identifier,
 				Value = Clone(argument.Value)
 			};
 			return clone;
@@ -164,7 +164,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentIdentifier
 			{
-				Id = identifier.Id
+				Value = identifier.Value
 			};
 			return clone;
 		}
@@ -173,8 +173,8 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentMessageReference
 			{
-				Id = messageReference.Id,
-				AttributeId = messageReference.AttributeId
+				TargetId = messageReference.TargetId,
+				TargetAttributeId = messageReference.TargetAttributeId
 			};
 			return clone;
 		}
@@ -183,8 +183,8 @@ namespace FluentTranslate.Infrastructure
 		{
 			var clone = new FluentTermReference
 			{
-				Id = termReference.Id,
-				AttributeId = termReference.AttributeId,
+				TargetId = termReference.TargetId,
+				TargetAttributeId = termReference.TargetAttributeId,
 				Arguments = termReference.Arguments.Select(Clone).ToList()
 			};
 			return clone;

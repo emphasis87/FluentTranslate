@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using FluentTranslate.Common;
+
+using System;
 using System.Linq;
+
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentText : FluentElement, IFluentContent, IFluentAggregable
+    public class FluentText : FluentElement, IFluentContent, IFluentAggregable
     {
-        public override string Type => FluentElementTypes.Text;
         public string Value { get; set; }
 
 		public FluentText()

@@ -11,7 +11,9 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
+using FluentTranslate.Domain.Helpers;
 using FluentTranslate.Infrastructure;
 using FluentTranslate.WebHost.Infrastructure;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +22,7 @@ using static FluentTranslate.WebHost.Infrastructure.EqualityHelper;
 
 namespace FluentTranslate.WebHost
 {
-	public class FluentFileGeneratorService : BackgroundService
+    public class FluentFileGeneratorService : BackgroundService
 	{
 		private readonly IOptionsMonitor<FluentTranslateOptions> _optionsMonitor;
 

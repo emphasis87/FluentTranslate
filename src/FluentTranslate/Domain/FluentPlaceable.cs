@@ -1,11 +1,9 @@
-﻿using System.Collections;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
 	public class FluentPlaceable : FluentElement, IFluentContent, IFluentExpression
     {
-        public override string Type => FluentElementTypes.Placeable;
-
         public IFluentExpression Content { get; set; }
 
 		public FluentPlaceable()
