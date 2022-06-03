@@ -1,6 +1,7 @@
-﻿using FluentTranslate.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using FluentTranslate.Domain;
 
 using static FluentTranslate.Common.EqualityHelper;
 

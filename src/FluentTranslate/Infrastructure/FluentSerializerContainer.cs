@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentTranslate.Serialization;
+
+using FluentTranslate.Serialization.Fluent;
 
 namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentDeserializerContainer
+    public interface IFluentDeserializerContainer
 	{
 		IFluentDeserializer Get(string extension);
 		void Add(string extension, IFluentDeserializer deserializer);
@@ -13,15 +14,14 @@ namespace FluentTranslate.Infrastructure
 
 	public class FluentDeserializerContainer : IFluentDeserializerContainer
 	{
-		private readonly Dictionary<string, IFluentDeserializer> _deserializers =
-			new Dictionary<string, IFluentDeserializer>();
+		private readonly Dictionary<string, IFluentDeserializer> _deserializers = new();
 
 		public static FluentDeserializerContainer Default
 		{
 			get
 			{
 				var container = new FluentDeserializerContainer();
-				var fluentFormatDeserializer = new FluentFormatDeserializer();
+				var fluentFormatDeserializer = new FluentDeserializer();
 				container.Add("ftl", fluentFormatDeserializer);
 				return container;
 			}

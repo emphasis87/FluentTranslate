@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+
 using FluentTranslate.Domain;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Parser
 {
-	public class FluentFormatDeserializationVisitor : FluentParserBaseVisitor<List<IFluentElement>>
+	public class FluentDeserializerVisitor : FluentParserBaseVisitor<List<IFluentElement>>
 	{
 		private static readonly Regex WhitespaceIndent = new(@"[\r\n\u0020]*?\r?\n(\u0020*[^\r\n\u0020])", RegexOptions.Compiled | RegexOptions.Singleline);
 
@@ -19,9 +22,10 @@ namespace FluentTranslate.Parser
 			return base.Visit(tree);
 		}
 
-		protected override List<IFluentElement> DefaultResult => new List<IFluentElement>();
+		protected override List<IFluentElement> DefaultResult => new();
 
-		protected override List<IFluentElement> AggregateResult(List<IFluentElement> aggregate,
+		protected override List<IFluentElement> AggregateResult(
+			List<IFluentElement> aggregate,
 			List<IFluentElement> nextResult)
 		{
 			aggregate.AddRange(nextResult);
@@ -47,7 +51,7 @@ namespace FluentTranslate.Parser
 					case FluentEmptyLines _:
 						// Ignore empty lines
 						break;
-					case IFluentEntry entry:
+					case IFluentResourceEntry entry:
 						resource.Entries.Add(entry);
 						break;
 					default:
@@ -222,9 +226,9 @@ namespace FluentTranslate.Parser
 			var id = context.IDENTIFIER().GetText();
 			IFluentContainer container = context.Parent switch
 			{
-				FluentParser.TermContext _ => new FluentTerm {Id = id},
-				FluentParser.MessageContext _ => new FluentMessage {Id = id},
-				FluentParser.AttributeContext _ => new FluentAttribute {Id = id},
+				FluentParser.TermContext _ => new FluentTerm {Identifier = id},
+				FluentParser.MessageContext _ => new FluentMessage {Identifier = id},
+				FluentParser.AttributeContext _ => new FluentAttribute {Identifier = id},
 				_ => throw UnsupportedContextTypeException(context.Parent)
 			};
 
@@ -329,12 +333,12 @@ namespace FluentTranslate.Parser
 			if (id != null)
 			{
 				result.Remove(id);
-				variant.Key = id;
+				variant.Identifier = id;
 			}
 
 			var numberLiteral = context.NUMBER_LITERAL()?.GetText();
 			if (numberLiteral != null)
-				variant.Key = new FluentNumberLiteral {Value = numberLiteral};
+				variant.Identifier = new FluentNumberLiteral {Value = numberLiteral};
 
 			AggregateContainer(variant, result);
 
@@ -350,7 +354,7 @@ namespace FluentTranslate.Parser
 			var result = DefaultResult;
 			var identifier = new FluentIdentifier()
 			{
-				Id = context.GetText(),
+				Value = context.GetText(),
 			};
 			result.Add(identifier);
 			return result;
@@ -383,7 +387,7 @@ namespace FluentTranslate.Parser
 		{
 			var result = DefaultResult;
 			var id = context.IDENTIFIER_REF().GetText();
-			var variableReference = new FluentVariableReference {Id = id};
+			var variableReference = new FluentVariableReference {TargetId = id};
 			result.Add(variableReference);
 			return result;
 		}
@@ -412,8 +416,8 @@ namespace FluentTranslate.Parser
 			var id = context.IDENTIFIER_REF().GetText();
 			var attributeId = context.attributeAccessor()?.IDENTIFIER_REF().GetText();
 
-			reference.Id = id;
-			reference.AttributeId = attributeId;
+			reference.TargetId = id;
+			reference.TargetAttributeId = attributeId;
 
 			result.Add(reference);
 			return result;
@@ -426,7 +430,7 @@ namespace FluentTranslate.Parser
 			switch (child)
 			{
 				case FluentFunctionCall functionCall:
-					functionCall.Id = context.IDENTIFIER_REF().GetText();
+					functionCall.TargetId = context.IDENTIFIER_REF().GetText();
 					break;
 				default:
 					throw UnsupportedChildTypeException(child);
@@ -488,7 +492,7 @@ namespace FluentTranslate.Parser
 			switch (child)
 			{
 				case FluentCallArgument argument:
-					argument.Id = argumentId;
+					argument.Identifier = argumentId;
 					break;
 				default:
 					throw UnsupportedChildTypeException(child);

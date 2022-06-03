@@ -1,24 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+	<TargetFrameworks>netstandard2.0</TargetFrameworks>
 	<LangVersion>preview</LangVersion>
 	<DefaultItemExcludes>$(DefaultItemExcludes);**\*.interp;**\*.tokens</DefaultItemExcludes>
 	<Version>1.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.3" />
+    <None Remove="Parser\Grammars\FluentLexer.g4" />
+    <None Remove="Parser\Grammars\FluentParser.g4" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'netstandard1.3'">
-	<PackageReference Include="System.ComponentModel" Version="4.3.0" />
-	<PackageReference Include="System.Net.Http" Version="4.3.4" />
-	<PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  <ItemGroup>
+    <Antlr4 Include="Parser\Grammars\FluentLexer.g4">
+      <Package>FluentTranslate.Parser</Package>
+      <Visitor>true</Visitor>
+      <AntOutDir>../FluentTranslate/Parser/Generated</AntOutDir>
+      <Listener>False</Listener>
+    </Antlr4>
+    <Antlr4 Include="Parser\Grammars\FluentParser.g4">
+      <Package>FluentTranslate.Parser</Package>
+      <Visitor>true</Visitor>
+      <AntOutDir>../FluentTranslate/Parser/Generated</AntOutDir>
+      <Listener>False</Listener>
+    </Antlr4>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.10.1" />
+    <PackageReference Include="Antlr4BuildTasks" Version="10.6.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Providers\" />
+    <Folder Include="Serialization\Json\" />
   </ItemGroup>
 
 </Project>

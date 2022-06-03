@@ -15,21 +15,6 @@
 	    <None Remove="Java\**" />
 	</ItemGroup>
 
-	<ItemGroup>
-    <Antlr4 Include="Grammars\FluentLexer.g4">
-      <Visitor>true</Visitor>
-      <AntOutDir>../FluentTranslate.Parser/Generated</AntOutDir>
-      <Listener>False</Listener>
-      <Package>FluentTranslate.Parser</Package>
-    </Antlr4>
-    <Antlr4 Include="Grammars\FluentParser.g4">
-      <Visitor>true</Visitor>
-      <Listener>False</Listener>
-      <AntOutDir>../FluentTranslate.Parser/Generated</AntOutDir>
-      <Package>FluentTranslate.Parser</Package>
-    </Antlr4>
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.10.1" />
     <PackageReference Include="Antlr4BuildTasks" Version="10.6.0" />
