@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public interface IFluentMerger
+    public interface IFluentMerger
 	{
 		FluentResource Combine(IEnumerable<FluentResource> resources);
 	}

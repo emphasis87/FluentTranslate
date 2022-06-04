@@ -34,7 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Providers\" />
+    <Folder Include="Providers\EmbeddedResource\" />
+    <Folder Include="Providers\Json\" />
+    <Folder Include="Providers\Fluent\" />
     <Folder Include="Serialization\Json\" />
   </ItemGroup>
 

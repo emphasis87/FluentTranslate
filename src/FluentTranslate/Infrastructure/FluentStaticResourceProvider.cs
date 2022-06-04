@@ -1,10 +1,11 @@
 ﻿using System.Globalization;
 using System.Threading.Tasks;
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {
-	public class FluentStaticResourceProvider : IFluentResourceProvider
+    public class FluentStaticResourceProvider : IFluentResourceProvider
 	{
 		protected IFluentConfiguration Configuration { get; }
 

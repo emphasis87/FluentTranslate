@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate
 {
-	public interface IFluentConfiguration
+    public interface IFluentConfiguration
 	{
 		IFluentCompositeResourceProvider Providers { get; }
 		IFluentOptionsContainer Options { get; }
