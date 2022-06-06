@@ -6,8 +6,6 @@ using Antlr4.Runtime;
 using FluentAssertions;
 using FluentTranslate.Common;
 using FluentTranslate.Domain;
-using FluentTranslate.Domain.Helpers;
-using FluentTranslate.Infrastructure;
 using FluentTranslate.Parser;
 using FluentTranslate.Tests.Support;
 using NUnit.Framework;
@@ -24,7 +22,7 @@ namespace FluentTranslate.Tests.Parser
 			var parser = new FluentParser(new CommonTokenStream(lexer));
 
 			// Parse the result using deserialization visitor
-			var visitor = new FluentFormatDeserializationVisitor();
+			var visitor = new FluentDeserializerVisitor();
 			var resource = visitor.Visit(parser.resource()).FirstOrDefault() as FluentResource;
 
 			var mode = 0;
