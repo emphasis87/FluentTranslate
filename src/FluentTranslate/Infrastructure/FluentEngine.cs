@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using FluentTranslate.Common;
 using FluentTranslate.Domain;
-using FluentTranslate.Domain.Helpers;
+using FluentTranslate.Domain.Common;
 using FluentTranslate.Parser;
 
 namespace FluentTranslate.Infrastructure
@@ -39,7 +39,7 @@ namespace FluentTranslate.Infrastructure
 		{
 			foreach (var record in Resource.Entries.OfType<FluentRecord>())
 			{
-				RecordByReference[record.TargetReference] = record;
+				RecordByReference[record.Reference] = record;
 			}
 		}
 

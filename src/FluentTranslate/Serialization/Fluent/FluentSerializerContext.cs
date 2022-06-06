@@ -5,8 +5,6 @@ namespace FluentTranslate.Serialization.Fluent
 {
     public class FluentSerializerContext
     {
-        protected StringBuilder Writer { get; } = new();
-
         public bool IsTextContinuation { get; set; }
         public string Indent { get; private set; } = "";
 

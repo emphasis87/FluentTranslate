@@ -18,7 +18,7 @@ namespace FluentTranslate.Serialization.Fluent
     {
         public static FluentSerializer Default { get; } = new FluentSerializer();
 
-        protected virtual FluentSerializerContext CreateContext() => new FluentSerializerContext();
+        protected virtual FluentSerializerContext CreateContext() => new();
 
         public virtual string Serialize(IFluentElement element, FluentSerializerContext context = null)
         {
@@ -26,6 +26,7 @@ namespace FluentTranslate.Serialization.Fluent
             return element switch
             {
                 FluentResource resource => Serialize(resource, context),
+                FluentEmptyLines emptyLines => Serialize(emptyLines, context),
                 FluentComment comment => Serialize(comment, context),
                 FluentMessage message => Serialize(message, context),
                 FluentTerm term => Serialize(term, context),

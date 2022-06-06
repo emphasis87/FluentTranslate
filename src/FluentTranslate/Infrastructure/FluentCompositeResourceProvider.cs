@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentTranslate.Domain;
-using static FluentTranslate.Infrastructure.EqualityHelper;
+using static FluentTranslate.Common.EqualityHelper;
 
 namespace FluentTranslate.Infrastructure
 {

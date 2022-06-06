@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentTranslate.Common;
 using FluentTranslate.Domain;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Infrastructure
 {
@@ -44,7 +45,7 @@ namespace FluentTranslate.Infrastructure
 
 			foreach (var entry in entries)
 			{
-				if (entryByName.TryGetValue(entry.TargetReference, out var prev))
+				if (entryByName.TryGetValue(entry.Reference, out var prev))
 				{
 					// Coalesce L1 comments
 					prev.Comment ??= entry.Comment;
@@ -54,7 +55,7 @@ namespace FluentTranslate.Infrastructure
 				var factory = Factory ?? FluentCloneFactory.Default;
 				var clone = factory.Clone(entry);
 				result.Entries.Add(clone);
-				entryByName[entry.TargetReference] = clone;
+				entryByName[entry.Reference] = clone;
 			}
 
 			return result;

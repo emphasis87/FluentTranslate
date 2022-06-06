@@ -8,7 +8,14 @@ using static FluentTranslate.Common.EqualityHelper;
 
 namespace FluentTranslate.Common
 {
-    public class FluentAggregator
+    public interface IFluentAggregator
+    {
+        bool CanAggregate(IFluentElement e1, IFluentElement e2);
+        bool CanAggregate(IEnumerable<IFluentElement> elements);
+        IFluentElement Aggregate(IEnumerable<IFluentElement> elements);
+    }
+
+    public class FluentAggregator : IFluentAggregator
     {
         public virtual bool CanAggregate(IFluentElement e1, IFluentElement e2)
         {

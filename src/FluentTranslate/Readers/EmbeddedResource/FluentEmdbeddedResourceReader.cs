@@ -1,6 +1,8 @@
 ﻿using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Serialization.Fluent;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,27 +17,39 @@ namespace FluentTranslate.Providers.EmbeddedResource
 
     }
 
-    public class FluentEmdbeddedResourceReader : IFluentEmdbeddedResourceReader
+    public class FluentEmdbeddedResourceReader : FluentService<FluentEmdbeddedResourceReader>, IFluentEmdbeddedResourceReader
     {
-        public IFluentDeserializer Deserializer { get; }
+        private IFluentDeserializer _deserializer;
+        public IFluentDeserializer Deserializer 
+        {
+            get => _deserializer ??= FluentServices.Default.GetService<IFluentDeserializer>();
+            set => _deserializer = value;
+        }
 
-        public FluentEmdbeddedResourceReader(IFluentDeserializer deserializer!!)
+        public FluentEmdbeddedResourceReader(IFluentDeserializer deserializer = null)
         {
             Deserializer = deserializer;
         }
 
         public FluentResource Read(Assembly assembly, string path)
         {
-            using var stream = assembly.GetManifestResourceStream(path);
-            if (stream is null) 
+            try
+            {
+                using var stream = assembly.GetManifestResourceStream(path);
+                if (stream is null)
+                    return null;
+
+                using var reader = new StreamReader(stream);
+                var source = reader.ReadToEnd();
+                var extension = Path.GetExtension(path);
+                var result = Deserializer.Deserialize(source);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Unable to read a fluent file: {Assembly}, {Path}", assembly, path);
                 return null;
-
-            using var reader = new StreamReader(stream);
-            var source = reader.ReadToEnd();
-            var extension = Path.GetExtension(path);
-            var result = Deserializer.Deserialize(source);
-
-            return result;
+            }
         }
 
         public IEnumerable<(FluentResource Resource, string Path)> Read(Assembly assembly)
@@ -45,7 +59,8 @@ namespace FluentTranslate.Providers.EmbeddedResource
             foreach(var name in fluent)
             {
                 var resource = Read(assembly, name);
-                yield return (resource, name);
+                if (resource is not null)
+                    yield return (resource, name);
             }
         }
     }
