@@ -11,5 +11,10 @@ namespace FluentTranslate.Common
             get => _logger ??= FluentServices.Default.GetService<ILogger<T>>();
             set => _logger = value;
         }
+
+        protected FluentService(ILogger<T> logger = null)
+        {
+            Logger = logger;
+        }
     }
 }

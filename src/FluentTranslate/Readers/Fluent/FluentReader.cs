@@ -15,18 +15,19 @@ namespace FluentTranslate.Readers.Fluent
 
     }
 
-    public class FluentReader : IFluentReader
+    public class FluentReader : FluentService<FluentReader>, IFluentReader
     {
-        public ILogger<FluentReader> Logger { get; set; }
-        private ILogger<FluentReader> GetLogger() => Logger ?? FluentServices.Default.GetService<ILogger<FluentReader>>();
-
-        public IFluentDeserializer Deserializer { get; set; }
-        private IFluentDeserializer GetDeserializer() => Deserializer ?? FluentServices.Default.GetService<IFluentDeserializer>();
+        private IFluentDeserializer _deserializer;
+        public IFluentDeserializer Deserializer 
+        {
+            get => _deserializer ?? FluentServices.Deserializer;
+            set => _deserializer = value;
+        }
 
         public FluentReader(IFluentDeserializer deserializer = null, ILogger<FluentReader> logger = null)
+            : base(logger)
         {
             Deserializer = deserializer;
-            Logger = logger;
         }
 
         public FluentResource Read(string path)
@@ -34,12 +35,12 @@ namespace FluentTranslate.Readers.Fluent
             try
             {
                 var content = File.ReadAllText(path, Encoding.UTF8);
-                var resource = GetDeserializer().Deserialize(content);
+                var resource = Deserializer.Deserialize(content);
                 return resource;
             }
             catch (Exception ex)
             {
-                GetLogger().LogError(ex, "Unable to read a fluent file: {Path}", path);
+                Logger.LogError(ex, "Unable to read a fluent file: {Path}", path);
                 return null;
             }
         }

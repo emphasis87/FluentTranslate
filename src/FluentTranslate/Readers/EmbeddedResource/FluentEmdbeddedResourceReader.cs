@@ -1,14 +1,12 @@
 ﻿using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Serialization.Fluent;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace FluentTranslate.Providers.EmbeddedResource
 {
@@ -22,11 +20,12 @@ namespace FluentTranslate.Providers.EmbeddedResource
         private IFluentDeserializer _deserializer;
         public IFluentDeserializer Deserializer 
         {
-            get => _deserializer ??= FluentServices.Default.GetService<IFluentDeserializer>();
+            get => _deserializer ??= FluentServices.Deserializer;
             set => _deserializer = value;
         }
 
-        public FluentEmdbeddedResourceReader(IFluentDeserializer deserializer = null)
+        public FluentEmdbeddedResourceReader(IFluentDeserializer deserializer = null, ILogger<FluentEmdbeddedResourceReader> logger = null)
+            : base(logger)
         {
             Deserializer = deserializer;
         }
@@ -58,6 +57,7 @@ namespace FluentTranslate.Providers.EmbeddedResource
             var fluent = names.Where(x => x.EndsWith(FluentConstants.Extension, StringComparison.OrdinalIgnoreCase));
             foreach(var name in fluent)
             {
+                var info = assembly.GetManifestResourceInfo(name);
                 var resource = Read(assembly, name);
                 if (resource is not null)
                     yield return (resource, name);
