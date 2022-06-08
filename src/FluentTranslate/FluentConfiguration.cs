@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
-using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
+using FluentTranslate.Services;
 
 namespace FluentTranslate
 {

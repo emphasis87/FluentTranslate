@@ -1,6 +1,6 @@
-﻿using FluentTranslate.Common;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 using FluentTranslate.Serialization.Fluent;
+using FluentTranslate.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,23 +8,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace FluentTranslate.Readers.Fluent
+namespace FluentTranslate.Readers
 {
     public interface IFluentReader
     {
 
     }
 
-    public class FluentReader : FluentService<FluentReader>, IFluentReader
+    public class FluentFileReader : FluentService<FluentFileReader>, IFluentReader
     {
         private IFluentDeserializer _deserializer;
-        public IFluentDeserializer Deserializer 
+        public IFluentDeserializer Deserializer
         {
             get => _deserializer ?? FluentServices.Deserializer;
             set => _deserializer = value;
         }
 
-        public FluentReader(IFluentDeserializer deserializer = null, ILogger<FluentReader> logger = null)
+        public FluentFileReader(IFluentDeserializer deserializer = null, ILogger<FluentFileReader> logger = null)
             : base(logger)
         {
             Deserializer = deserializer;

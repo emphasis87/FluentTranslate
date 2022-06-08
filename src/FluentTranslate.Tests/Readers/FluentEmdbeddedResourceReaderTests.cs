@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Providers.EmbeddedResource;
+using FluentTranslate.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

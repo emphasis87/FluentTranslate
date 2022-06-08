@@ -1,6 +1,7 @@
 ﻿using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Serialization.Fluent;
+using FluentTranslate.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace FluentTranslate.Providers.EmbeddedResource
+namespace FluentTranslate.Readers
 {
     public interface IFluentEmdbeddedResourceReader
     {
@@ -18,7 +19,7 @@ namespace FluentTranslate.Providers.EmbeddedResource
     public class FluentEmdbeddedResourceReader : FluentService<FluentEmdbeddedResourceReader>, IFluentEmdbeddedResourceReader
     {
         private IFluentDeserializer _deserializer;
-        public IFluentDeserializer Deserializer 
+        public IFluentDeserializer Deserializer
         {
             get => _deserializer ??= FluentServices.Deserializer;
             set => _deserializer = value;
@@ -55,7 +56,7 @@ namespace FluentTranslate.Providers.EmbeddedResource
         {
             var names = assembly.GetManifestResourceNames();
             var fluent = names.Where(x => x.EndsWith(FluentConstants.Extension, StringComparison.OrdinalIgnoreCase));
-            foreach(var name in fluent)
+            foreach (var name in fluent)
             {
                 var info = assembly.GetManifestResourceInfo(name);
                 var resource = Read(assembly, name);

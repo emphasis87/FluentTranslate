@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Threading.Tasks;
-using FluentTranslate.Common;
 using FluentTranslate.Domain;
+using FluentTranslate.Services;
 
 namespace FluentTranslate.Infrastructure
 {

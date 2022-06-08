@@ -2,7 +2,7 @@
 using System.Linq;
 using FluentTranslate.Domain;
 
-namespace FluentTranslate.Common
+namespace FluentTranslate.Services
 {
     public interface IFluentCloneFactory
     {

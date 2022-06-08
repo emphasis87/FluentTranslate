@@ -5,7 +5,7 @@ using FluentTranslate.Domain;
 
 using static FluentTranslate.Common.EqualityHelper;
 
-namespace FluentTranslate.Common
+namespace FluentTranslate.Services
 {
     public interface IFluentEqualityComparer : IEqualityComparer<IFluentElement>
     {

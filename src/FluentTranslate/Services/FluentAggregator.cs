@@ -6,7 +6,7 @@ using FluentTranslate.Domain.Common;
 
 using static FluentTranslate.Common.EqualityHelper;
 
-namespace FluentTranslate.Common
+namespace FluentTranslate.Services
 {
     public interface IFluentAggregator
     {

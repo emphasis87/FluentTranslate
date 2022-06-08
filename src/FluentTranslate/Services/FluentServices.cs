@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace FluentTranslate.Common
+namespace FluentTranslate.Services
 {
     public static class FluentServices
     {

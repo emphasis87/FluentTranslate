@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace FluentTranslate.Common
+namespace FluentTranslate.Services
 {
     public abstract class FluentService<T>
     {

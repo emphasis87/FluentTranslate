@@ -1,12 +1,12 @@
-﻿using FluentTranslate.Common;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 using FluentTranslate.Serialization.Json;
+using FluentTranslate.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Text.Json;
 
-namespace FluentTranslate.Readers.Json
+namespace FluentTranslate.Readers
 {
     public interface IFluentJsonReader
     {
@@ -18,7 +18,7 @@ namespace FluentTranslate.Readers.Json
         public FluentJsonReader(ILogger<FluentJsonReader> logger = null)
             : base(logger)
         {
-            
+
         }
 
         public FluentResource Read(string path, JsonSerializerOptions options = null)

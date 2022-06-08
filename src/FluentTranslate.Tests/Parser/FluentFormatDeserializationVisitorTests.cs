@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using Antlr4.Runtime;
 using FluentAssertions;
-using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Parser;
+using FluentTranslate.Services;
 using FluentTranslate.Tests.Support;
 using NUnit.Framework;
 

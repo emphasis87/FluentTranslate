@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentTranslate.Common;
 using FluentTranslate.Domain;
+using FluentTranslate.Services;
 
 namespace FluentTranslate.Infrastructure
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-
 using FluentTranslate.Common;
+using FluentTranslate.Services;
 
 namespace FluentTranslate.Domain.Common
 {
