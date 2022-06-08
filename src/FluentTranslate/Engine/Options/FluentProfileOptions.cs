@@ -1,6 +1,6 @@
-﻿namespace FluentTranslate.Engine
+﻿namespace FluentTranslate.Engine.Options
 {
-    public class FluentProfile
+    public class FluentProfileOptions
     {
         public long Id { get; set; }
         public string Name { get; set; }
