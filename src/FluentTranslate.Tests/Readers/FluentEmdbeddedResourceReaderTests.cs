@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FluentTranslate.Domain;
-using FluentTranslate.Providers.EmbeddedResource;
+using FluentTranslate.Readers;
 using FluentTranslate.Services;
 using NUnit.Framework;
 using System;

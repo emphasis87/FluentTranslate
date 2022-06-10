@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
-namespace FluentTranslate.Engine.Options
+namespace FluentTranslate.Options
 {
     public class FluentClientOptions
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<FluentProfileOptions> Profiles { get; }
-        public List<FluentSourceOptions> Sources { get; }
+
+        public List<FluentProfileOptions> Profiles { get; set; } = new();
+        public List<FluentSourceOptions> Sources { get; set; } = new();
 
         public FluentClientOptions()
         {
-            Profiles = new List<FluentProfileOptions>();
-            Sources = new List<FluentSourceOptions>();
+            
         }
     }
 }
