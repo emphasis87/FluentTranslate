@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FluentTranslate.Common;
+﻿using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Domain.Common;
 using FluentTranslate.Parser;
@@ -10,7 +6,7 @@ using FluentTranslate.Services;
 
 namespace FluentTranslate.Infrastructure
 {
-    public interface IFluentEngine
+	public interface IFluentEngine
 	{
 		string Evaluate(string query, IDictionary<string, object> parameters = null);
 		string Evaluate(IFluentElement element, IDictionary<string, object> parameters = null);
@@ -192,7 +188,7 @@ namespace FluentTranslate.Infrastructure
 
 		public override int GetHashCode()
 		{
-			return EqualityHelper.Hash(Resource);
+			return Helpers.Hash(Resource);
 		}
 	}
 }

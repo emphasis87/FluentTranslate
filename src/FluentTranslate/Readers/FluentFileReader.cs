@@ -1,12 +1,8 @@
-﻿using FluentTranslate.Domain;
+﻿using Microsoft.Extensions.Logging;
+
+using FluentTranslate.Domain;
 using FluentTranslate.Serialization.Fluent;
 using FluentTranslate.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace FluentTranslate.Readers
 {

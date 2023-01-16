@@ -10,9 +10,9 @@ namespace FluentTranslate.Domain
 		{
 		}
 
-		public FluentIdentifier(string id)
+		public FluentIdentifier(string value)
 		{
-			Value = id;
+			Value = value;
 		}
     }
 }

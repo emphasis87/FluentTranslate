@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FluentTranslate.Infrastructure
+﻿namespace FluentTranslate.Infrastructure
 {
 	public class Timestamped<T>
 	{

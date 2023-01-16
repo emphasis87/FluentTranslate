@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 using FluentTranslate.Parser;
 using FluentTranslate.Serialization.Fluent;
 
 namespace FluentTranslate
 {
-    public class FluentConverter
+	public class FluentConverter
 	{
 		public static FluentResource Deserialize(string content)
 		{

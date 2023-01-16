@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FluentTranslate.Infrastructure
+﻿namespace FluentTranslate.Infrastructure
 {
 	public class FluentResourceProviderOptions
 	{

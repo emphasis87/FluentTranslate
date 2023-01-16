@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {

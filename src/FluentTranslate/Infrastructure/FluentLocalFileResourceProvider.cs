@@ -1,8 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
-using File = System.IO.File;
+﻿using File = System.IO.File;
 
 namespace FluentTranslate.Infrastructure
 {

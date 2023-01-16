@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-
-namespace FluentTranslate.Infrastructure
+﻿namespace FluentTranslate.Infrastructure
 {
 	public interface ICurrentCultureProvider
 	{

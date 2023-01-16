@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 
 namespace FluentTranslate.Services
 {
@@ -163,7 +161,7 @@ namespace FluentTranslate.Services
             var clone = new FluentCallArgument
             {
                 Identifier = argument.Identifier,
-                Value = Clone(argument.Value)
+                Content = Clone(argument.Content)
             };
             return clone;
         }

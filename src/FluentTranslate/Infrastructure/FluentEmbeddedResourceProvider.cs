@@ -1,9 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 
 namespace FluentTranslate.Infrastructure
 {

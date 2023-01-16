@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
-
-namespace FluentTranslate.Infrastructure
+﻿namespace FluentTranslate.Infrastructure
 {
 	public interface IFluentServiceContainer : IServiceProvider
 	{

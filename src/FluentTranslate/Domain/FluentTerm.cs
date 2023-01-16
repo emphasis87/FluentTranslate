@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Linq;
-
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {

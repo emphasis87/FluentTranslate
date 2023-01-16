@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-    public class FluentComment : FluentElement, IFluentResourceEntry
+	public class FluentComment : FluentElement, IFluentResourceEntry
 	{
         public int Level { get; set; }
 		public string Value { get; set; }

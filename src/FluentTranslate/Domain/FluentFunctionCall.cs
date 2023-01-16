@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-    public interface IFluentFunctionCall : IFluentElement, IFluentExpression, IFluentCallable
+	public interface IFluentFunctionCall : IFluentElement, IFluentExpression, IFluentCallable
 	{
 		
 	}

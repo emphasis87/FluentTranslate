@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
-using FluentTranslate.Domain;
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate

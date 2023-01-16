@@ -1,9 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace FluentTranslate.Infrastructure
+﻿namespace FluentTranslate.Infrastructure
 {
 	public class FluentHttpFileResourceProvider : FluentFileResourceProvider
 	{

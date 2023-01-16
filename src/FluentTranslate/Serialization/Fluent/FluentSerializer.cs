@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 
 namespace FluentTranslate.Serialization.Fluent
 {
@@ -204,7 +200,7 @@ namespace FluentTranslate.Serialization.Fluent
         {
             context ??= CreateContext();
             var name = string.IsNullOrWhiteSpace(callArgument.Identifier) ? null : $"{callArgument.Identifier}: ";
-            var value = Serialize(callArgument.Value, context);
+            var value = Serialize(callArgument.Content, context);
             return $"{name}{value}";
         }
 

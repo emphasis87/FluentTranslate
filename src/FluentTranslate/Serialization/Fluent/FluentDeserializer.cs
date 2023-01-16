@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 
 using FluentTranslate.Domain;
 using FluentTranslate.Parser;
@@ -37,7 +32,7 @@ namespace FluentTranslate.Serialization.Fluent
 
         public List<IFluentElement> Deserialize(FluentParserContext parserContext)
         {
-            var visitor = new FluentDeserializerVisitor();
+            var visitor = new FluentParserVisitor();
             var result = visitor.Visit(parserContext);
             return result;
         }

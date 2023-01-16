@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FluentTranslate.Domain;
 
-using FluentTranslate.Domain;
-
-using static FluentTranslate.Common.EqualityHelper;
+using static FluentTranslate.Common.Helpers;
 
 namespace FluentTranslate.Services
 {
@@ -21,7 +18,7 @@ namespace FluentTranslate.Services
             return HashElement(element);
         }
 
-        public int HashElement(IFluentElement element)
+        private int HashElement(IFluentElement element)
         {
             var hashCode = element switch
             {
@@ -75,21 +72,21 @@ namespace FluentTranslate.Services
             if (e1.GetType() != e2.GetType()) return false;
             var result = (e1, e2) switch
             {
-                (FluentResource x, FluentResource y) => Equals(x, y),
+                (FluentResource x, FluentResource y) => Equals(x, y, this),
                 (FluentEmptyLines x, FluentComment y) => Equals(x, y),
                 (FluentComment x, FluentComment y) => Equals(x, y),
-                (FluentMessage x, FluentMessage y) => Equals(x, y),
-                (FluentTerm x, FluentTerm y) => Equals(x, y),
-                (FluentAttribute x, FluentAttribute y) => Equals(x, y),
+                (FluentMessage x, FluentMessage y) => Equals(x, y, this),
+                (FluentTerm x, FluentTerm y) => Equals(x, y, this),
+                (FluentAttribute x, FluentAttribute y) => Equals(x, y, this),
                 (FluentText x, FluentText y) => Equals(x, y),
-                (FluentPlaceable x, FluentPlaceable y) => Equals(x, y),
-                (FluentSelection x, FluentSelection y) => Equals(x, y),
-                (FluentVariant x, FluentVariant y) => Equals(x, y),
-                (FluentFunctionCall x, FluentFunctionCall y) => Equals(x, y),
-                (FluentCallArgument x, FluentCallArgument y) => Equals(x, y),
+                (FluentPlaceable x, FluentPlaceable y) => Equals(x, y, this),
+                (FluentSelection x, FluentSelection y) => Equals(x, y, this),
+                (FluentVariant x, FluentVariant y) => Equals(x, y, this),
+                (FluentFunctionCall x, FluentFunctionCall y) => Equals(x, y, this),
+                (FluentCallArgument x, FluentCallArgument y) => Equals(x, y, this),
                 (FluentIdentifier x, FluentIdentifier y) => Equals(x, y),
                 (FluentMessageReference x, FluentMessageReference y) => Equals(x, y),
-                (FluentTermReference x, FluentTermReference y) => Equals(x, y),
+                (FluentTermReference x, FluentTermReference y) => Equals(x, y, this),
                 (FluentVariableReference x, FluentVariableReference y) => Equals(x, y),
                 (FluentNumberLiteral x, FluentNumberLiteral y) => Equals(x, y),
                 (FluentStringLiteral x, FluentStringLiteral y) => Equals(x, y),
@@ -98,9 +95,9 @@ namespace FluentTranslate.Services
             return result;
         }
 
-        public static bool Equals(FluentResource x, FluentResource y)
+        public static bool Equals(FluentResource x, FluentResource y, IEqualityComparer<IFluentElement>? comparer = null)
         {
-            return AreEqual(x.Entries, y.Entries);
+            return AreEqual(x.Entries, y.Entries, comparer);
         }
 
         public static bool Equals(FluentEmptyLines x, FluentEmptyLines y)
@@ -114,26 +111,26 @@ namespace FluentTranslate.Services
                 && x.Value == y.Value;
         }
 
-        public static bool Equals(FluentMessage x, FluentMessage y)
+        public static bool Equals(FluentMessage x, FluentMessage y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.Reference == y.Reference
                 && x.Comment == y.Comment
-                && AreEqual(x.Attributes, y.Attributes)
-                && AreEqual(x.Content, y.Content);
+                && AreEqual(x.Attributes, y.Attributes, comparer)
+                && AreEqual(x.Content, y.Content, comparer);
         }
 
-        public static bool Equals(FluentTerm x, FluentTerm y)
+        public static bool Equals(FluentTerm x, FluentTerm y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.Reference == y.Reference
                 && x.Comment == y.Comment
-                && AreEqual(x.Attributes, y.Attributes)
-                && AreEqual(x.Content, y.Content);
+                && AreEqual(x.Attributes, y.Attributes, comparer)
+                && AreEqual(x.Content, y.Content, comparer);
         }
 
-        public static bool Equals(FluentAttribute x, FluentAttribute y)
+        public static bool Equals(FluentAttribute x, FluentAttribute y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.Identifier == y.Identifier
-                && AreEqual(x.Content, y.Content);
+                && AreEqual(x.Content, y.Content, comparer);
         }
 
         public static bool Equals(FluentText x, FluentText y)
@@ -141,34 +138,34 @@ namespace FluentTranslate.Services
             return x.Value == y.Value;
         }
 
-        public static bool Equals(FluentPlaceable x, FluentPlaceable y)
+        public static bool Equals(FluentPlaceable x, FluentPlaceable y, IEqualityComparer<IFluentElement>? comparer = null)
         {
-            return AreEqual(x.Content, y.Content);
+            return AreEqual(x.Content, y.Content, comparer);
         }
 
-        public static bool Equals(FluentSelection x, FluentSelection y)
+        public static bool Equals(FluentSelection x, FluentSelection y, IEqualityComparer<IFluentElement>? comparer = null)
         {
-            return AreEqual(x.Match, y.Match)
-                && AreEqual(x.Variants, y.Variants);
+            return AreEqual(x.Match, y.Match, comparer)
+                && AreEqual(x.Variants, y.Variants, comparer);
         }
 
-        public static bool Equals(FluentVariant x, FluentVariant y)
+        public static bool Equals(FluentVariant x, FluentVariant y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.IsDefault == y.IsDefault
-                && AreEqual(x.Identifier, y.Identifier)
-                && AreEqual(x.Content, y.Content);
+                && AreEqual(x.Identifier, y.Identifier, comparer)
+                && AreEqual(x.Content, y.Content, comparer);
         }
 
-        public static bool Equals(FluentFunctionCall x, FluentFunctionCall y)
+        public static bool Equals(FluentFunctionCall x, FluentFunctionCall y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.TargetId == y.TargetId
-                && AreEqual(x.Arguments, y.Arguments);
+                && AreEqual(x.Arguments, y.Arguments, comparer);
         }
 
-        public static bool Equals(FluentCallArgument x, FluentCallArgument y)
+        public static bool Equals(FluentCallArgument x, FluentCallArgument y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.Identifier == y.Identifier
-                && AreEqual(x.Value, y.Value);
+                && AreEqual(x.Content, y.Content, comparer);
         }
 
         public static bool Equals(FluentIdentifier x, FluentIdentifier y)
@@ -181,10 +178,10 @@ namespace FluentTranslate.Services
             return x.TargetReference == y.TargetReference;
         }
 
-        public static bool Equals(FluentTermReference x, FluentTermReference y)
+        public static bool Equals(FluentTermReference x, FluentTermReference y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.TargetReference == y.TargetReference
-                && AreEqual(x.Arguments, y.Arguments);
+                && AreEqual(x.Arguments, y.Arguments, comparer);
         }
 
         public static bool Equals(FluentVariableReference x, FluentVariableReference y)

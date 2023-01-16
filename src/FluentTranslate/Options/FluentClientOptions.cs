@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
-
-namespace FluentTranslate.Options
+﻿namespace FluentTranslate.Options
 {
     public class FluentClientOptions
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FluentTranslate.Serialization.Fluent
+﻿namespace FluentTranslate.Serialization.Fluent
 {
     public class FluentDeserializerContext
     {

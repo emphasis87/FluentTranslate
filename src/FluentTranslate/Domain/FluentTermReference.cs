@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentTermReference : FluentRecordReference, IFluentCallable, IFluentAggregable, IEnumerable<FluentCallArgument>
+    public class FluentTermReference : FluentRecordReference, IFluentCallable, IFluentAggregable, IEnumerable<FluentCallArgument>
     {
         public override string TargetReference => TargetAttributeId switch
         {
@@ -26,7 +21,7 @@ namespace FluentTranslate.Domain
 			TargetId = id;
 		}
 
-		public FluentTermReference(string id, string attributeId) : this()
+		public FluentTermReference(string id, string? attributeId) : this()
 		{
 			TargetId = id;
 			TargetAttributeId = attributeId;

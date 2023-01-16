@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-
-namespace FluentTranslate.Serialization.Fluent
+﻿namespace FluentTranslate.Serialization.Fluent
 {
     public class FluentSerializerContext
     {

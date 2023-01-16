@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-    public class FluentVariant : FluentContainer, IFluentContainer, IEnumerable<IFluentContent>
+	public class FluentVariant : FluentContainer, IFluentContainer, IEnumerable<IFluentContent>
 	{
         public bool IsDefault { get; set; }
 		public IFluentVariantIdentifier Identifier { get; set; }

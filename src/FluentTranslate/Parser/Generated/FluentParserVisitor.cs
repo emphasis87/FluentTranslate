@@ -225,6 +225,12 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNamedArgument([NotNull] FluentParser.NamedArgumentContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.inlineArgument"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInlineArgument([NotNull] FluentParser.InlineArgumentContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.argumentExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

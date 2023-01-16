@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 using FluentTranslate.Services;
 
 namespace FluentTranslate.Infrastructure
 {
-    public abstract class FluentPollingResourceProvider : IFluentResourceProvider
+	public abstract class FluentPollingResourceProvider : IFluentResourceProvider
 	{
 		protected IFluentConfiguration Configuration { get; }
 

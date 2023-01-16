@@ -1,8 +1,6 @@
-﻿using FluentTranslate.Services;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Extensions.Logging;
+
+using FluentTranslate.Services;
 
 namespace FluentTranslate.Providers
 {

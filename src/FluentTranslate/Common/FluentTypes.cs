@@ -1,10 +1,8 @@
-﻿using System;
-
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 
 namespace FluentTranslate.Common
 {
-    public class FluentElementTypes
+    public static class FluentTypes
     {
         public const string Resource = "resource";
         public const string EmptyLines = "empty-lines";
@@ -25,7 +23,7 @@ namespace FluentTranslate.Common
         public const string NumberLiteral = "number";
         public const string StringLiteral = "string";
 
-        public static string GetType(IFluentElement element!!)
+        public static string GetType(IFluentElement element)
         {
             return element switch
             {

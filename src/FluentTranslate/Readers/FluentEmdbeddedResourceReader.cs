@@ -1,13 +1,9 @@
-﻿using FluentTranslate.Common;
+﻿using Microsoft.Extensions.Logging;
+
+using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Serialization.Fluent;
 using FluentTranslate.Services;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace FluentTranslate.Readers
 {

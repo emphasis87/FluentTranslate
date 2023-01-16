@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace FluentTranslate.Domain.Common
+﻿namespace FluentTranslate.Domain.Common
 {
     public abstract class FluentContainer : FluentElement, IFluentContainer
     {

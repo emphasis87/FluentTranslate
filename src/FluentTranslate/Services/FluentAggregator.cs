@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using FluentTranslate.Domain;
+﻿using FluentTranslate.Domain;
 using FluentTranslate.Domain.Common;
 
-using static FluentTranslate.Common.EqualityHelper;
+using static FluentTranslate.Common.Helpers;
 
 namespace FluentTranslate.Services
 {
@@ -31,12 +28,12 @@ namespace FluentTranslate.Services
             };
         }
 
-        public virtual bool CanAggregate(IEnumerable<IFluentElement> elements!!)
+        public virtual bool CanAggregate(IEnumerable<IFluentElement> elements)
         {
             return ZipOrDefault(elements, elements.Skip(1), CanAggregate).All(r => r);
         }
 
-        public virtual IFluentElement Aggregate(IEnumerable<IFluentElement> elements!!)
+        public virtual IFluentElement Aggregate(IEnumerable<IFluentElement> elements)
         {
             var all = elements.Where(c => c is not null).ToArray();
             if (all.Length == 0) return default;
@@ -58,13 +55,13 @@ namespace FluentTranslate.Services
             }
         }
 
-        public virtual IFluentElement AggregateEmptyLines(IFluentElement[] elements!!, FluentEmptyLines first!!)
+        public virtual IFluentElement AggregateEmptyLines(IFluentElement[] elements, FluentEmptyLines first)
         {
             first.Count = elements.Cast<FluentEmptyLines>().Sum(x => x.Count);
             return first;
         }
 
-        public virtual IFluentElement AggregateText(IFluentElement[] elements!!, FluentText first!!)
+        public virtual IFluentElement AggregateText(IFluentElement[] elements, FluentText first)
         {
             var texts = elements.Cast<FluentText>().Select(x => x.Value).Where(v => v is not null);
             var value = string.Join("\r\n", texts);
@@ -72,7 +69,7 @@ namespace FluentTranslate.Services
             return first;
         }
 
-        public virtual IFluentElement AggregateComments(IFluentElement[] elements!!, FluentComment first!!)
+        public virtual IFluentElement AggregateComments(IFluentElement[] elements, FluentComment first)
         {
             var last = elements[elements.Length - 1];
             var comments = elements.OfType<FluentComment>().Select(x => x.Value);

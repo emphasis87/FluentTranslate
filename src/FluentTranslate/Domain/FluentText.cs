@@ -1,13 +1,8 @@
-﻿using FluentTranslate.Common;
-
-using System;
-using System.Linq;
-
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-    public class FluentText : FluentElement, IFluentContent, IFluentAggregable
+	public class FluentText : FluentElement, IFluentContent, IFluentAggregable
     {
         public string Value { get; set; }
 

@@ -22,7 +22,7 @@ namespace FluentTranslate.Tests.Parser
 			var parser = new FluentParser(new CommonTokenStream(lexer));
 
 			// Parse the result using deserialization visitor
-			var visitor = new FluentDeserializerVisitor();
+			var visitor = new FluentParserVisitor();
 			var resource = visitor.Visit(parser.resource()).FirstOrDefault() as FluentResource;
 
 			var mode = 0;

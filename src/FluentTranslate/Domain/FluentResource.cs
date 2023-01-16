@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-    public class FluentResource : FluentElement, IEnumerable<IFluentResourceEntry>
+	public class FluentResource : FluentElement, IEnumerable<IFluentResourceEntry>
 	{
         public List<IFluentResourceEntry> Entries { get; }
 

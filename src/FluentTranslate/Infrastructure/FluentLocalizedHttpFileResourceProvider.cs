@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace FluentTranslate.Infrastructure
+﻿namespace FluentTranslate.Infrastructure
 {
 	public class FluentLocalizedHttpFileResourceProvider : FluentLocalizedFileResourceProvider
 	{

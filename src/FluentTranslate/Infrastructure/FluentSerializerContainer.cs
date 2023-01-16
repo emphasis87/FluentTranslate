@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-using FluentTranslate.Serialization.Fluent;
+﻿using FluentTranslate.Serialization.Fluent;
 
 namespace FluentTranslate.Infrastructure
 {
-    public interface IFluentDeserializerContainer
+	public interface IFluentDeserializerContainer
 	{
 		IFluentDeserializer Get(string extension);
 		void Add(string extension, IFluentDeserializer deserializer);

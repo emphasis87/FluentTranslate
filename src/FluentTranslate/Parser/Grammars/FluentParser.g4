@@ -62,8 +62,9 @@ attributeAccessor	: ATTRIBUTE_REF IDENTIFIER_REF ;
 functionCall		: IDENTIFIER_REF argumentList ;
 
 argumentList		: ws CALL_OPEN ( argument ws CALL_ARG_SEP )* argument? ws CALL_CLOSE ;
-argument			: ws ( namedArgument | argumentExpression ) ;
+argument			: ws ( namedArgument | inlineArgument ) ;
 namedArgument		: IDENTIFIER_REF ws CALL_ARG_NAME_SEP ws argumentExpression ;
+inlineArgument		: argumentExpression ;
 argumentExpression	: inlineExpression ;
 
 emptyLine			: INDENT? ( NL | NL_INDENT ) ;

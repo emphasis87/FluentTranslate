@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FluentTranslate.Options
+﻿namespace FluentTranslate.Options
 {
     public class FluentProfileOptions
     {
