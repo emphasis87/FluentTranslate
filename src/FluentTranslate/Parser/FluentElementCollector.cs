@@ -1,7 +1,5 @@
 ﻿using FluentTranslate.Common;
 using FluentTranslate.Domain;
-using FluentTranslate.Domain.Common;
-using System.ComponentModel;
 
 namespace FluentTranslate.Parser
 {
@@ -9,7 +7,7 @@ namespace FluentTranslate.Parser
     {
         public string Type => throw new NotImplementedException();
 
-        public Stack<string> Types { get; set; } = new();
+        public Stack<FluentType> Types { get; set; } = new();
         public Stack<IFluentElement> Elements { get; set; } = new();
         public List<string> Texts { get; } = new();
         public List<int> Levels { get; set; } = new();
@@ -19,14 +17,14 @@ namespace FluentTranslate.Parser
 
         }
 
-        public void AddType(string type)
+        public void AddType(FluentType type)
         {
             Types.Push(type);
-        }
+        } 
 
         public void AddEmptyLines()
         {
-            Types.Push(FluentTypes.EmptyLines);
+            Types.Push(FluentType.EmptyLines);
         }
 
         public FluentResource AddResource()
@@ -40,10 +38,10 @@ namespace FluentTranslate.Parser
             id ??= "";
             IFluentElement result = type switch
             {
-                FluentTypes.Message => new FluentMessage(id),
-                FluentTypes.Term => new FluentTerm(id),
-                FluentTypes.Attribute => new FluentAttribute(id),
-                FluentTypes.Identifier => new FluentIdentifier(id),
+                FluentType.Message => new FluentMessage(id),
+                FluentType.Term => new FluentTerm(id),
+                FluentType.Attribute => new FluentAttribute(id),
+                FluentType.Identifier => new FluentIdentifier(id),
                 _ => throw UnsupportedChildTypeException(type),
             };
             Elements.Push(result);
@@ -58,7 +56,7 @@ namespace FluentTranslate.Parser
         public IFluentElement AddFunctionCall(string id)
         {
             var result = new FluentFunctionCall(id);
-            while (Types.Peek() == FluentTypes.CallArgument)
+            while (Types.Peek() == FluentType.CallArgument)
             {
                 var next = GetElement<FluentCallArgument>();
                 result.Arguments.Add(next);
@@ -81,15 +79,15 @@ namespace FluentTranslate.Parser
 
         public void AddComemnt(int level, string value)
         {
-            Types.Push(FluentTypes.Comment);
+            Types.Push(FluentType.Comment);
             Levels.Add(level);
             Texts.Add(value);
         }
 
         public void AddText(string value)
         {
-            if (Types.Peek() != FluentTypes.Text)
-                Types.Push(FluentTypes.Text);
+            if (Types.Peek() != FluentType.Text)
+                Types.Push(FluentType.Text);
 
             Texts.Add(value);
         }
@@ -99,10 +97,10 @@ namespace FluentTranslate.Parser
             var type = Types.Pop();
             IFluentElement result = type switch
             {
-                FluentTypes.MessageReference => new FluentMessageReference(id),
-                FluentTypes.TermReference => new FluentTermReference(id, attributeId),
-                FluentTypes.VariableReference => new FluentVariableReference(id),
-                FluentTypes.Identifier => new FluentIdentifier(id),
+                FluentType.MessageReference => new FluentMessageReference(id),
+                FluentType.TermReference => new FluentTermReference(id, attributeId),
+                FluentType.VariableReference => ,
+                FluentType.Identifier => new FluentIdentifier(id),
                 _ => throw UnsupportedChildTypeException(type),
             };
             Elements.Push(result);
@@ -114,8 +112,8 @@ namespace FluentTranslate.Parser
             var type = Types.Pop();
             IFluentElement result = type switch
             {
-                FluentTypes.StringLiteral => new FluentStringLiteral(value),
-                FluentTypes.NumberLiteral => new FluentNumberLiteral(value),
+                FluentType.StringLiteral => new FluentStringLiteral(value),
+                FluentType.NumberLiteral => new FluentNumberLiteral(value),
                 _ => throw UnsupportedChildTypeException(type),
             };
             Elements.Push(result);
@@ -126,7 +124,7 @@ namespace FluentTranslate.Parser
         {
             return Types.Peek() switch
             {
-                FluentTypes.Text => 
+                FluentType.Text => 
             }
         }
 
@@ -136,7 +134,7 @@ namespace FluentTranslate.Parser
         protected FluentText CollectText()
         {
             var count = 0;
-            while(Types.Peek() == FluentTypes.Text)
+            while(Types.Peek() == FluentType.Text)
             {
                 Types.Pop();
                 count++;
@@ -201,7 +199,7 @@ namespace FluentTranslate.Parser
         {
             var variant = new FluentVariant();
 
-            while(Types.Peek() != FluentTypes.Variant)
+            while(Types.Peek() != FluentType.Variant)
             {
 
             }
@@ -219,7 +217,7 @@ namespace FluentTranslate.Parser
                     default: break;
                 }
             }
-            while (type != FluentTypes.Variant);
+            while (type != FluentType.Variant);
 
             var id = result.OfType<FluentIdentifier>().FirstOrDefault();
             if (id != null)

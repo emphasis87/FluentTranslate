@@ -16,3 +16,4 @@ namespace FluentTranslate.Domain
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }
+	

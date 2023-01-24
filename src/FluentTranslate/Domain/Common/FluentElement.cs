@@ -9,7 +9,7 @@ namespace FluentTranslate.Domain.Common
 
 		public FluentElement()
         {
-			Type = FluentTypes.GetType(this);
+			Type = FluentType.GetType(this);
 		}
 
 		public override bool Equals(object other)

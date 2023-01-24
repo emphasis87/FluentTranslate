@@ -20,17 +20,27 @@ namespace FluentTranslate.Parser
 
 		protected override IFluentElement DefaultResult => new FluentResource();
 
-        //protected override IFluentElement AggregateResult(
-        //	List<IFluentElement> aggregate,
-        //	List<IFluentElement> nextResult)
-        //{
-        //	aggregate.AddRange(nextResult);
-        //	return aggregate;
-        //}
+        public override IFluentElement VisitChildren(IRuleNode node)
+        {
+            IFluentElement val = DefaultResult;
+            int childCount = node.ChildCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                if (!ShouldVisitNextChild(node, val))
+                {
+                    break;
+                }
+
+                IFluentElement nextResult = node.GetChild(i).Accept(this);
+                val = AggregateResult(val, nextResult);
+            }
+
+            return val;
+        }
 
         public override IFluentElement VisitResource(FluentParser.ResourceContext context)
-		{
-			Collector.AddType(FluentTypes.Resource);
+		{ 
+			Collector.AddType(FluentType.Resource);
 			base.VisitResource(context);
 			var result = Collector.AddResource();
 			return result;
@@ -110,7 +120,7 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitTerm(FluentParser.TermContext context)
 		{
-			Collector.AddType(FluentTypes.Term);
+			Collector.AddType(FluentType.Term);
 			base.VisitTerm(context);
 			var result = Collector.AddRecord();
 			return result;
@@ -130,7 +140,7 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitMessage(FluentParser.MessageContext context)
 		{
-            Collector.AddType(FluentTypes.Message);
+            Collector.AddType(FluentType.Message);
             base.VisitMessage(context);
             var result = Collector.AddRecord();
             return result;
@@ -151,7 +161,7 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitAttribute(FluentParser.AttributeContext context)
 		{
-            Collector.AddType(FluentTypes.Attribute);
+            Collector.AddType(FluentType.Attribute);
             base.VisitAttribute(context);
             var result = Collector.AddRecord();
             return result;
@@ -205,7 +215,7 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitPlaceable(FluentParser.PlaceableContext context)
 		{
-			Collector.AddType(FluentTypes.Placeable);
+			Collector.AddType(FluentType.Placeable);
 
 			var result = base.VisitPlaceable(context);
 			if (result.Count == 0)
@@ -248,7 +258,7 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitSelectExpression(FluentParser.SelectExpressionContext context)
 		{
-			Collector.AddType(FluentTypes.Selection);
+			Collector.AddType(FluentType.Selection);
 			base.VisitSelectExpression(context);
 			var result = Collector.AddSelection();
 			//var selection = new FluentSelection();
@@ -288,7 +298,7 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitVariant(FluentParser.VariantContext context)
 		{
-			Collector.AddType(FluentTypes.Variant);
+			Collector.AddType(FluentType.Variant);
 			base.VisitVariant(context);
 			var result = Collector.AddVariant();
 			return result;
@@ -296,7 +306,7 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitIdentifier(FluentParser.IdentifierContext context)
 		{
-			Collector.AddType(FluentTypes.Identifier);
+			Collector.AddType(FluentType.Identifier);
 			var id = context.GetText();
 			var result = Collector.AddReference(id);
 			return result;
@@ -304,32 +314,35 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitStringLiteral(FluentParser.StringLiteralContext context)
 		{
-            Collector.AddType(FluentTypes.NumberLiteral);
             var value = context.GetText();
-			var text = value.Substring(1, value.Length - 2);
-            var result = Collector.AddLiteral(text);
+			// Remove quotes
+			var literal = value.Substring(1, value.Length - 2);
+            var result = new FluentStringLiteral(literal);
             return result;
         }
 
 		public override IFluentElement VisitNumberLiteral(FluentParser.NumberLiteralContext context)
 		{
-			Collector.AddType(FluentTypes.NumberLiteral);
-			var value = context.GetText();
-            var result = Collector.AddLiteral(value);
+			var literal = context.GetText();
+			var result = new FluentNumberLiteral(literal);
 			return result;
 		}
 
 		public override IFluentElement VisitVariableReference(FluentParser.VariableReferenceContext context)
 		{
-            Collector.AddType(FluentTypes.VariableReference);
 			var id = context.IDENTIFIER_REF().GetText();
-			var result = Collector.AddReference(id);
-			return result;
+			var result = new FluentVariableReference(id);
+            return result;
 		}
 
-		public override IFluentElement VisitTermReference(FluentParser.TermReferenceContext context)
+        public override IFluentElement VisitMessageReference([NotNull] FluentParser.MessageReferenceContext context)
+        {
+            return base.VisitMessageReference(context);
+        }
+
+        public override IFluentElement VisitTermReference(FluentParser.TermReferenceContext context)
 		{
-			Collector.AddType(FluentTypes.TermReference);
+			Collector.AddType(FluentType.TermReference);
 			return base.VisitTermReference(context);
 		}
 
@@ -341,9 +354,9 @@ namespace FluentTranslate.Parser
 			return result;
 		}
 
-		public override IFluentElement VisitFunctionCall(FluentParser.FunctionCallContext context)
+        public override IFluentElement VisitFunctionCall(FluentParser.FunctionCallContext context)
 		{
-			Collector.AddType(FluentTypes.FunctionCall);
+			Collector.AddType(FluentType.FunctionCall);
 			base.VisitFunctionCall(context);
             var id = context.IDENTIFIER_REF().GetText();
 			var result = Collector.AddFunctionCall(id);
@@ -352,7 +365,7 @@ namespace FluentTranslate.Parser
 
         public override IFluentElement VisitArgument([NotNull] FluentParser.ArgumentContext context)
         {
-            Collector.AddType(FluentTypes.CallArgument);
+			var argument = new FluentCallArgument();
             return base.VisitArgument(context);
         }
 
