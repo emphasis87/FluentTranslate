@@ -26,7 +26,7 @@ namespace FluentTranslate.Readers
             Deserializer = deserializer;
         }
 
-        public FluentResource Read(string path)
+        public FluentDocument Read(string path)
         {
             try
             {

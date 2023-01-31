@@ -27,7 +27,7 @@ namespace FluentTranslate.Readers
             Deserializer = deserializer;
         }
 
-        public FluentResource Read(Assembly assembly, string path)
+        public FluentDocument Read(Assembly assembly, string path)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace FluentTranslate.Readers
             }
         }
 
-        public IEnumerable<(FluentResource Resource, string Path)> Read(Assembly assembly)
+        public IEnumerable<(FluentDocument Resource, string Path)> Read(Assembly assembly)
         {
             var names = assembly.GetManifestResourceNames();
             var fluent = names.Where(x => x.EndsWith(FluentConstants.Extension, StringComparison.OrdinalIgnoreCase));

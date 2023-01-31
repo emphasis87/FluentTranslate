@@ -45,7 +45,7 @@ namespace FluentTranslate.Tests.Infrastructure
 
 			// When files are missing should return an empty resource
 			var r0 = await provider.GetResourceAsync();
-			r0.Should().Equal(new FluentResource());
+			r0.Should().Equal(new FluentDocument());
 			provider.FindResourceAsyncCount.Should().Be(1);
 			provider.Providers.Should().BeEquivalentTo(fn, fn.Replace("ftl", "iv.ftl"));
 
@@ -68,7 +68,7 @@ namespace FluentTranslate.Tests.Infrastructure
 			// Should return a new resource
 			var r3 = await provider.GetResourceAsync();
 			r3.Should().Equal(
-				new FluentResource
+				new FluentDocument
 				{
 					new FluentMessage("hello") {new FluentText("Hello, world!")},
 					new FluentMessage("greeting") {new FluentText("Hello, world!")}
@@ -80,7 +80,7 @@ namespace FluentTranslate.Tests.Infrastructure
 			// Should combine the resources with specific culture having priority
 			var r4 = await provider.GetResourceAsync();
 			r4.Should().Equal(
-				new FluentResource
+				new FluentDocument
 				{
 					new FluentMessage("hello") {new FluentText("Hello, everyone!")},
 					new FluentMessage("greeting") {new FluentText("Hello, world!")}
@@ -112,7 +112,7 @@ namespace FluentTranslate.Tests.Infrastructure
 			}
 
 			public int FindResourceAsyncCount { get; set; }
-			protected override Task<FluentResource> FindResourceAsync(Context context, CultureInfo culture)
+			protected override Task<FluentDocument> FindResourceAsync(Context context, CultureInfo culture)
 			{
 				FindResourceAsyncCount++;
 				return base.FindResourceAsync(context, culture);

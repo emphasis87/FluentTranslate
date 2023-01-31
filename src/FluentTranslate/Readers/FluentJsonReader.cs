@@ -19,13 +19,13 @@ namespace FluentTranslate.Readers
 
         }
 
-        public FluentResource Read(string path, JsonSerializerOptions options = null)
+        public FluentDocument Read(string path, JsonSerializerOptions options = null)
         {
             try
             {
                 using var stream = File.OpenRead(path);
                 FluentResourceJsonContext context = new(options);
-                var resource = JsonSerializer.Deserialize(stream, context.FluentResource);
+                var resource = JsonSerializer.Deserialize(stream, context.FluentDocument);
                 return resource;
             }
             catch (Exception ex)

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:\projects\FluentTranslate\src\FluentTranslate\Parser\Grammars\FluentParser.g4 by ANTLR 4.10.1
+// Generated from C:\prace\FluentTranslate\src\FluentTranslate\Parser\Grammars\FluentParser.g4 by ANTLR 4.10.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -33,11 +33,11 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.resource"/>.
+	/// Visit a parse tree produced by <see cref="FluentParser.document"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitResource([NotNull] FluentParser.ResourceContext context);
+	Result VisitDocument([NotNull] FluentParser.DocumentContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.entry"/>.
 	/// </summary>
@@ -51,6 +51,18 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitComment([NotNull] FluentParser.CommentContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.record"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRecord([NotNull] FluentParser.RecordContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="FluentParser.recordHeader"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRecordHeader([NotNull] FluentParser.RecordHeaderContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -62,12 +74,6 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitMessage([NotNull] FluentParser.MessageContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.record"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitRecord([NotNull] FluentParser.RecordContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.attributeList"/>.
 	/// </summary>

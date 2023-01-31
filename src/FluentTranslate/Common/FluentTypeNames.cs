@@ -27,7 +27,7 @@ namespace FluentTranslate.Common
         {
             return element switch
             {
-                FluentResource => Resource,
+                FluentDocument => Resource,
                 FluentEmptyLines => EmptyLines,
                 FluentComment => Comment,
                 FluentMessage => Message,

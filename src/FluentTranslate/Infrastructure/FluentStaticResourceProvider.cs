@@ -10,16 +10,16 @@ namespace FluentTranslate.Infrastructure
 		protected IFluentCloneFactory CloneFactory =>
 			Configuration?.Services.GetService<IFluentCloneFactory>() ?? FluentCloneFactory.Default;
 
-		private readonly FluentResource _resource;
+		private readonly FluentDocument _resource;
 
-		public FluentStaticResourceProvider(FluentResource resource, IFluentConfiguration configuration = null)
+		public FluentStaticResourceProvider(FluentDocument resource, IFluentConfiguration configuration = null)
 		{
 			Configuration = configuration;
 
 			_resource = CloneFactory.Clone(resource);
 		}
 
-		public Task<FluentResource> GetResourceAsync(CultureInfo culture = null)
+		public Task<FluentDocument> GetResourceAsync(CultureInfo culture = null)
 		{
 			return Task.FromResult(_resource);
 		}

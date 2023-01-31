@@ -6,7 +6,7 @@ namespace FluentTranslate.Infrastructure
 {
 	public interface IFluentMerger
 	{
-		FluentResource Combine(IEnumerable<FluentResource> resources);
+		FluentDocument Combine(IEnumerable<FluentDocument> resources);
 	}
 
 	/// <summary>
@@ -27,17 +27,17 @@ namespace FluentTranslate.Infrastructure
 			Configuration = configuration;
 		}
 
-		public FluentResource Combine(IEnumerable<FluentResource> resources)
+		public FluentDocument Combine(IEnumerable<FluentDocument> resources)
 		{
 			if (resources is null)
 				throw new ArgumentNullException(nameof(resources));
 
-			var result = new FluentResource();
+			var result = new FluentDocument();
 			var entryByName = new Dictionary<string, FluentRecord>();
 
 			var entries = resources
-				.Where(x => x?.Entries != null)
-				.SelectMany(x => x.Entries)
+				.Where(x => x?.Content != null)
+				.SelectMany(x => x.Content)
 				.OfType<FluentRecord>();
 
 			foreach (var entry in entries)
@@ -51,7 +51,7 @@ namespace FluentTranslate.Infrastructure
 
 				var factory = Factory ?? FluentCloneFactory.Default;
 				var clone = factory.Clone(entry);
-				result.Entries.Add(clone);
+				result.Content.Add(clone);
 				entryByName[entry.Reference] = clone;
 			}
 

@@ -64,7 +64,7 @@ namespace FluentTranslate.Infrastructure
 			return new Context(culture);
 		}
 
-		public async Task<FluentResource> GetResourceAsync(CultureInfo culture = null)
+		public async Task<FluentDocument> GetResourceAsync(CultureInfo culture = null)
 		{
 			var nextCulture = GetCulture(culture);
 
@@ -86,9 +86,9 @@ namespace FluentTranslate.Infrastructure
 
 			if (lastResult is null)
 			{
-				var initResult = new AsyncLazy<FluentResource>(() => FindResourceAsync(context, culture));
+				var initResult = new AsyncLazy<FluentDocument>(() => FindResourceAsync(context, culture));
 				var prevResult = Interlocked.CompareExchange(ref context.InitialResult, initResult, null);
-				var result = await (prevResult ?? initResult) ?? new FluentResource();
+				var result = await (prevResult ?? initResult) ?? new FluentDocument();
 				var prev = Interlocked.CompareExchange(ref context.LastResult, result, null);
 				context.LastPolled = now;
 				context.InitialResult = null;
@@ -114,16 +114,16 @@ namespace FluentTranslate.Infrastructure
 		/// <summary>
 		/// Retrieve the resource from the underlying source.
 		/// Return null when the source has not been changed.
-		/// Return empty <see cref="FluentResource"/> when the source can not be reached.
+		/// Return empty <see cref="FluentDocument"/> when the source can not be reached.
 		/// </summary>
-		protected abstract Task<FluentResource> FindResourceAsync(Context context, CultureInfo culture);
+		protected abstract Task<FluentDocument> FindResourceAsync(Context context, CultureInfo culture);
 
 		protected class Context
 		{
 			public CultureInfo Culture { get; }
 			public DateTime? LastPolled;
-			public FluentResource LastResult;
-			public AsyncLazy<FluentResource> InitialResult;
+			public FluentDocument LastResult;
+			public AsyncLazy<FluentDocument> InitialResult;
 			public int IsUpdating;
 
 			public Context(CultureInfo culture)

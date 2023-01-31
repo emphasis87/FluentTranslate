@@ -9,16 +9,16 @@ options {
  * Parser Rules
  */
 
-resource			: entry* EOF ;
+document			: entry* EOF ;
 
-entry				: ( term | message | comment | emptyLine ) ;
+entry				: ( record | comment | emptyLine ) ;
 
 comment				: COMMENT_OPEN COMMENT NL? ;
 
-term				: TERM record expressionList attributeList? NL? ;
-message				: record expressionList? attributeList? NL? ;
-
-record				: IDENTIFIER INDENT? EQUALS INDENT? ;
+record				: term | message ;
+recordHeader		: IDENTIFIER INDENT? EQUALS INDENT? ;
+term				: TERM recordHeader expressionList attributeList? NL? ;
+message				: recordHeader expressionList? attributeList? NL? ;
 
 attributeList		: attribute+ ;
 attribute			: ws indent ATTRIBUTE record expressionList ;

@@ -4,6 +4,6 @@ namespace FluentTranslate.Infrastructure
 {
 	public interface IFluentResourceProvider
 	{
-		Task<FluentResource> GetResourceAsync(CultureInfo culture = null);
+		Task<FluentDocument> GetResourceAsync(CultureInfo culture = null);
 	}
 }

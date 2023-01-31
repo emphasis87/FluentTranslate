@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Serialization.Json
 {
-    [JsonSerializable(typeof(FluentResource))]
+    [JsonSerializable(typeof(FluentDocument))]
     public partial class FluentResourceJsonContext : JsonSerializerContext
     {
     }

@@ -19,14 +19,14 @@ namespace FluentTranslate.Infrastructure
 		protected IFluentCloneFactory Factory =>
 			Configuration?.Services.GetService<IFluentCloneFactory>() ?? FluentCloneFactory.Default;
 
-		protected FluentResource Resource { get; }
+		protected FluentDocument Resource { get; }
 		protected Dictionary<string, FluentRecord> RecordByReference { get; }
 
-		public FluentEngine(FluentResource resource, IFluentConfiguration configuration = null)
+		public FluentEngine(FluentDocument resource, IFluentConfiguration configuration = null)
 		{
 			Configuration = configuration;
 
-			Resource = resource is null ? new FluentResource() : Factory.Clone(resource);
+			Resource = resource is null ? new FluentDocument() : Factory.Clone(resource);
 			RecordByReference = new Dictionary<string, FluentRecord>();
 
 			Initialize();
@@ -34,7 +34,7 @@ namespace FluentTranslate.Infrastructure
 
 		protected void Initialize()
 		{
-			foreach (var record in Resource.Entries.OfType<FluentRecord>())
+			foreach (var record in Resource.Content.OfType<FluentRecord>())
 			{
 				RecordByReference[record.Reference] = record;
 			}
@@ -45,10 +45,10 @@ namespace FluentTranslate.Infrastructure
 			if (query is null)
 				return null;
 
-			List<IFluentElement> elements;
+			IFluentElement element;
 			try
 			{
-				elements = FluentConverter.Deserialize(query, (lexer, parser) =>
+				element = FluentConverter.Deserialize(query, (lexer, parser) =>
 				{
 					lexer.PushMode(FluentLexer.SINGLELINE);
 					return parser.expressionList();
@@ -59,7 +59,7 @@ namespace FluentTranslate.Infrastructure
 				throw new ArgumentException($"Unable to deserialize query: '{query}'.", ex);
 			}
 
-			var result = Evaluate(elements, parameters);
+			var result = Evaluate(element, parameters);
 			return result;
 		}
 

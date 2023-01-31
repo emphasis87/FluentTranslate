@@ -49,7 +49,7 @@ namespace FluentTranslate.Infrastructure
 			}
 		}
 
-		protected override async Task<FluentResource> FindResourceAsync(Context context, CultureInfo culture)
+		protected override async Task<FluentDocument> FindResourceAsync(Context context, CultureInfo culture)
 		{
 			var ctx = (CompositeContext) context;
 
@@ -72,12 +72,12 @@ namespace FluentTranslate.Infrastructure
 		protected class CompositeContext : Context
 		{
 			public List<IFluentResourceProvider> Providers;
-			public FluentResource[] LastResults;
+			public FluentDocument[] LastResults;
 
 			public CompositeContext(CultureInfo culture) : base(culture)
 			{
 				Providers = new List<IFluentResourceProvider>();
-				LastResults = new FluentResource[0];
+				LastResults = new FluentDocument[0];
 			}
 		}
 	}

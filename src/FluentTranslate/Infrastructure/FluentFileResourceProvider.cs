@@ -14,7 +14,7 @@ namespace FluentTranslate.Infrastructure
 			RequestPath = path ?? throw new ArgumentNullException(nameof(path));
 		}
 
-		protected override async Task<FluentResource> FindResourceAsync(Context context, CultureInfo culture)
+		protected override async Task<FluentDocument> FindResourceAsync(Context context, CultureInfo culture)
 		{
 			if (CheckLastModified(context, culture))
 			{
@@ -28,7 +28,7 @@ namespace FluentTranslate.Infrastructure
 			var content = await FindFileAsync(context, culture);
 			var extension = Path.GetExtension(RequestPath);
 			var result = Configuration.Deserialize(content, extension);
-			return result ?? new FluentResource();
+			return result ?? new FluentDocument();
 		}
 
 		protected virtual bool CheckLastModified(Context context, CultureInfo culture = null) => true;

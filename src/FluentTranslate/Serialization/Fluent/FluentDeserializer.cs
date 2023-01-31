@@ -7,20 +7,20 @@ namespace FluentTranslate.Serialization.Fluent
 {
     public interface IFluentDeserializer
     {
-        FluentResource Deserialize(string content);
-        List<IFluentElement> Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse);
+        FluentDocument Deserialize(string content);
+        IFluentElement Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse);
     }
 
     public class FluentDeserializer : IFluentDeserializer
     {
         public static FluentDeserializer Default { get; } = new FluentDeserializer();
 
-        public FluentResource Deserialize(string content)
+        public FluentDocument Deserialize(string content)
         {
-            return (FluentResource)Deserialize(content, (_, x) => x.resource()).FirstOrDefault();
+            return (FluentDocument)Deserialize(content, (_, x) => x.document());
         }
 
-        public List<IFluentElement> Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse)
+        public IFluentElement Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse)
         {
             var stream = new AntlrInputStream(new StringReader(content));
             var lexer = new FluentLexer(stream);
@@ -30,7 +30,7 @@ namespace FluentTranslate.Serialization.Fluent
             return result;
         }
 
-        public List<IFluentElement> Deserialize(FluentParserContext parserContext)
+        public IFluentElement Deserialize(FluentParserContext parserContext)
         {
             var visitor = new FluentParserVisitor();
             var result = visitor.Visit(parserContext);

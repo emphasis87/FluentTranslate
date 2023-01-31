@@ -9,7 +9,7 @@ namespace FluentTranslate.Infrastructure
 		protected Assembly Assembly { get; }
 		protected string ResourcePath { get; }
 
-		private readonly Lazy<FluentResource> _resource;
+		private readonly Lazy<FluentDocument> _resource;
 
 		public FluentEmbeddedResourceProvider(Assembly assembly, string path, IFluentConfiguration configuration = null)
 		{
@@ -17,15 +17,15 @@ namespace FluentTranslate.Infrastructure
 
 			Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			ResourcePath = path ?? throw new ArgumentNullException(nameof(path));
-			_resource = new Lazy<FluentResource>(FindResource);
+			_resource = new Lazy<FluentDocument>(FindResource);
 		}
 
-		public Task<FluentResource> GetResourceAsync(CultureInfo culture = null)
+		public Task<FluentDocument> GetResourceAsync(CultureInfo culture = null)
 		{
 			return Task.FromResult(_resource.Value);
 		}
 
-		private FluentResource FindResource()
+		private FluentDocument FindResource()
 		{
 			using var stream = Assembly.GetManifestResourceStream(ResourcePath);
 			if (stream is null)

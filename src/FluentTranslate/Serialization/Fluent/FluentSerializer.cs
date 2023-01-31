@@ -21,7 +21,7 @@ namespace FluentTranslate.Serialization.Fluent
             context ??= CreateContext();
             return element switch
             {
-                FluentResource resource => Serialize(resource, context),
+                FluentDocument resource => Serialize(resource, context),
                 FluentEmptyLines emptyLines => Serialize(emptyLines, context),
                 FluentComment comment => Serialize(comment, context),
                 FluentMessage message => Serialize(message, context),
@@ -43,10 +43,10 @@ namespace FluentTranslate.Serialization.Fluent
             };
         }
 
-        public virtual string Serialize(FluentResource resource, FluentSerializerContext context = null)
+        public virtual string Serialize(FluentDocument resource, FluentSerializerContext context = null)
         {
             context ??= CreateContext();
-            var entryItems = resource.Entries
+            var entryItems = resource.Content
                 .Select(entry => Serialize(entry, context))
                 .ToList();
             var entries = string.Join("\r\n", entryItems);

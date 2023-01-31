@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from D:\projects\FluentTranslate\src\FluentTranslate\Parser\Grammars\FluentLexer.g4 by ANTLR 4.10.1
+// Generated from C:\prace\FluentTranslate\src\FluentTranslate\Parser\Grammars\FluentLexer.g4 by ANTLR 4.10.1
 
 // Unreachable code detected
 #pragma warning disable 0162

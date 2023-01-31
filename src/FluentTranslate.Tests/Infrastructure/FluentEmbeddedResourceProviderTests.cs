@@ -20,7 +20,7 @@ namespace FluentTranslate.Tests.Infrastructure
 
 			var r0 = await provider.GetResourceAsync();
 			r0.Should().Equal(
-				new FluentResource()
+				new FluentDocument()
 				{
 					new FluentMessage("hello")
 					{

@@ -43,7 +43,7 @@ namespace FluentTranslate.Tests.Infrastructure
 
 			// When file is missing should return an empty resource
 			var r0 = await provider.GetResourceAsync();
-			r0.Should().Equal(new FluentResource());
+			r0.Should().Equal(new FluentDocument());
 			provider.CheckLastModifiedCount.Should().Be(1);
 			provider.FindFileAsyncCount.Should().Be(1);
 
@@ -68,7 +68,7 @@ namespace FluentTranslate.Tests.Infrastructure
 			// Should return a new resource
 			var r3 = await provider.GetResourceAsync();
 			r3.Should().Equal(
-				new FluentResource
+				new FluentDocument
 				{
 					new FluentMessage("hello")
 					{

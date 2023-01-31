@@ -1,7 +1,5 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
-using FluentTranslate.Common;
 using FluentTranslate.Domain;
 using FluentTranslate.Domain.Common;
 
@@ -9,97 +7,124 @@ namespace FluentTranslate.Parser
 {
 	public class FluentParserVisitor : FluentParserBaseVisitor<IFluentElement>
 	{
-		
+		private Stack<string> _texts = new();
+        private StringBuilder _text = new();
+        private Stack<string> _comments = new();
+		private StringBuilder _comment = new();
+        private int _commentLevel = 0;
+        private Stack<IFluentElement> _items = new();
+		private Stack<IFluentElement> _children = new();
 
-		public override IFluentElement Visit(IParseTree tree)
+        public override IFluentElement VisitDocument(FluentParser.DocumentContext context)
 		{
-			return base.Visit(tree);
+			var document = new FluentDocument();
+
+			_items.Clear();
+            _items.Push(document);
+			
+			base.VisitDocument(context);
+
+			AggregateItems(document);
+
+			return document;
 		}
 
-		public FluentElementCollector Collector { get; private set; } = new FluentElementCollector();
+		private void PublishComment()
+		{
+			if (_comments.Count > 0)
+			{
+                foreach (var value in _comments)
+                    _comment.Append(value);
 
-		protected override IFluentElement DefaultResult => new FluentResource();
+                var comment = new FluentComment(_commentLevel, _comment.ToString());
 
-        public override IFluentElement VisitChildren(IRuleNode node)
-        {
-            IFluentElement val = DefaultResult;
-            int childCount = node.ChildCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                if (!ShouldVisitNextChild(node, val))
-                {
-                    break;
-                }
+				_children.Push(comment);
 
-                IFluentElement nextResult = node.GetChild(i).Accept(this);
-                val = AggregateResult(val, nextResult);
-            }
-
-            return val;
+				_comment.Clear();
+				_commentLevel = 0;
+			}
         }
 
-        public override IFluentElement VisitResource(FluentParser.ResourceContext context)
-		{ 
-			Collector.AddType(FluentType.Resource);
-			base.VisitResource(context);
-			var result = Collector.AddResource();
-			return result;
-			//if (result.Count == 0)
-			//{
-			//	result.Add(resource);
-			//	return result;
-			//}
+        private void PublishText()
+        {
+			if (_texts.Count > 0)
+			{
+				// Find common indentation
 
-			//AggregateSequential(result);
+				foreach (var value in _texts)
+					_text.Append(value);
 
-			//foreach (var child in result)
-			//{
-			//	switch (child)
-			//	{
-			//		case FluentEmptyLines _:
-			//			// Ignore empty lines
-			//			break;
-			//		case IFluentResourceEntry entry:
-			//			resource.Entries.Add(entry);
-			//			break;
-			//		default:
-			//			throw UnsupportedChildTypeException(child);
-			//	}
-			//}
+				var text = new FluentText(_text.ToString());
+				
+				_children.Push(text);
 
-			//result.Clear();
-			//result.Add(resource);
-			//return result;
-		}
+				_text.Clear();
+				_texts.Clear();
+			}
+        }
 
-        //private static void AggregateSequential<T>(IList<T> items)
-        //{
-        //    for (var i = 0; i < items.Count - 1; i++)
-        //    {
-        //        var right = items[i + 1];
-        //        switch (items[i])
-        //        {
-        //            case IFluentAggregable aggregable when aggregable.CanAggregate(right):
-        //            {
-        //                items[i] = (T) aggregable.Aggregate(right);
-        //                items.RemoveAt(i + 1);
-        //                i--;
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-
-        public override IFluentElement VisitEntry(FluentParser.EntryContext context)
+        protected void AggregateItems(IFluentElement parent)
 		{
-			return base.VisitEntry(context);
+            _children.Clear();
+            IFluentElement current;
+			while((current = _items.Pop()) != parent)
+			{
+				if (_comments.Count > 0 )
+				{
+					if (current is FluentComment c && _commentLevel != c.Level)
+						PublishComment();
+					if (current is FluentText && _commentLevel != 0)
+						PublishComment();
+				}
+
+				if (_texts.Count > 0)
+				{
+					if (current is not FluentText)
+						PublishText();
+                }
+
+				if (current is FluentComment comment)
+				{
+					_comments.Push(comment.Value);
+					_commentLevel = comment.Level;
+				}
+				else if (current is FluentText text)
+				{
+					_texts.Push(text.Value);
+				}
+				else if (current is not FluentEmptyLines)
+				{
+					_children.Push(current);
+				}
+			}
+
+			PublishText();
+			PublishComment();
+
+			if (parent is IFluentContainer container)
+			{
+				foreach(var child in _children.OfType<IFluentContent>())
+					container.Add(child);
+			} 
+			else if (parent is FluentDocument document)
+			{
+                foreach (var child in _children.OfType<IFluentResourceEntry>())
+                    document.Add(child);
+            }
+
+			_items.Push(parent);
 		}
 
 		public override IFluentElement VisitEmptyLine(FluentParser.EmptyLineContext context)
 		{
-			Collector.AddEmptyLines();
-			var empty = new FluentEmptyLines();
-			return empty;
+			if (_items.Count > 0 && _items.Peek() is FluentEmptyLines emptyLines)
+				return emptyLines;
+
+			emptyLines = new FluentEmptyLines();
+
+			_items.Push(emptyLines);
+
+			return emptyLines;
 		}
 
 		public override IFluentElement VisitComment(FluentParser.CommentContext context)
@@ -107,76 +132,63 @@ namespace FluentTranslate.Parser
 			var level = context.COMMENT_OPEN().GetText().TrimEnd().Length;
 			var value = context.COMMENT().GetText();
 
-			Collector.AddComemnt(level, value);
-
-			// This may be an incomplete comment
 			var result = new FluentComment
 			{
 				Level = level,
 				Value = value,
 			};
+
+			_items.Push(result);
+
 			return result;
 		}
 
 		public override IFluentElement VisitTerm(FluentParser.TermContext context)
 		{
-			Collector.AddType(FluentType.Term);
-			base.VisitTerm(context);
-			var result = Collector.AddRecord();
-			return result;
+            var term = new FluentTerm();
 
-			//var record = (FluentRecord) result[0];
-			//result.RemoveAt(0);
-			
-			//AggregateContainer(record, result);
-			//AggregateRecord(record, result);
+            _items.Push(term);
 
-			//if (result.Count != 0)
-			//	throw UnsupportedChildTypeException(result[0]);
+            base.VisitTerm(context);
 
-			//result.Add(record);
-			//return result;
-		}
+            AggregateItems(term);
+
+            return term;
+        }
 
 		public override IFluentElement VisitMessage(FluentParser.MessageContext context)
 		{
-            Collector.AddType(FluentType.Message);
-            base.VisitMessage(context);
-            var result = Collector.AddRecord();
-            return result;
+			var message = new FluentMessage();
 
-            //var result = base.VisitMessage(context);
-            //var record = (FluentRecord) result[0];
-            //result.RemoveAt(0);
+			_items.Push(message);
 
-            //AggregateContainer(record, result);
-            //AggregateRecord(record, result);
+			base.VisitMessage(context);
 
-            //if (result.Count != 0)
-            //	throw UnsupportedChildTypeException(result[0]);
+            AggregateItems(message);
 
-            //result.Add(record);
-            //return result;
+            return message;
         }
 
-		public override IFluentElement VisitAttribute(FluentParser.AttributeContext context)
+        public override IFluentElement VisitRecordHeader(FluentParser.RecordHeaderContext context)
+        {
+            var id = context.IDENTIFIER().GetText();
+
+            if (_items.Peek() is not FluentRecord record)
+                throw new Exception("There should be a FluentRecord type on the result stack.");
+
+            record.Identifier = id;
+            return record;
+        }
+
+        public override IFluentElement VisitAttribute(FluentParser.AttributeContext context)
 		{
-            Collector.AddType(FluentType.Attribute);
-            base.VisitAttribute(context);
-            var result = Collector.AddRecord();
-            return result;
+			var attribute = new FluentAttribute();
 
-   //         var result = base.VisitAttribute(context);
-			//var attribute = (FluentAttribute) result[0];
-			//result.RemoveAt(0);
+			_items.Push(attribute);
 
-			//AggregateContainer(attribute, result);
+			base.VisitAttribute(context);
 
-			//if (result.Count != 0)
-			//	throw UnsupportedChildTypeException(result[0]);
-
-			//result.Add(attribute);
-			//return result;
+			return attribute;
 		}
 
 		private static void AggregateRecord(FluentRecord record, IList<IFluentElement> result)
@@ -194,27 +206,20 @@ namespace FluentTranslate.Parser
 			}
 		}
 
-		public override IFluentElement VisitRecord(FluentParser.RecordContext context)
-		{
-			base.VisitRecord(context);
-			var id = context.IDENTIFIER().GetText();
-			var result = Collector.AddRecord(id);
-			return result;
-		}
-
 		public override IFluentElement VisitText(FluentParser.TextContext context)
 		{
 			var value = context.GetText();
-			Collector.AddText(value);
+            var text = new FluentText() { Value = value };
 
-			// This may be an incomplete text
-            var result = new FluentText(value);
+			_items.Push(text);
 
-			return result;
+			return text;
 		}
 
 		public override IFluentElement VisitPlaceable(FluentParser.PlaceableContext context)
 		{
+			return base.VisitPlaceable(context);
+			/*
 			Collector.AddType(FluentType.Placeable);
 
 			var result = base.VisitPlaceable(context);
@@ -254,13 +259,17 @@ namespace FluentTranslate.Parser
 			}
 
 			return result;
+			*/
 		}
 
 		public override IFluentElement VisitSelectExpression(FluentParser.SelectExpressionContext context)
 		{
-			Collector.AddType(FluentType.Selection);
-			base.VisitSelectExpression(context);
-			var result = Collector.AddSelection();
+			return base.VisitSelectExpression(context);
+
+			//Collector.AddType(FluentType.Selection);
+			//base.VisitSelectExpression(context);
+			//var result = Collector.AddSelection();
+
 			//var selection = new FluentSelection();
 			//foreach (var child in result)
 			//{
@@ -279,11 +288,13 @@ namespace FluentTranslate.Parser
 
 			//result.Clear();
 			//result.Add(selection);
-			return result;
+			//return result;
 		}
 
 		public override IFluentElement VisitDefaultVariant(FluentParser.DefaultVariantContext context)
 		{
+			return base.VisitDefaultVariant(context);
+			/*
 			var result = base.VisitDefaultVariant(context);
 			var child = result.SingleOrDefault();
 			switch (child)
@@ -294,22 +305,27 @@ namespace FluentTranslate.Parser
 			}
 
 			return result;
+			*/
 		}
 
 		public override IFluentElement VisitVariant(FluentParser.VariantContext context)
 		{
-			Collector.AddType(FluentType.Variant);
-			base.VisitVariant(context);
-			var result = Collector.AddVariant();
-			return result;
+			return base.VisitVariant(context);
+
+			//Collector.AddType(FluentType.Variant);
+			//base.VisitVariant(context);
+			//var result = Collector.AddVariant();
+			//return result;
 		}
 
 		public override IFluentElement VisitIdentifier(FluentParser.IdentifierContext context)
 		{
-			Collector.AddType(FluentType.Identifier);
-			var id = context.GetText();
-			var result = Collector.AddReference(id);
-			return result;
+			return base.VisitIdentifier(context);
+
+			//Collector.AddType(FluentType.Identifier);
+			//var id = context.GetText();
+			//var result = Collector.AddReference(id);
+			//return result;
 		}
 
 		public override IFluentElement VisitStringLiteral(FluentParser.StringLiteralContext context)
@@ -342,7 +358,7 @@ namespace FluentTranslate.Parser
 
         public override IFluentElement VisitTermReference(FluentParser.TermReferenceContext context)
 		{
-			Collector.AddType(FluentType.TermReference);
+			//Collector.AddType(FluentType.TermReference);
 			return base.VisitTermReference(context);
 		}
 
@@ -350,38 +366,45 @@ namespace FluentTranslate.Parser
 		{
 			var id = context.IDENTIFIER_REF().GetText();
 			var attributeId = context.attributeAccessor()?.IDENTIFIER_REF().GetText();
-			var result = Collector.AddReference(id, attributeId);
-			return result;
+			return base.VisitRecordReference(context);
+			//var result = Collector.AddReference(id, attributeId);
+			//return result;
 		}
 
         public override IFluentElement VisitFunctionCall(FluentParser.FunctionCallContext context)
 		{
-			Collector.AddType(FluentType.FunctionCall);
+			//Collector.AddType(FluentType.FunctionCall);
 			base.VisitFunctionCall(context);
             var id = context.IDENTIFIER_REF().GetText();
-			var result = Collector.AddFunctionCall(id);
-			return result;
+			//var result = Collector.AddFunctionCall(id);
+			//return result;
+			return base.VisitFunctionCall(context);
 		}
 
         public override IFluentElement VisitArgument([NotNull] FluentParser.ArgumentContext context)
         {
 			var argument = new FluentCallArgument();
-            return base.VisitArgument(context);
+			_items.Push(argument);
+            base.VisitArgument(context);
+			return argument;
         }
 
         public override IFluentElement VisitInlineArgument([NotNull] FluentParser.InlineArgumentContext context)
         {
-            base.VisitInlineArgument(context);
-			var result = Collector.AddCallArgument();
-			return result;
+            return base.VisitInlineArgument(context);
         }
 
         public override IFluentElement VisitNamedArgument(FluentParser.NamedArgumentContext context)
 		{
-			base.VisitNamedArgument(context);
-			var id = context.IDENTIFIER_REF().GetText();
-			var result = Collector.AddCallArgument(id);
-			return result;
+			if (_items.Peek() is not FluentCallArgument argument)
+				throw new Exception("There should be a FluentCallArgument on the stack.");
+
+            var id = context.IDENTIFIER_REF().GetText();
+			argument.Identifier = id;
+
+            base.VisitNamedArgument(context);
+
+			return argument;
 		}
 
         private static Exception UnsupportedChildTypeException(IFluentElement child, [CallerMemberName] string? callerName = null)

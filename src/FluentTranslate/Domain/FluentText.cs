@@ -4,6 +4,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentText : FluentElement, IFluentContent, IFluentAggregable
     {
+		public string? Comment { get; set; }
         public string Value { get; set; }
 
 		public FluentText()

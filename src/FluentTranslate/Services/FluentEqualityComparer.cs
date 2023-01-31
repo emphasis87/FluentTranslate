@@ -23,7 +23,7 @@ namespace FluentTranslate.Services
             var hashCode = element switch
             {
                 null => 0,
-                FluentResource resource => GetHashCode(resource),
+                FluentDocument resource => GetHashCode(resource),
                 FluentEmptyLines emptyLines => GetHashCode(emptyLines),
                 FluentComment comment => GetHashCode(comment),
                 FluentMessage message => GetHashCode(message),
@@ -46,7 +46,7 @@ namespace FluentTranslate.Services
             return hashCode;
         }
 
-        public static int GetHashCode(FluentResource resource) => Hash((object)resource.Entries);
+        public static int GetHashCode(FluentDocument resource) => Hash((object)resource.Content);
         public static int GetHashCode(FluentEmptyLines emptyLines) => emptyLines.Count;
         public static int GetHashCode(FluentComment comment) => Hash((object)comment.Value);
         public static int GetHashCode(FluentMessage message) => Hash((object)message.Reference);
@@ -72,7 +72,7 @@ namespace FluentTranslate.Services
             if (e1.GetType() != e2.GetType()) return false;
             var result = (e1, e2) switch
             {
-                (FluentResource x, FluentResource y) => Equals(x, y, this),
+                (FluentDocument x, FluentDocument y) => Equals(x, y, this),
                 (FluentEmptyLines x, FluentComment y) => Equals(x, y),
                 (FluentComment x, FluentComment y) => Equals(x, y),
                 (FluentMessage x, FluentMessage y) => Equals(x, y, this),
@@ -95,9 +95,9 @@ namespace FluentTranslate.Services
             return result;
         }
 
-        public static bool Equals(FluentResource x, FluentResource y, IEqualityComparer<IFluentElement>? comparer = null)
+        public static bool Equals(FluentDocument x, FluentDocument y, IEqualityComparer<IFluentElement>? comparer = null)
         {
-            return AreEqual(x.Entries, y.Entries, comparer);
+            return AreEqual(x.Content, y.Content, comparer);
         }
 
         public static bool Equals(FluentEmptyLines x, FluentEmptyLines y)

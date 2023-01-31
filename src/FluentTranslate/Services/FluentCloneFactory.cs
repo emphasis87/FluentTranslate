@@ -24,7 +24,7 @@ namespace FluentTranslate.Services
         {
             IFluentElement clone = element switch
             {
-                FluentResource resource => Clone(resource),
+                FluentDocument resource => Clone(resource),
                 FluentEmptyLines emptyLines => Clone(emptyLines),
                 FluentComment comment => Clone(comment),
                 FluentMessage message => Clone(message),
@@ -47,10 +47,10 @@ namespace FluentTranslate.Services
             return clone;
         }
 
-        public FluentResource Clone(FluentResource resource)
+        public FluentDocument Clone(FluentDocument resource)
         {
-            var clone = new FluentResource();
-            clone.Entries.AddRange(resource.Entries.Select(Clone));
+            var clone = new FluentDocument();
+            clone.Content.AddRange(resource.Content.Select(Clone));
             return clone;
         }
 

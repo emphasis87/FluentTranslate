@@ -3,6 +3,7 @@ using FluentTranslate.Domain;
 
 namespace FluentTranslate.Parser
 {
+    /*
     public class FluentElementCollector : IFluentElement
     {
         public string Type => throw new NotImplementedException();
@@ -238,4 +239,5 @@ namespace FluentTranslate.Parser
             result.Add(variant);
         }
     }
+    */
 }

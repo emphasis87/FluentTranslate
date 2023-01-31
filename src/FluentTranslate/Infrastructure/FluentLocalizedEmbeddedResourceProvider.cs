@@ -70,7 +70,7 @@ namespace FluentTranslate.Infrastructure
 			return new FluentEmbeddedResourceProvider(assembly, path, Configuration);
 		}
 
-		protected override async Task<FluentResource> FindResourceAsync(Context context, CultureInfo culture)
+		protected override async Task<FluentDocument> FindResourceAsync(Context context, CultureInfo culture)
 		{
 			var ctx = (LocalizedFileContext)context;
 			var compositeProvider = ctx.Provider;

@@ -4,7 +4,7 @@ namespace FluentTranslate.Infrastructure
 {
 	public interface IFluentEngineCache
 	{
-		IFluentEngine GetEngine(FluentResource resource);
+		IFluentEngine GetEngine(FluentDocument resource);
 	}
 
 	public class FluentEngineCache : IFluentEngineCache
@@ -12,8 +12,8 @@ namespace FluentTranslate.Infrastructure
 		protected IFluentConfiguration Configuration { get; }
 
 		private readonly object _lock = new object();
-		private readonly FluentResource _defaultResource = new FluentResource();
-		private readonly Dictionary<FluentResource, Context> _engineByResource = new Dictionary<FluentResource, Context>();
+		private readonly FluentDocument _defaultResource = new FluentDocument();
+		private readonly Dictionary<FluentDocument, Context> _engineByResource = new Dictionary<FluentDocument, Context>();
 		private DateTime _lastEviction;
 		
 		public FluentEngineCache(IFluentConfiguration configuration)
@@ -21,7 +21,7 @@ namespace FluentTranslate.Infrastructure
 			Configuration = configuration;
 		}
 
-		protected virtual IFluentEngine CreateEngine(FluentResource resource)
+		protected virtual IFluentEngine CreateEngine(FluentDocument resource)
 		{
 			return new FluentEngine(resource, Configuration);
 		}
@@ -36,7 +36,7 @@ namespace FluentTranslate.Infrastructure
 			return TimeSpan.FromMinutes(15);
 		}
 
-		public IFluentEngine GetEngine(FluentResource resource)
+		public IFluentEngine GetEngine(FluentDocument resource)
 		{
 			resource ??= _defaultResource;
 
@@ -73,7 +73,7 @@ namespace FluentTranslate.Infrastructure
 
 		private class Context
 		{
-			public FluentResource Resource { get; set; }
+			public FluentDocument Resource { get; set; }
 			public IFluentEngine Engine { get; set; }
 			public DateTime LastAccess { get; set; }
 		}

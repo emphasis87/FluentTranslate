@@ -23,7 +23,7 @@ namespace FluentTranslate.Tests.Readers
 
             var (resource, path) = results[0];
 
-            var expected = new FluentResource
+            var expected = new FluentDocument
             {
                 new FluentMessage("hello")
                 {

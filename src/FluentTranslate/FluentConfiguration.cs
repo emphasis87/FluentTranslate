@@ -119,13 +119,13 @@ namespace FluentTranslate
 
 	public static class FluentConfigurationExtensions
 	{
-		public static FluentResource Deserialize(this IFluentConfiguration configuration, string content)
+		public static FluentDocument Deserialize(this IFluentConfiguration configuration, string content)
 		{
 			var resource = configuration.Deserialize(content, "ftl");
 			return resource;
 		}
 
-		public static FluentResource Deserialize(this IFluentConfiguration configuration, string content, string extension)
+		public static FluentDocument Deserialize(this IFluentConfiguration configuration, string content, string extension)
 		{
 			if (content is null) 
 				return null;
