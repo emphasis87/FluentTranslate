@@ -317,7 +317,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void PlaceablesInner()
+        public void Can_parse_Placeable_within_Placeable()
         {
             var actual = Act(Resources.PlaceablesInner);
 
@@ -338,7 +338,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void PlaceablesInterpolation()
+        public void Can_parse_Placeable_with_interpolation()
         {
             var actual = Act(Resources.PlaceablesInterpolation);
 
@@ -370,7 +370,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void PlaceablesSpecialCharacters()
+        public void Can_parse_Placeable_with_special_characters()
         {
             var resource = Act(Resources.PlaceablesSpecialCharacters);
 
@@ -394,7 +394,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void QuotedText()
+        public void Can_parse_quoted_string()
         {
             var actual = Act(Resources.QuotedText);
 
@@ -415,7 +415,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void QuotedTextEscape()
+        public void Can_parse_text_escape()
         {
             var actual = Act(Resources.QuotedTextEscape);
 
@@ -441,7 +441,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void QuotedTextLeadingBracket()
+        public void Can_parse_quoted_text_with_leading_bracket()
         {
             var actual = Act(Resources.QuotedTextLeadingBracket);
 
@@ -462,7 +462,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void QuotedTextLeadingDot()
+        public void Can_parse_quoted_text_with_leading_dot()
         {
             var actual = Act(Resources.QuotedTextLeadingDot);
 
@@ -486,7 +486,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void QuotedTextUnicodeDash()
+        public void Can_parse_quoted_text_with_unicode_dash()
         {
             var actual = Act(Resources.QuotedTextUnicodeDash);
 
@@ -511,7 +511,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void QuotedTextUnicodeEscape()
+        public void Can_parse_quoted_text_with_unicode_escape()
         {
             var actual = Act(Resources.QuotedTextUnicodeEscape);
 
@@ -529,7 +529,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void Selectors()
+        public void Can_parse_selectors()
         {
             var actual = Act(Resources.Selectors);
 
@@ -559,7 +559,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void SelectorsNumber()
+        public void Can_parse_selector_with_function_call()
         {
             var actual = Act(Resources.SelectorsNumber);
 
@@ -598,7 +598,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void SelectorsOrdinal()
+        public void Can_parse_selector_with_function_call_and_literal_argument()
         {
             var actual = Act(Resources.SelectorsOrdinal);
 
@@ -650,7 +650,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void TermsAttributes()
+        public void Can_parse_terms_with_attributes()
         {
             var actual = Act(Resources.TermsAttributes);
 
@@ -693,7 +693,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void TermsParameterized()
+        public void Can_parse_term_references_with_arguments()
         {
             var actual = Act(Resources.TermsParameterized);
 
@@ -722,7 +722,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void TermsVariants()
+        public void Can_parse_term_variants()
         {
             var actual = Act(Resources.TermsVariants);
 
@@ -761,7 +761,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void Variables()
+        public void Can_parse_variables()
         {
             var actual = Act(Resources.Variables);
 
@@ -786,7 +786,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void VariablesExplicitFormatting()
+        public void Can_parse_variables_with_explicit_formatting()
         {
             var actual = Act(Resources.VariablesExplicitFormatting);
 
@@ -810,7 +810,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void VariablesImplicitFormatting()
+        public void Can_parse_variables_with_implicit_formatting()
         {
             var actual = Act(Resources.VariablesImplicitFormatting);
 

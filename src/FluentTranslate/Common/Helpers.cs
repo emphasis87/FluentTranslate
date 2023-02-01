@@ -80,17 +80,19 @@
 				bool m1, m2;
 				T1? v1;
 				T2? v2;
-				do
+				while(true)
 				{
 					m1 = e1.MoveNext();
 					m2 = e2.MoveNext();
 
+					if (!(m1 || m2))
+						break;
+					
 					v1 = m1 ? e1.Current : default;
 					v2 = m2 ? e2.Current : default;
 
 					yield return resultSelector(v1, v2);
-
-				} while (m1 && m2);
+				}
             }
             finally
             {

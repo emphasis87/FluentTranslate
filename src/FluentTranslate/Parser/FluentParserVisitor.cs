@@ -2,6 +2,7 @@
 using Antlr4.Runtime.Misc;
 using FluentTranslate.Domain;
 using FluentTranslate.Domain.Common;
+using System;
 
 namespace FluentTranslate.Parser
 {
@@ -11,6 +12,7 @@ namespace FluentTranslate.Parser
         private StringBuilder _text = new();
         private Stack<string> _comments = new();
 		private StringBuilder _comment = new();
+		private StringBuilder _ws = new();
         private int _commentLevel = 0;
         private Stack<IFluentElement> _items = new();
 		private Stack<IFluentElement> _children = new();
@@ -29,90 +31,159 @@ namespace FluentTranslate.Parser
 			return document;
 		}
 
-		private void PublishComment()
+		private string PublishComment()
 		{
-			if (_comments.Count > 0)
-			{
-                foreach (var value in _comments)
-                    _comment.Append(value);
+            foreach (var value in _comments)
+                _comment.Append(value);
 
-                var comment = new FluentComment(_commentLevel, _comment.ToString());
-
-				_children.Push(comment);
-
-				_comment.Clear();
-				_commentLevel = 0;
-			}
+			var comment = _comment.ToString();
+			_comment.Clear();
+            _comments.Clear();
+            return comment;
         }
 
-        private void PublishText()
+        private string PublishText()
         {
-			if (_texts.Count > 0)
+			// Find a common indentation
+			_ws.Clear();
+			int indent = int.MaxValue;
+			foreach(var value in _texts.Skip(1))
 			{
-				// Find common indentation
+                int lineIndent = 0;
+				int i = 0;
+                while (lineIndent < indent && i < value.Length)
+				{
+					char c = value[i++];
+                    if (c == '\r' || c == '\n')
+                    {
+                        lineIndent = 0;
+                        continue;
+                    }
 
-				foreach (var value in _texts)
-					_text.Append(value);
+                    if (!char.IsWhiteSpace(c))
+                        break;
+                    if (_ws.Length == lineIndent)
+                        _ws.Append(c);
+                    else if (_ws[lineIndent] != c)
+                        break;
 
-				var text = new FluentText(_text.ToString());
-				
-				_children.Push(text);
-
-				_text.Clear();
-				_texts.Clear();
+                    lineIndent++;
+                }
+                indent = Math.Min(indent, lineIndent);
 			}
+
+			var start = _texts.Pop();
+			_text.Append(start.TrimStart());
+
+			foreach (var value in _texts)
+			{
+				int lineIndent = 0;
+				for(var p = 0; p < value.Length; p++)
+				{
+                    char c = value[p];
+                    if (c == '\r' || c == '\n')
+                    {
+						_text.Append(c);
+                        lineIndent = 0;
+                        continue;
+                    }
+
+					if (lineIndent < indent && _ws[lineIndent] == c)
+					{
+						lineIndent++;
+						continue;
+					}
+
+					_text.Append(value, p, value.Length - p);
+					break;
+                }
+            }
+
+			var text = _text.ToString();
+			_text.Clear();
+            _texts.Clear();
+            return text;
         }
 
         protected void AggregateItems(IFluentElement parent)
 		{
             _children.Clear();
-            IFluentElement current;
-			while((current = _items.Pop()) != parent)
+
+			IFluentElement current;
+			while ((current = _items.Pop()) != parent)
 			{
+				_children.Push(current);
+			}
+
+			while(_children.Count > 0)
+			{
+				current = _children.Pop();
 				if (_comments.Count > 0 )
 				{
-					if (current is FluentComment c && _commentLevel != c.Level)
-						PublishComment();
-					if (current is FluentText && _commentLevel != 0)
-						PublishComment();
+					switch(current)
+					{
+						case FluentComment comment when _commentLevel != comment.Level :
+						case FluentMessage when _commentLevel != 1:
+                            AddChild(new FluentComment(_commentLevel, PublishComment()));
+							break;
+						case FluentMessage message when _commentLevel == 1:
+							message.Comment = PublishComment();
+							break;
+                    }
 				}
 
 				if (_texts.Count > 0)
 				{
 					if (current is not FluentText)
-						PublishText();
+                        AddChild(new FluentText(PublishText()));
                 }
 
-				if (current is FluentComment comment)
+				switch (current)
 				{
-					_comments.Push(comment.Value);
-					_commentLevel = comment.Level;
-				}
-				else if (current is FluentText text)
-				{
-					_texts.Push(text.Value);
-				}
-				else if (current is not FluentEmptyLines)
-				{
-					_children.Push(current);
-				}
-			}
+					case FluentComment comment:
+                        _comments.Push(comment.Value);
+                        _commentLevel = comment.Level;
+						continue;
+					case FluentText text:
+                        _texts.Push(text.Value);
+						continue;
+					case FluentEmptyLines:
+						continue;
+                }
 
-			PublishText();
-			PublishComment();
-
-			if (parent is IFluentContainer container)
-			{
-				foreach(var child in _children.OfType<IFluentContent>())
-					container.Add(child);
-			} 
-			else if (parent is FluentDocument document)
-			{
-                foreach (var child in _children.OfType<IFluentResourceEntry>())
-                    document.Add(child);
+                AddChild(current);
             }
 
-			_items.Push(parent);
+			if (_texts.Count > 0)
+				AddChild(new FluentText(PublishText()));
+			if (_comments.Count > 0)
+                AddChild(new FluentComment(_commentLevel, PublishComment()));
+
+            _items.Push(parent);
+
+            void AddChild(IFluentElement child)
+			{
+				switch (parent)
+				{
+					case IFluentContainer container when child is IFluentContent content:
+						container.Add(content);
+						break;
+					case FluentPlaceable placeable:
+                        switch (child)
+                        {
+                            case FluentPlaceable inner:
+                                placeable.Content = inner.Content;
+                                break;
+                            case IFluentExpression expression:
+                                placeable.Content = expression;
+                                break;
+                        }
+						break;
+					case FluentDocument document when child is IFluentResourceEntry entry:
+                        document.Add(entry);
+						break;
+                }
+            }
 		}
 
 		public override IFluentElement VisitEmptyLine(FluentParser.EmptyLineContext context)
@@ -188,22 +259,9 @@ namespace FluentTranslate.Parser
 
 			base.VisitAttribute(context);
 
-			return attribute;
-		}
+			AggregateItems(attribute);
 
-		private static void AggregateRecord(FluentRecord record, IList<IFluentElement> result)
-		{
-			for (var i = 0; i < result.Count; i++)
-			{
-				switch (result[i])
-				{
-					case FluentAttribute attribute:
-						record.Attributes.Add(attribute);
-						result.RemoveAt(i);
-						i--;
-						break;
-				}
-			}
+			return attribute;
 		}
 
 		public override IFluentElement VisitText(FluentParser.TextContext context)
@@ -218,48 +276,49 @@ namespace FluentTranslate.Parser
 
 		public override IFluentElement VisitPlaceable(FluentParser.PlaceableContext context)
 		{
-			return base.VisitPlaceable(context);
-			/*
-			Collector.AddType(FluentType.Placeable);
+			var placeable = new FluentPlaceable();
+			
+			_items.Push(placeable);
 
-			var result = base.VisitPlaceable(context);
-			if (result.Count == 0)
-				return result;
+			base.VisitPlaceable(context);
 
-			// Remove indentation text from inner placeable, e.g
-			// ... { indentation { $variable } } ...
-			result.RemoveAll(x => x is FluentText);
+			AggregateItems(placeable);
 
-			var child = result[0];
-			switch (child)
-			{
-				case FluentPlaceable _:
-				{
-					// Inner placeable, e.g.
-					// ... { { $variable } } ...
-					break;
-				}
-				case IFluentExpression content:
-				{
-					var placeable = new FluentPlaceable {Content = content};
-					result[0] = placeable;
-					break;
-				}
-				default:
-					throw UnsupportedChildTypeException(child);
-			}
+			return placeable;
 
-			// Add indentation prefix as a part of the expression, e.g.
-			// ... { $variable } indentation { "literal" } ...
-			var prefix = context.Prefix.GetText();
-			if (!string.IsNullOrEmpty(prefix))
-			{
-				var text = new FluentText {Value = prefix};
-				result.Insert(0, text);
-			}
+			//// Remove indentation text from inner placeable, e.g
+			//// ... { indentation { $variable } } ...
+			//result.RemoveAll(x => x is FluentText);
 
-			return result;
-			*/
+			//var child = result[0];
+			//switch (child)
+			//{
+			//	case FluentPlaceable _:
+			//	{
+			//		// Inner placeable, e.g.
+			//		// ... { { $variable } } ...
+			//		break;
+			//	}
+			//	case IFluentExpression content:
+			//	{
+			//		var placeable = new FluentPlaceable {Content = content};
+			//		result[0] = placeable;
+			//		break;
+			//	}
+			//	default:
+			//		throw UnsupportedChildTypeException(child);
+			//}
+
+			//// Add indentation prefix as a part of the expression, e.g.
+			//// ... { $variable } indentation { "literal" } ...
+			//var prefix = context.Prefix.GetText();
+			//if (!string.IsNullOrEmpty(prefix))
+			//{
+			//	var text = new FluentText {Value = prefix};
+			//	result.Insert(0, text);
+			//}
+
+			//return result;
 		}
 
 		public override IFluentElement VisitSelectExpression(FluentParser.SelectExpressionContext context)
@@ -334,6 +393,9 @@ namespace FluentTranslate.Parser
 			// Remove quotes
 			var literal = value.Substring(1, value.Length - 2);
             var result = new FluentStringLiteral(literal);
+			
+			_items.Push(result);
+
             return result;
         }
 
@@ -341,6 +403,9 @@ namespace FluentTranslate.Parser
 		{
 			var literal = context.GetText();
 			var result = new FluentNumberLiteral(literal);
+
+			_items.Push(result);
+
 			return result;
 		}
 
@@ -348,6 +413,9 @@ namespace FluentTranslate.Parser
 		{
 			var id = context.IDENTIFIER_REF().GetText();
 			var result = new FluentVariableReference(id);
+
+			_items.Push(result);
+
             return result;
 		}
 
