@@ -2,9 +2,10 @@
 
 namespace FluentTranslate.Domain
 {
-	public class FluentAttribute : FluentContainer, IEnumerable<IFluentContent>
+	public class FluentAttribute : FluentContainer, 
+		IEnumerable<IFluentContent>
     {
-        public string Identifier { get; set; }
+        public string Id { get; set; } = default!;
 
 		public FluentAttribute()
 		{
@@ -13,9 +14,7 @@ namespace FluentTranslate.Domain
 
 		public FluentAttribute(string id) : this()
 		{
-			Identifier = id;
+			Id = id;
 		}
-
-        public override IEnumerator GetEnumerator() => Content.GetEnumerator();
     }
 }

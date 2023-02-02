@@ -38,14 +38,16 @@ namespace FluentTranslate.Tests.Parser
 
         private static void ShouldBeEqual(FluentDocument actual, FluentDocument expected)
         {
+            var comparer = new FluentDebugEqualityComparer();
+
             // Verify result is expected
-            FluentEqualityComparer.Default.Equals(actual, expected).Should().BeTrue();
+            comparer.Equals(expected, actual).Should().BeTrue();
 
             var serialized = FluentConverter.Serialize(actual);
             var deserialized = Act(serialized);
 
             // Verify that serialization and deserialization does not change the result
-            FluentEqualityComparer.Default.Equals(deserialized, expected).Should().BeTrue();
+            comparer.Equals(expected, deserialized).Should().BeTrue();
         }
 
         [Test]
@@ -317,7 +319,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void Can_parse_Placeable_within_Placeable()
+        public void Can_parse_placeable_within_placeable()
         {
             var actual = Act(Resources.PlaceablesInner);
 
@@ -338,7 +340,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void Can_parse_Placeable_with_interpolation()
+        public void Can_parse_placeable_with_interpolation()
         {
             var actual = Act(Resources.PlaceablesInterpolation);
 
@@ -351,7 +353,8 @@ namespace FluentTranslate.Tests.Parser
                 new FluentMessage("installing")
                 {
                     new FluentText("Installing "),
-                    new FluentPlaceable(new FluentTermReference("brand-name")),
+                    new FluentPlaceable(
+                        new FluentTermReference("brand-name")),
                     new FluentText("."),
                 },
                 new FluentMessage("menu-save")
@@ -361,7 +364,8 @@ namespace FluentTranslate.Tests.Parser
                 new FluentMessage("help-menu-save")
                 {
                     new FluentText("Click "),
-                    new FluentPlaceable(new FluentMessageReference("menu-save")),
+                    new FluentPlaceable(
+                        new FluentMessageReference("menu-save")),
                     new FluentText(" to save the file."),
                 },
             };
@@ -370,7 +374,7 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void Can_parse_Placeable_with_special_characters()
+        public void Can_parse_placeable_with_special_characters()
         {
             var resource = Act(Resources.PlaceablesSpecialCharacters);
 

@@ -11,15 +11,13 @@ options {
 
 document			: entry* EOF ;
 
-entry				: ( record | comment | emptyLine ) ;
+entry				: ( term | message | comment | emptyLine ) ;
 
 comment				: COMMENT_OPEN COMMENT NL? ;
 
-record				: term | message ;
-recordHeader		: IDENTIFIER INDENT? EQUALS INDENT? ;
-term				: TERM recordHeader expressionList attributeList? NL? ;
-message				: recordHeader expressionList? attributeList? NL? ;
-
+record				: IDENTIFIER INDENT? EQUALS INDENT? ;
+term				: TERM record expressionList attributeList? NL? ;
+message				: record expressionList? attributeList? NL? ;
 attributeList		: attribute+ ;
 attribute			: ws indent ATTRIBUTE record expressionList ;
 

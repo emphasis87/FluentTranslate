@@ -4,15 +4,15 @@ namespace FluentTranslate.Domain
 {
 	public class FluentPlaceable : FluentElement, IFluentContent, IFluentExpression
     {
-        public IFluentExpression Content { get; set; }
+        public IFluentExpression Content { get; set; } = default!;
 
-		public FluentPlaceable()
+        public FluentPlaceable()
 		{
 		}
 
-		public FluentPlaceable(IFluentExpression content) : this()
+		public FluentPlaceable(IFluentExpression content)
 		{
 			Content = content;
 		}
-	}
+    }
 }

@@ -4,12 +4,12 @@ namespace FluentTranslate.Domain
 {
 	public class FluentSelection : FluentElement, IFluentExpression, IEnumerable<FluentVariant>
     {
-        public IFluentExpression Match { get; set; }
-		public List<FluentVariant> Variants { get; }
+        public IFluentExpression Match { get; set; } = default!;
+        public List<FluentVariant> Variants { get; } = new();
 
 		public FluentSelection()
 		{
-			Variants = new List<FluentVariant>();
+			
 		}
 
 		public FluentSelection(IFluentExpression match) : this()
@@ -18,7 +18,8 @@ namespace FluentTranslate.Domain
 		}
 
         public void Add(FluentVariant variant) => Variants.Add(variant);
+
         public IEnumerator<FluentVariant> GetEnumerator() => Variants.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
+    }
 }

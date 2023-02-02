@@ -2,14 +2,13 @@
 
 namespace FluentTranslate.Domain
 {
-	public class FluentComment : FluentElement, IFluentResourceEntry
+	public class FluentComment : FluentElement, IFluentDocumentItem
 	{
         public int Level { get; set; }
-		public string Value { get; set; }
+		public string Value { get; set; } = default!;
 
 		public FluentComment()
 		{
-
 		}
 
 		public FluentComment(int level, string comment) : this()
@@ -20,7 +19,6 @@ namespace FluentTranslate.Domain
 
 		public FluentComment(string comment) : this(1, comment)
 		{
-
 		}
 	}
 }

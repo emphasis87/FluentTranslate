@@ -115,7 +115,7 @@ namespace FluentTranslate.Infrastructure
 
 		protected virtual string Evaluate(FluentRecordReference reference, FluentEvaluationContext context)
 		{
-			if (RecordByReference.TryGetValue(reference.TargetReference, out var record))
+			if (RecordByReference.TryGetValue(reference.Target, out var record))
 			{
 				var values = record.Content
 					.Select(x => Evaluate(x, context))
@@ -125,7 +125,7 @@ namespace FluentTranslate.Infrastructure
 				return result;
 			}
 
-			return $"{{{reference.TargetReference}}}";
+			return $"{{{reference.Target}}}";
 		}
 
 		public virtual string Evaluate(FluentText text, FluentEvaluationContext context)

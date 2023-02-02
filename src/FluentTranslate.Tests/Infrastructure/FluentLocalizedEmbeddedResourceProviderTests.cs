@@ -19,10 +19,12 @@ namespace FluentTranslate.Tests.Infrastructure
 			var provider = new FluentLocalizedEmbeddedResourceProvider(assembly, "FluentTranslate.Tests.EmbeddedResources.Hello.ftl");
 
 			var r0 = await provider.GetResourceAsync();
-			r0.Should().Equal(new FluentDocument());
+
+            Assert.AreEqual(r0, new FluentDocument());
 			
 			var r1 = await provider.GetResourceAsync(CultureInfo.InvariantCulture);
-			r1.Should().Equal(
+
+            Assert.AreEqual(r1,
 				new FluentDocument()
 				{
 					new FluentMessage("hello")
@@ -32,7 +34,8 @@ namespace FluentTranslate.Tests.Infrastructure
 				});
 
 			var r2 = await provider.GetResourceAsync();
-			r2.Should().Equal(new FluentDocument());
+
+            Assert.AreEqual(r2, new FluentDocument());
 		}
 	}
 }

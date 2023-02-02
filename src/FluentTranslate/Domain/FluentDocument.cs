@@ -2,18 +2,19 @@
 
 namespace FluentTranslate.Domain
 {
-	public class FluentDocument : FluentElement, IEnumerable<IFluentResourceEntry>
+	public class FluentDocument : FluentElement, 
+		IEnumerable<IFluentDocumentItem>
 	{
-        public List<IFluentResourceEntry> Content { get; }
+		public List<IFluentDocumentItem> Content { get; init; } = new();
 
 		public FluentDocument()
 		{
-			Content = new List<IFluentResourceEntry>();
+			
 		}
 
-        public void Add(IFluentResourceEntry entry) => Content.Add(entry);
-        public IEnumerator<IFluentResourceEntry> GetEnumerator() => Content.GetEnumerator();
+        public void Add(IFluentDocumentItem entry) => Content.Add(entry);
+        public IEnumerator<IFluentDocumentItem> GetEnumerator() => Content.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
+    }
 }
 	

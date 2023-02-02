@@ -2,6 +2,6 @@
 {
 	public interface IFluentTargetReference : IFluentElement
 	{
-		string TargetReference { get; }
+		string Target { get; }
 	}
 }

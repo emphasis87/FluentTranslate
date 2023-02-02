@@ -77,7 +77,7 @@ namespace FluentTranslate.Services
         {
             var clone = new FluentMessage
             {
-                Identifier = message.Identifier,
+                Id = message.Id,
                 Comment = message.Comment,
             };
             clone.Content.AddRange(message.Content.Select(Clone));
@@ -89,7 +89,7 @@ namespace FluentTranslate.Services
         {
             var clone = new FluentTerm
             {
-                Identifier = term.Identifier,
+                Id = term.Id,
                 Comment = term.Comment,
             };
             clone.Content.AddRange(term.Content.Select(Clone));
@@ -101,7 +101,7 @@ namespace FluentTranslate.Services
         {
             var clone = new FluentAttribute
             {
-                Identifier = attribute.Identifier,
+                Id = attribute.Id,
             };
             clone.Content.AddRange(attribute.Content.Select(Clone));
             return clone;
@@ -150,7 +150,7 @@ namespace FluentTranslate.Services
         {
             var clone = new FluentFunctionCall
             {
-                TargetId = functionCall.TargetId,
+                Id = functionCall.Id,
                 Arguments = functionCall.Arguments.Select(Clone).ToList()
             };
             return clone;
@@ -179,8 +179,8 @@ namespace FluentTranslate.Services
         {
             var clone = new FluentMessageReference
             {
-                TargetId = messageReference.TargetId,
-                TargetAttributeId = messageReference.TargetAttributeId
+                Id = messageReference.Id,
+                AttributeId = messageReference.AttributeId
             };
             return clone;
         }
@@ -189,8 +189,8 @@ namespace FluentTranslate.Services
         {
             var clone = new FluentTermReference
             {
-                TargetId = termReference.TargetId,
-                TargetAttributeId = termReference.TargetAttributeId,
+                Id = termReference.Id,
+                AttributeId = termReference.AttributeId,
                 Arguments = termReference.Arguments.Select(Clone).ToList()
             };
             return clone;

@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Threading.Tasks;
-using FluentAssertions;
 using FluentTranslate.Domain;
 using FluentTranslate.Infrastructure;
 using NUnit.Framework;
@@ -19,7 +18,8 @@ namespace FluentTranslate.Tests.Infrastructure
 			var provider = new FluentEmbeddedResourceProvider(assembly, "FluentTranslate.Tests.EmbeddedResources.Hello.iv.ftl");
 
 			var r0 = await provider.GetResourceAsync();
-			r0.Should().Equal(
+            
+			Assert.AreEqual(r0,
 				new FluentDocument()
 				{
 					new FluentMessage("hello")
@@ -29,7 +29,8 @@ namespace FluentTranslate.Tests.Infrastructure
 				});
 			
 			var r1 = await provider.GetResourceAsync(CultureInfo.InvariantCulture);
-			r1.Should().Equal(r0);
+
+            Assert.AreEqual(r1, r0);
 		}
 	}
 }

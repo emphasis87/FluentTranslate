@@ -45,13 +45,17 @@ namespace FluentTranslate.Tests.Infrastructure
 
 			// When files are missing should return an empty resource
 			var r0 = await provider.GetResourceAsync();
-			r0.Should().Equal(new FluentDocument());
+			
+			Assert.AreEqual(r0, new FluentDocument());
+
 			provider.FindResourceAsyncCount.Should().Be(1);
 			provider.Providers.Should().BeEquivalentTo(fn, fn.Replace("ftl", "iv.ftl"));
 
 			// Consecutive calls should be cached based on polling interval
 			var r1 = await provider.GetResourceAsync();
-			r0.Should().BeSameAs(r1);
+			
+			Assert.AreSame(r0, r1);
+
 			provider.FindResourceAsyncCount.Should().Be(1);
 
 			await Task.Delay(2000);
@@ -67,7 +71,7 @@ namespace FluentTranslate.Tests.Infrastructure
 
 			// Should return a new resource
 			var r3 = await provider.GetResourceAsync();
-			r3.Should().Equal(
+			Assert.AreEqual(r3,
 				new FluentDocument
 				{
 					new FluentMessage("hello") {new FluentText("Hello, world!")},
@@ -79,8 +83,8 @@ namespace FluentTranslate.Tests.Infrastructure
 
 			// Should combine the resources with specific culture having priority
 			var r4 = await provider.GetResourceAsync();
-			r4.Should().Equal(
-				new FluentDocument
+            Assert.AreEqual(r4,
+                new FluentDocument
 				{
 					new FluentMessage("hello") {new FluentText("Hello, everyone!")},
 					new FluentMessage("greeting") {new FluentText("Hello, world!")}
@@ -89,7 +93,8 @@ namespace FluentTranslate.Tests.Infrastructure
 			// Should ignore files for different cultures
 			var en = CultureInfo.GetCultureInfo("en-US");
 			var r5 = await provider.GetResourceAsync(en);
-			r5.Should().Equal(r3);
+
+            Assert.AreEqual(r5, r3);
 
 			// Should create a single provider for each path
 			provider.Providers.Should().BeEquivalentTo(

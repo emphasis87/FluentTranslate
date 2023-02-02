@@ -1,12 +1,10 @@
 ﻿using FluentTranslate.Serialization.Fluent;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace FluentTranslate.Services
 {
     public static class FluentServices
     {
-        public static IFluentAggregator Aggregator => Default.GetService<IFluentAggregator>();
         public static IFluentCloneFactory CloneFactory => Default.GetService<IFluentCloneFactory>();
         public static IFluentSerializer Serializer => Default.GetService<IFluentSerializer>();
         public static IFluentDeserializer Deserializer => Default.GetService<IFluentDeserializer>();
@@ -29,7 +27,6 @@ namespace FluentTranslate.Services
 
         public static void AddFluent(this IServiceCollection services)
         {
-            services.AddSingleton<IFluentAggregator, FluentAggregator>();
             services.AddSingleton<IFluentCloneFactory, FluentCloneFactory>();
             services.AddSingleton<IFluentSerializer, FluentSerializer>();
             services.AddSingleton<IFluentDeserializer, FluentDeserializer>();

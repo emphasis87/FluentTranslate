@@ -26,8 +26,8 @@ namespace FluentTranslate.Services
                 FluentDocument resource => GetHashCode(resource),
                 FluentEmptyLines emptyLines => GetHashCode(emptyLines),
                 FluentComment comment => GetHashCode(comment),
-                FluentMessage message => GetHashCode(message),
                 FluentTerm term => GetHashCode(term),
+                FluentMessage message => GetHashCode(message),
                 FluentAttribute attribute => GetHashCode(attribute),
                 FluentText text => GetHashCode(text),
                 FluentPlaceable placeable => GetHashCode(placeable),
@@ -51,17 +51,17 @@ namespace FluentTranslate.Services
         public static int GetHashCode(FluentComment comment) => Hash((object)comment.Value);
         public static int GetHashCode(FluentMessage message) => Hash((object)message.Reference);
         public static int GetHashCode(FluentTerm term) => Hash((object)term.Reference);
-        public static int GetHashCode(FluentAttribute attribute) => Hash((object)attribute.Identifier);
+        public static int GetHashCode(FluentAttribute attribute) => Hash((object)attribute.Id);
         public static int GetHashCode(FluentText text) => Hash((object)text.Value);
         public static int GetHashCode(FluentPlaceable placeable) => Hash(placeable.Type, placeable.Content);
         public static int GetHashCode(FluentSelection selection) => Hash(selection.Type, selection.Match, selection.Variants);
         public static int GetHashCode(FluentVariant variant) => Hash(variant.Type, variant.Identifier);
-        public static int GetHashCode(FluentFunctionCall functionCall) => Hash((object)functionCall.TargetId);
+        public static int GetHashCode(FluentFunctionCall functionCall) => Hash((object)functionCall.Id);
         public static int GetHashCode(FluentCallArgument argument) => Hash((object)argument.Identifier);
         public static int GetHashCode(FluentIdentifier identifier) => Hash((object)identifier.Value);
-        public static int GetHashCode(FluentMessageReference messageReference) => Hash((object)messageReference.TargetReference);
-        public static int GetHashCode(FluentTermReference termReference) => Hash((object)termReference.TargetReference);
-        public static int GetHashCode(FluentVariableReference variableReference) => Hash((object)variableReference.TargetId);
+        public static int GetHashCode(FluentMessageReference messageReference) => Hash((object)messageReference.Target);
+        public static int GetHashCode(FluentTermReference termReference) => Hash((object)termReference.Target);
+        public static int GetHashCode(FluentVariableReference variableReference) => Hash((object)variableReference.Id);
         public static int GetHashCode(FluentNumberLiteral numberLiteral) => Hash((object)numberLiteral.Value);
         public static int GetHashCode(FluentStringLiteral stringLiteral) => Hash((object)stringLiteral.Value);
 
@@ -75,8 +75,8 @@ namespace FluentTranslate.Services
                 (FluentDocument x, FluentDocument y) => Equals(x, y, this),
                 (FluentEmptyLines x, FluentComment y) => Equals(x, y),
                 (FluentComment x, FluentComment y) => Equals(x, y),
-                (FluentMessage x, FluentMessage y) => Equals(x, y, this),
                 (FluentTerm x, FluentTerm y) => Equals(x, y, this),
+                (FluentMessage x, FluentMessage y) => Equals(x, y, this),
                 (FluentAttribute x, FluentAttribute y) => Equals(x, y, this),
                 (FluentText x, FluentText y) => Equals(x, y),
                 (FluentPlaceable x, FluentPlaceable y) => Equals(x, y, this),
@@ -129,7 +129,7 @@ namespace FluentTranslate.Services
 
         public static bool Equals(FluentAttribute x, FluentAttribute y, IEqualityComparer<IFluentElement>? comparer = null)
         {
-            return x.Identifier == y.Identifier
+            return x.Id == y.Id
                 && AreEqual(x.Content, y.Content, comparer);
         }
 
@@ -158,7 +158,7 @@ namespace FluentTranslate.Services
 
         public static bool Equals(FluentFunctionCall x, FluentFunctionCall y, IEqualityComparer<IFluentElement>? comparer = null)
         {
-            return x.TargetId == y.TargetId
+            return x.Id == y.Id
                 && AreEqual(x.Arguments, y.Arguments, comparer);
         }
 
@@ -175,18 +175,18 @@ namespace FluentTranslate.Services
 
         public static bool Equals(FluentMessageReference x, FluentMessageReference y)
         {
-            return x.TargetReference == y.TargetReference;
+            return x.Target == y.Target;
         }
 
         public static bool Equals(FluentTermReference x, FluentTermReference y, IEqualityComparer<IFluentElement>? comparer = null)
         {
-            return x.TargetReference == y.TargetReference
+            return x.Target == y.Target
                 && AreEqual(x.Arguments, y.Arguments, comparer);
         }
 
         public static bool Equals(FluentVariableReference x, FluentVariableReference y)
         {
-            return x.TargetId == y.TargetId;
+            return x.Id == y.Id;
         }
 
         public static bool Equals(FluentNumberLiteral x, FluentNumberLiteral y)

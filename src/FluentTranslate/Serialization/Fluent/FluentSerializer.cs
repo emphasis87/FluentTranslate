@@ -113,7 +113,7 @@ namespace FluentTranslate.Serialization.Fluent
         public virtual string Serialize(FluentAttribute attribute, FluentSerializerContext context = null)
         {
             context ??= CreateContext();
-            var entry = $"{context.Indent}.{attribute.Identifier} =";
+            var entry = $"{context.Indent}.{attribute.Id} =";
             context.AddIndent();
             var contents = attribute.Content
                 .Select(content => Serialize(content, context))
@@ -171,18 +171,18 @@ namespace FluentTranslate.Serialization.Fluent
 
         public virtual string Serialize(FluentVariableReference variableReference, FluentSerializerContext context = null)
         {
-            return $"${variableReference.TargetId}";
+            return $"${variableReference.Id}";
         }
 
         public virtual string Serialize(FluentMessageReference messageReference, FluentSerializerContext context = null)
         {
-            return messageReference.TargetReference;
+            return messageReference.Target;
         }
 
         public virtual string Serialize(FluentTermReference termReference, FluentSerializerContext context = null)
         {
             context ??= CreateContext();
-            var reference = termReference.TargetReference;
+            var reference = termReference.Target;
             var call = Serialize(new FluentFunctionCall { Arguments = termReference.Arguments.ToList() }, context);
             return $"{reference}{call}";
         }
@@ -193,7 +193,7 @@ namespace FluentTranslate.Serialization.Fluent
             var arguments = functionCall.Arguments
                 .Select(argument => Serialize(argument, context))
                 .ToList();
-            return $"{functionCall.TargetId}({string.Join(", ", arguments)})";
+            return $"{functionCall.Id}({string.Join(", ", arguments)})";
         }
 
         public virtual string Serialize(FluentCallArgument callArgument, FluentSerializerContext context = null)

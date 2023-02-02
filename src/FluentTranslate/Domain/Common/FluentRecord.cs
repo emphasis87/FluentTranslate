@@ -1,22 +1,23 @@
 ﻿namespace FluentTranslate.Domain.Common
 {
-	public interface IFluentRecord : IFluentContainer, IFluentAttributable, IFluentResourceEntry, IFluentReference
+	public interface IFluentRecord : IFluentContainer, IFluentAttributable, IFluentDocumentItem, IFluentReference
 	{
-		string Comment { get; }
-		string Identifier { get; }
+		string Id { get; }
 	}
 
-	public abstract class FluentRecord : FluentContainer, IFluentRecord, IEnumerable<IFluentContent>, IEnumerable<FluentAttribute>
-	{
-		public string Comment { get; set; }
-		public string Identifier { get; set; }
-		public abstract string Reference { get; }
+	public abstract class FluentRecord : FluentContainer, IFluentRecord, 
+		IEnumerable<IFluentContent>, 
+		IEnumerable<FluentAttribute>
+    {
+		public string Id { get; set; } = default!;
 
-		public List<FluentAttribute> Attributes { get; }
+		public List<FluentAttribute> Attributes { get; init; } = new();
+
+		public virtual string Reference => Id;
 
         protected FluentRecord()
 		{
-			Attributes = new List<FluentAttribute>();
+			
 		}
 
         public void Add(FluentAttribute attribute) => Attributes.Add(attribute);

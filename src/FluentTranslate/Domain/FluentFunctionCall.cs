@@ -7,19 +7,21 @@ namespace FluentTranslate.Domain
 		
 	}
 
-	public class FluentFunctionCall : FluentElement, IFluentFunctionCall, IEnumerable<FluentCallArgument>
+	public class FluentFunctionCall : FluentElement, IFluentFunctionCall, 
+		IEnumerable<FluentCallArgument>
     {
-        public string TargetId { get; set; }
-		public List<FluentCallArgument> Arguments { get; set; }
+		public string Id { get; set; } = default!;
+
+		public List<FluentCallArgument> Arguments { get; init; } = new();
 
 		public FluentFunctionCall()
 		{
-			Arguments = new List<FluentCallArgument>();
+			
 		}
 
 		public FluentFunctionCall(string id) : this()
 		{
-			TargetId = id;
+			Id = id;
 		}
 
         public void Add(FluentCallArgument argument) => Arguments.Add(argument);

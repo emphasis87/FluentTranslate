@@ -4,7 +4,7 @@ namespace FluentTranslate.Domain
 {
 	public interface IFluentCallable : IFluentElement, IEnumerable<FluentCallArgument>
 	{
-		string TargetId { get; }
+		string Id { get; }
 
 		List<FluentCallArgument> Arguments { get; }
 		void Add(FluentCallArgument argument);

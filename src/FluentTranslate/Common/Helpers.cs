@@ -29,7 +29,7 @@
 			}
 		}
 
-		public static int Hash(params object[] items)
+		public static int Hash(params object?[] items)
 		{
 			return Hash(items as IEnumerable);
 		}

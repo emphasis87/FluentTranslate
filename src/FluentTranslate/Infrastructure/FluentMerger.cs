@@ -33,6 +33,7 @@ namespace FluentTranslate.Infrastructure
 				throw new ArgumentNullException(nameof(resources));
 
 			var result = new FluentDocument();
+			/*
 			var entryByName = new Dictionary<string, FluentRecord>();
 
 			var entries = resources
@@ -54,7 +55,7 @@ namespace FluentTranslate.Infrastructure
 				result.Content.Add(clone);
 				entryByName[entry.Reference] = clone;
 			}
-
+			*/
 			return result;
 		}
 	}

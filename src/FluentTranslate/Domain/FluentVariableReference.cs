@@ -4,16 +4,17 @@ namespace FluentTranslate.Domain
 {
     public class FluentVariableReference : FluentElement, IFluentExpression, IFluentTargetReference
 	{
-        public string TargetId { get; set; }
-		public string TargetReference => TargetId;
+		public string Id { get; set; } = default!;
+
+		public string Target => Id;
 
         public FluentVariableReference()
 		{
 		}
 
-		public FluentVariableReference(string targetId) : this()
+		public FluentVariableReference(string id) : this()
 		{
-			TargetId = targetId;
+			Id = id;
 		}
 	}
 }

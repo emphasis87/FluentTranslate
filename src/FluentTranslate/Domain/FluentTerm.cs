@@ -4,7 +4,9 @@ namespace FluentTranslate.Domain
 {
 	public class FluentTerm : FluentRecord
     {
-		public override string Reference => $"-{Identifier}";
+        public string? Comment { get; set; }
+
+        public override string Reference => $"-{Id}";
 
 		public FluentTerm()
 		{
@@ -12,15 +14,13 @@ namespace FluentTranslate.Domain
 
 		public FluentTerm(string id) : this()
 		{
-			Identifier = id;
+			Id = id;
 		}
 
 		public FluentTerm(string id, string comment) : this()
 		{
-			Identifier = id;
+			Id = id;
 			Comment = comment;
 		}
-
-		public override IEnumerator GetEnumerator() => Attributes.Cast<IFluentElement>().Concat(Content).GetEnumerator();
 	}
 }

@@ -2,19 +2,24 @@
 
 namespace FluentTranslate.Domain
 {
-	public class FluentCallArgument : FluentElement
+    public class FluentCallArgument : FluentElement
     {
         public string? Identifier { get; set; }
         public IFluentExpression Content { get; set; } = default!;
 
-        public FluentCallArgument(string? id = null, IFluentExpression? content = null)
+        public FluentCallArgument()
         {
-            Identifier = id;
-            Content = content ?? default!;
+
         }
 
-        public FluentCallArgument(IFluentExpression content)
+        public FluentCallArgument(IFluentExpression content) : this()
         {
+            Content = content;
+        }
+
+        public FluentCallArgument(string id, IFluentExpression content) : this()
+        {
+            Identifier = id;
             Content = content;
         }
     }

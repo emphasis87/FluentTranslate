@@ -57,12 +57,6 @@ public interface IFluentParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitRecord([NotNull] FluentParser.RecordContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="FluentParser.recordHeader"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitRecordHeader([NotNull] FluentParser.RecordHeaderContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="FluentParser.term"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

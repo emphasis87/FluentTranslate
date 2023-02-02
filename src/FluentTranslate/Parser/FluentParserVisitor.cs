@@ -1,109 +1,21 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+using Antlr4.Runtime.Tree;
 using FluentTranslate.Domain;
 using FluentTranslate.Domain.Common;
-using System;
+using System.Xml.Linq;
 
 namespace FluentTranslate.Parser
 {
 	public class FluentParserVisitor : FluentParserBaseVisitor<IFluentElement>
 	{
-		private Stack<string> _texts = new();
+		private Queue<string> _texts = new();
         private StringBuilder _text = new();
-        private Stack<string> _comments = new();
-		private StringBuilder _comment = new();
+        private Queue<string> _comments = new();
 		private StringBuilder _ws = new();
         private int _commentLevel = 0;
         private Stack<IFluentElement> _items = new();
 		private Stack<IFluentElement> _children = new();
-
-        public override IFluentElement VisitDocument(FluentParser.DocumentContext context)
-		{
-			var document = new FluentDocument();
-
-			_items.Clear();
-            _items.Push(document);
-			
-			base.VisitDocument(context);
-
-			AggregateItems(document);
-
-			return document;
-		}
-
-		private string PublishComment()
-		{
-            foreach (var value in _comments)
-                _comment.Append(value);
-
-			var comment = _comment.ToString();
-			_comment.Clear();
-            _comments.Clear();
-            return comment;
-        }
-
-        private string PublishText()
-        {
-			// Find a common indentation
-			_ws.Clear();
-			int indent = int.MaxValue;
-			foreach(var value in _texts.Skip(1))
-			{
-                int lineIndent = 0;
-				int i = 0;
-                while (lineIndent < indent && i < value.Length)
-				{
-					char c = value[i++];
-                    if (c == '\r' || c == '\n')
-                    {
-                        lineIndent = 0;
-                        continue;
-                    }
-
-                    if (!char.IsWhiteSpace(c))
-                        break;
-                    if (_ws.Length == lineIndent)
-                        _ws.Append(c);
-                    else if (_ws[lineIndent] != c)
-                        break;
-
-                    lineIndent++;
-                }
-                indent = Math.Min(indent, lineIndent);
-			}
-
-			var start = _texts.Pop();
-			_text.Append(start.TrimStart());
-
-			foreach (var value in _texts)
-			{
-				int lineIndent = 0;
-				for(var p = 0; p < value.Length; p++)
-				{
-                    char c = value[p];
-                    if (c == '\r' || c == '\n')
-                    {
-						_text.Append(c);
-                        lineIndent = 0;
-                        continue;
-                    }
-
-					if (lineIndent < indent && _ws[lineIndent] == c)
-					{
-						lineIndent++;
-						continue;
-					}
-
-					_text.Append(value, p, value.Length - p);
-					break;
-                }
-            }
-
-			var text = _text.ToString();
-			_text.Clear();
-            _texts.Clear();
-            return text;
-        }
 
         protected void AggregateItems(IFluentElement parent)
 		{
@@ -141,11 +53,11 @@ namespace FluentTranslate.Parser
 				switch (current)
 				{
 					case FluentComment comment:
-                        _comments.Push(comment.Value);
+                        _comments.Enqueue(comment.Value);
                         _commentLevel = comment.Level;
 						continue;
 					case FluentText text:
-                        _texts.Push(text.Value);
+                        _texts.Enqueue(text.Value);
 						continue;
 					case FluentEmptyLines:
 						continue;
@@ -165,6 +77,9 @@ namespace FluentTranslate.Parser
 			{
 				switch (parent)
 				{
+					case IFluentAttributable attributable when child is FluentAttribute attribute:
+						attributable.Attributes.Add(attribute);
+						break;
 					case IFluentContainer container when child is IFluentContent content:
 						container.Add(content);
 						break;
@@ -179,26 +94,132 @@ namespace FluentTranslate.Parser
                                 break;
                         }
 						break;
-					case FluentDocument document when child is IFluentResourceEntry entry:
+					case FluentTermReference termReference when child is FluentCallArgument argument:
+						termReference.Arguments.Add(argument);
+						break;
+					case FluentCallArgument argument when child is IFluentExpression expression:
+						argument.Content = expression;
+						break;
+					case FluentDocument document when child is IFluentDocumentItem entry:
                         document.Add(entry);
 						break;
                 }
             }
 		}
 
-		public override IFluentElement VisitEmptyLine(FluentParser.EmptyLineContext context)
+        private string PublishComment()
+        {
+            var comment = string.Join("\r\n", _comments);
+            _comments.Clear();
+            return comment;
+        }
+
+        private string PublishText()
+        {
+            // Find a common indentation
+            _ws.Clear();
+            int indent = int.MaxValue;
+            foreach (var value in _texts.Skip(1))
+            {
+                int lineIndent = 0;
+                int i = 0;
+                while (lineIndent < indent && i < value.Length)
+                {
+                    char c = value[i++];
+                    if (c == '\r' || c == '\n')
+                    {
+                        lineIndent = 0;
+                        continue;
+                    }
+
+                    if (!char.IsWhiteSpace(c))
+                        break;
+                    if (_ws.Length == lineIndent)
+                        _ws.Append(c);
+                    else if (_ws[lineIndent] != c)
+                        break;
+
+                    lineIndent++;
+                }
+                indent = Math.Min(indent, lineIndent);
+            }
+
+            var start = _texts.Dequeue();
+            _text.Append(start.TrimStart());
+
+            foreach (var value in _texts)
+            {
+                int lineIndent = 0;
+                for (var p = 0; p < value.Length; p++)
+                {
+                    char c = value[p];
+                    if (c == '\r' || c == '\n')
+                    {
+                        _text.Append(c);
+                        lineIndent = 0;
+                        continue;
+                    }
+
+                    if (lineIndent < indent && _ws[lineIndent] == c)
+                    {
+                        lineIndent++;
+                        continue;
+                    }
+
+                    _text.Append(value, p, value.Length - p);
+                    break;
+                }
+            }
+
+            var text = _text.ToString();
+            _text.Clear();
+            _texts.Clear();
+            return text;
+        }
+
+        public override IFluentElement VisitChildren(IRuleNode node)
+        {
+            var val = DefaultResult;
+            int childCount = node.ChildCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                if (!ShouldVisitNextChild(node, val))
+                {
+                    break;
+                }
+
+				var child = node.GetChild(i);
+                var nextResult = child.Accept(this);
+                val = AggregateResult(val, nextResult);
+            }
+
+            return val;
+        }
+
+        protected virtual IFluentElement Publish<TResult>(TResult result)
+            where TResult : IFluentElement
+        {
+            _items.Push(result);
+            return result;
+        }
+
+        protected virtual IFluentElement ResolveChildren<T, TResult>(T context, TResult result)
+			where T : FluentTranslate.Parser.FluentParserContext
+			where TResult : IFluentElement
 		{
-			if (_items.Count > 0 && _items.Peek() is FluentEmptyLines emptyLines)
-				return emptyLines;
+            _items.Push(result);
+            VisitChildren(context);
+            AggregateItems(result);
+            return result;
+        }
 
-			emptyLines = new FluentEmptyLines();
+        public override IFluentElement VisitDocument(FluentParser.DocumentContext context)
+        {
+            _items.Clear();
+			return ResolveChildren(context, new FluentDocument());
+        }
 
-			_items.Push(emptyLines);
-
-			return emptyLines;
-		}
-
-		public override IFluentElement VisitComment(FluentParser.CommentContext context)
+        public override IFluentElement VisitComment(FluentParser.CommentContext context)
 		{
 			var level = context.COMMENT_OPEN().GetText().TrimEnd().Length;
 			var value = context.COMMENT().GetText();
@@ -209,82 +230,44 @@ namespace FluentTranslate.Parser
 				Value = value,
 			};
 
-			_items.Push(result);
-
-			return result;
+			return Publish(result);
 		}
 
 		public override IFluentElement VisitTerm(FluentParser.TermContext context)
 		{
-            var term = new FluentTerm();
-
-            _items.Push(term);
-
-            base.VisitTerm(context);
-
-            AggregateItems(term);
-
-            return term;
+            var id = context.record().IDENTIFIER().GetText();
+            return ResolveChildren(context, new FluentTerm(id));
         }
 
 		public override IFluentElement VisitMessage(FluentParser.MessageContext context)
 		{
-			var message = new FluentMessage();
-
-			_items.Push(message);
-
-			base.VisitMessage(context);
-
-            AggregateItems(message);
-
-            return message;
-        }
-
-        public override IFluentElement VisitRecordHeader(FluentParser.RecordHeaderContext context)
-        {
-            var id = context.IDENTIFIER().GetText();
-
-            if (_items.Peek() is not FluentRecord record)
-                throw new Exception("There should be a FluentRecord type on the result stack.");
-
-            record.Identifier = id;
-            return record;
+            var id = context.record().IDENTIFIER().GetText();
+            return ResolveChildren(context, new FluentMessage(id));
         }
 
         public override IFluentElement VisitAttribute(FluentParser.AttributeContext context)
-		{
-			var attribute = new FluentAttribute();
+        {
+            var id = context.record().IDENTIFIER().GetText();
+            return ResolveChildren(context, new FluentAttribute(id));
+        }
 
-			_items.Push(attribute);
+        public override IFluentElement VisitEmptyLine(FluentParser.EmptyLineContext context)
+        {
+            if (_items.Count > 0 && _items.Peek() is FluentEmptyLines emptyLines)
+                return emptyLines;
 
-			base.VisitAttribute(context);
+			return Publish(new FluentEmptyLines());
+        }
 
-			AggregateItems(attribute);
-
-			return attribute;
-		}
-
-		public override IFluentElement VisitText(FluentParser.TextContext context)
+        public override IFluentElement VisitText(FluentParser.TextContext context)
 		{
 			var value = context.GetText();
-            var text = new FluentText() { Value = value };
-
-			_items.Push(text);
-
-			return text;
+			return Publish(new FluentText(value));
 		}
 
 		public override IFluentElement VisitPlaceable(FluentParser.PlaceableContext context)
 		{
-			var placeable = new FluentPlaceable();
-			
-			_items.Push(placeable);
-
-			base.VisitPlaceable(context);
-
-			AggregateItems(placeable);
-
-			return placeable;
+			return ResolveChildren(context, new FluentPlaceable());
 
 			//// Remove indentation text from inner placeable, e.g
 			//// ... { indentation { $variable } } ...
@@ -392,72 +375,62 @@ namespace FluentTranslate.Parser
             var value = context.GetText();
 			// Remove quotes
 			var literal = value.Substring(1, value.Length - 2);
-            var result = new FluentStringLiteral(literal);
-			
-			_items.Push(result);
 
-            return result;
+			return Publish(new FluentStringLiteral(literal));
         }
 
 		public override IFluentElement VisitNumberLiteral(FluentParser.NumberLiteralContext context)
 		{
 			var literal = context.GetText();
-			var result = new FluentNumberLiteral(literal);
-
-			_items.Push(result);
-
-			return result;
+			return Publish(new FluentNumberLiteral(literal));
 		}
 
 		public override IFluentElement VisitVariableReference(FluentParser.VariableReferenceContext context)
 		{
 			var id = context.IDENTIFIER_REF().GetText();
-			var result = new FluentVariableReference(id);
-
-			_items.Push(result);
-
-            return result;
+			return Publish(new FluentVariableReference(id));
 		}
 
-        public override IFluentElement VisitMessageReference([NotNull] FluentParser.MessageReferenceContext context)
+        public override IFluentElement VisitMessageReference(FluentParser.MessageReferenceContext context)
         {
-            return base.VisitMessageReference(context);
+			return ResolveChildren(context, new FluentMessageReference());
         }
 
         public override IFluentElement VisitTermReference(FluentParser.TermReferenceContext context)
 		{
-			//Collector.AddType(FluentType.TermReference);
-			return base.VisitTermReference(context);
+			return ResolveChildren(context, new FluentTermReference());
 		}
 
 		public override IFluentElement VisitRecordReference(FluentParser.RecordReferenceContext context)
 		{
 			var id = context.IDENTIFIER_REF().GetText();
 			var attributeId = context.attributeAccessor()?.IDENTIFIER_REF().GetText();
-			return base.VisitRecordReference(context);
-			//var result = Collector.AddReference(id, attributeId);
-			//return result;
-		}
+			
+			base.VisitRecordReference(context);
+
+			if (_items.Peek() is FluentRecordReference reference)
+			{
+				reference.Id = id;
+				reference.AttributeId = attributeId;
+
+                return reference;
+			}
+
+			return default!;
+        }
 
         public override IFluentElement VisitFunctionCall(FluentParser.FunctionCallContext context)
 		{
-			//Collector.AddType(FluentType.FunctionCall);
-			base.VisitFunctionCall(context);
             var id = context.IDENTIFIER_REF().GetText();
-			//var result = Collector.AddFunctionCall(id);
-			//return result;
-			return base.VisitFunctionCall(context);
+			return ResolveChildren(context, new FluentFunctionCall(id));
 		}
 
-        public override IFluentElement VisitArgument([NotNull] FluentParser.ArgumentContext context)
+        public override IFluentElement VisitArgument(FluentParser.ArgumentContext context)
         {
-			var argument = new FluentCallArgument();
-			_items.Push(argument);
-            base.VisitArgument(context);
-			return argument;
+			return ResolveChildren(context, new FluentCallArgument());
         }
 
-        public override IFluentElement VisitInlineArgument([NotNull] FluentParser.InlineArgumentContext context)
+        public override IFluentElement VisitInlineArgument(FluentParser.InlineArgumentContext context)
         {
             return base.VisitInlineArgument(context);
         }
@@ -473,16 +446,6 @@ namespace FluentTranslate.Parser
             base.VisitNamedArgument(context);
 
 			return argument;
-		}
-
-        private static Exception UnsupportedChildTypeException(IFluentElement child, [CallerMemberName] string? callerName = null)
-		{
-			return new ArgumentOutOfRangeException(nameof(child), $"{callerName}: Child of type {child.GetType()} is not supported.");
-		}
-
-		private static Exception UnsupportedContextTypeException(RuleContext context, [CallerMemberName] string? callerName = null)
-		{
-			return new ArgumentOutOfRangeException(nameof(context), $"{callerName}: Context of type {context.GetType()} is not supported.");
 		}
 	}
 }

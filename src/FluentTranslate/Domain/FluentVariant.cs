@@ -2,10 +2,10 @@
 
 namespace FluentTranslate.Domain
 {
-	public class FluentVariant : FluentContainer, IFluentContainer, IEnumerable<IFluentContent>
+	public class FluentVariant : FluentContainer, IFluentContainer
 	{
         public bool IsDefault { get; set; }
-		public IFluentVariantIdentifier Identifier { get; set; }
+		public IFluentVariantIdentifier Identifier { get; set; } = default!;
 
 		public FluentVariant()
 		{
@@ -21,7 +21,5 @@ namespace FluentTranslate.Domain
 		{
 			IsDefault = isDefault;
 		}
-
-		public override IEnumerator GetEnumerator() => Content.GetEnumerator();
     }
 }

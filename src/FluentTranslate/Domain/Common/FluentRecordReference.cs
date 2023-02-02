@@ -1,28 +1,27 @@
-﻿using FluentTranslate.Domain;
-
-namespace FluentTranslate.Domain.Common
+﻿namespace FluentTranslate.Domain.Common
 {
 	public abstract class FluentRecordReference : FluentElement, IFluentExpression, IFluentTargetReference
 	{
-        public string TargetId { get; set; }
-		public string TargetAttributeId { get; set; }
-		public abstract string TargetReference { get; }
+		public string Id { get; set; } = default!;
+		public string? AttributeId { get; set; } = default!;
 
-		public static FluentRecordReference Create(string reference)
+		public abstract string Target { get; }
+
+		public static FluentRecordReference Create(string target)
 		{
-			var result = reference.StartsWith("-")
+			var result = target.StartsWith("-")
 				? (FluentRecordReference) new FluentTermReference()
 				: new FluentMessageReference();
 
-			var dotIndex = reference.IndexOf('.');
+			var dotIndex = target.IndexOf('.');
 			if (dotIndex != -1)
 			{
-				var attribute = reference.Substring(dotIndex + 1);
-				result.TargetAttributeId = attribute;
-				reference = reference.Substring(0, dotIndex);
+				var attribute = target.Substring(dotIndex + 1);
+				result.AttributeId = attribute;
+				target = target.Substring(0, dotIndex);
 			}
 
-			result.TargetId = reference;
+			result.Id = target;
 			return result;
 		}
     }
