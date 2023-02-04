@@ -4,8 +4,6 @@ namespace FluentTranslate.Domain
 {
 	public class FluentTerm : FluentRecord
     {
-        public string? Comment { get; set; }
-
         public override string Reference => $"-{Id}";
 
 		public FluentTerm()

@@ -1,15 +1,11 @@
-﻿using FluentTranslate.Common;
-using FluentTranslate.Services;
+﻿using FluentTranslate.Services;
 
 namespace FluentTranslate.Domain.Common
 {
 	public abstract class FluentElement : IFluentElement, IEquatable<IFluentElement>
 	{
-		public string Type { get; }
-
 		public FluentElement()
         {
-			Type = FluentTypeNames.GetType(this);
 		}
 
 		public override bool Equals(object other)

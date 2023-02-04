@@ -12,14 +12,19 @@ namespace FluentTranslate.Domain
 
         }
 
-        public FluentCallArgument(IFluentExpression content) : this()
+        public FluentCallArgument(string id) : this()
         {
-            Content = content;
+            Identifier = id;
         }
 
         public FluentCallArgument(string id, IFluentExpression content) : this()
         {
             Identifier = id;
+            Content = content;
+        }
+
+        public FluentCallArgument(IFluentExpression content) : this()
+        {
             Content = content;
         }
     }

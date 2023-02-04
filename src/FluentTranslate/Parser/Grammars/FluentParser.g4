@@ -9,34 +9,39 @@ options {
  * Parser Rules
  */
 
-document			: entry* EOF ;
+document			: Content=entryList EOF ;
 
+entryList			: entry* ;
 entry				: ( term | message | comment | emptyLine ) ;
 
 comment				: COMMENT_OPEN COMMENT NL? ;
 
 record				: IDENTIFIER INDENT? EQUALS INDENT? ;
-term				: TERM record expressionList attributeList? NL? ;
-message				: record expressionList? attributeList? NL? ;
-attributeList		: attribute+ ;
-attribute			: ws indent ATTRIBUTE record expressionList ;
 
-expressionList		: expression+ ;
+term				: TERM record Content=expressionList Attributes=attributeList? NL? ;
+message				: record Content=expressionList? Attributes=attributeList? NL? ;
+
+attributeList		: attribute+ ;
+attribute			: ws indent ATTRIBUTE record Content=expressionList ;
+
+expressionList		: ws? ( blank? expression )+ ws? ;
 expression			: text | placeable ;
 
-text				: ws TEXT ;
+text				: TEXT ;
 
 indent				: ( INDENT | NL_INDENT ) ;
+blank				: ( INDENT | NL | NL_INDENT )+ ;
 ws					: ( INDENT | NL | NL_INDENT )*? ;
 
-placeable			: Prefix=ws PLACEABLE_OPEN ws placeableExpression ws PLACEABLE_CLOSE ;
+placeable			: PLACEABLE_OPEN ws Content=placeableExpression ws PLACEABLE_CLOSE ;
 placeableExpression	: selectExpression | inlineExpression ;
 
-selectExpression	: inlineExpression ws SELECTOR ws variantList ;
+selectExpression	: Match=inlineExpression ws SELECTOR ws Variants=variantList ;
 
 variantList			: (ws variant)* ws defaultVariant (ws variant)* ;
 defaultVariant		: VARIANT_DEFAULT variant ;
-variant				: VARIANT_OPEN INDENT? ( identifier | NUMBER_LITERAL ) INDENT? VARIANT_CLOSE expressionList ;
+variant				: VARIANT_OPEN INDENT? Key=variantKey INDENT? VARIANT_CLOSE Content=expressionList ;
+variantKey			: ( identifier | numberLiteral ) ;
 identifier			: IDENTIFIER_REF ;
 
 inlineExpression	: stringLiteral
@@ -60,9 +65,7 @@ attributeAccessor	: ATTRIBUTE_REF IDENTIFIER_REF ;
 functionCall		: IDENTIFIER_REF argumentList ;
 
 argumentList		: ws CALL_OPEN ( argument ws CALL_ARG_SEP )* argument? ws CALL_CLOSE ;
-argument			: ws ( namedArgument | inlineArgument ) ;
-namedArgument		: IDENTIFIER_REF ws CALL_ARG_NAME_SEP ws argumentExpression ;
-inlineArgument		: argumentExpression ;
-argumentExpression	: inlineExpression ;
+argument			: ws argumentName? Argument=inlineExpression ;
+argumentName		: IDENTIFIER_REF ws CALL_ARG_NAME_SEP ws ;
 
 emptyLine			: INDENT? ( NL | NL_INDENT ) ;

@@ -1,12 +1,4 @@
-﻿using FluentAssertions;
-using FluentTranslate.Options;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-
-namespace FluentTranslate.Tests.Options
+﻿namespace FluentTranslate.Tests.Options
 {
     public class FluentOptionsSerializationTests
     {

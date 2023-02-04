@@ -14,6 +14,7 @@ namespace FluentTranslate.Common
         public const string Placeable = "placeable";
         public const string Selection = "selection";
         public const string Variant = "variant";
+        public const string VariantKey = "variant-key";
         public const string Identifier = "id";
         public const string MessageReference = "message-ref";
         public const string TermReference = "term-ref";
@@ -37,6 +38,7 @@ namespace FluentTranslate.Common
                 FluentPlaceable => Placeable,
                 FluentSelection => Selection,
                 FluentVariant => Variant,
+                FluentVariantKey => VariantKey,
                 FluentFunctionCall => FunctionCall,
                 FluentCallArgument => CallArgument,
                 FluentIdentifier => Identifier,

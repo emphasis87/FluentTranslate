@@ -5,19 +5,24 @@ namespace FluentTranslate.Domain
 	public class FluentVariant : FluentContainer, IFluentContainer
 	{
         public bool IsDefault { get; set; }
-		public IFluentVariantIdentifier Identifier { get; set; } = default!;
+		public FluentVariantKey Key { get; set; } = default!;
 
 		public FluentVariant()
 		{
 			
 		}
 
-		public FluentVariant(IFluentVariantIdentifier identifier) : this()
+		public FluentVariant(FluentVariantKey key) : this()
 		{
-			Identifier = identifier;
+			Key = key;
 		}
 
-		public FluentVariant(IFluentVariantIdentifier identifier, bool isDefault) : this(identifier)
+        public FluentVariant(IFluentVariantIdentifier identifier) : this()
+        {
+            Key = new FluentVariantKey(identifier);
+        }
+
+        public FluentVariant(IFluentVariantIdentifier identifier, bool isDefault) : this(identifier)
 		{
 			IsDefault = isDefault;
 		}

@@ -31,6 +31,7 @@ namespace FluentTranslate.Serialization.Fluent
                 FluentPlaceable placeable => Serialize(placeable, context),
                 FluentSelection selection => Serialize(selection, context),
                 FluentVariant variant => Serialize(variant, context),
+                FluentVariantKey variantKey => Serialize(variantKey, context),
                 FluentVariableReference variableReference => Serialize(variableReference, context),
                 FluentMessageReference messageReference => Serialize(messageReference, context),
                 FluentTermReference termReference => Serialize(termReference, context),
@@ -161,12 +162,20 @@ namespace FluentTranslate.Serialization.Fluent
         {
             context ??= CreateContext();
             var isDefault = variant.IsDefault ? "*" : " ";
-            var key = Serialize(variant.Identifier, context);
+            var key = Serialize(variant.Key, context);
             var contentItems = variant.Content
                 .Select(content => Serialize(content, context))
                 .ToList();
             var contents = string.Join("", contentItems);
             return $"{context.Indent}{isDefault}[{key}] {contents}\r\n";
+        }
+
+        public virtual string Serialize(FluentVariantKey variantKey, FluentSerializerContext context = null)
+        {
+            if (variantKey.Identifier is not null)
+                return Serialize(variantKey.Identifier, context);
+
+            return string.Empty;
         }
 
         public virtual string Serialize(FluentVariableReference variableReference, FluentSerializerContext context = null)

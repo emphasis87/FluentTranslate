@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FluentAssertions;
-using FluentTranslate.Infrastructure;
-using NUnit.Framework;
+﻿using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate.Tests.Infrastructure
 {

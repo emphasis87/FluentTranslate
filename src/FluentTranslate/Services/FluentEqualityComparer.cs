@@ -53,11 +53,11 @@ namespace FluentTranslate.Services
         public static int GetHashCode(FluentTerm term) => Hash((object)term.Reference);
         public static int GetHashCode(FluentAttribute attribute) => Hash((object)attribute.Id);
         public static int GetHashCode(FluentText text) => Hash((object)text.Value);
-        public static int GetHashCode(FluentPlaceable placeable) => Hash(placeable.Type, placeable.Content);
-        public static int GetHashCode(FluentSelection selection) => Hash(selection.Type, selection.Match, selection.Variants);
-        public static int GetHashCode(FluentVariant variant) => Hash(variant.Type, variant.Identifier);
+        public static int GetHashCode(FluentPlaceable placeable) => Hash(placeable.Content);
+        public static int GetHashCode(FluentSelection selection) => Hash(selection.Match, selection.Variants);
+        public static int GetHashCode(FluentVariant variant) => Hash(variant.Key);
         public static int GetHashCode(FluentFunctionCall functionCall) => Hash((object)functionCall.Id);
-        public static int GetHashCode(FluentCallArgument argument) => Hash((object)argument.Identifier);
+        public static int GetHashCode(FluentCallArgument argument) => Hash(argument.Identifier as object);
         public static int GetHashCode(FluentIdentifier identifier) => Hash((object)identifier.Value);
         public static int GetHashCode(FluentMessageReference messageReference) => Hash((object)messageReference.Target);
         public static int GetHashCode(FluentTermReference termReference) => Hash((object)termReference.Target);
@@ -152,7 +152,7 @@ namespace FluentTranslate.Services
         public static bool Equals(FluentVariant x, FluentVariant y, IEqualityComparer<IFluentElement>? comparer = null)
         {
             return x.IsDefault == y.IsDefault
-                && AreEqual(x.Identifier, y.Identifier, comparer)
+                && AreEqual(x.Key, y.Key, comparer)
                 && AreEqual(x.Content, y.Content, comparer);
         }
 

@@ -18,11 +18,17 @@ namespace FluentTranslate.Tests.Support
 
 		public override IToken NextToken()
 		{
-			var modeStack0 = string.Join(",", new[] {CurrentMode}.Concat(ModeStack).Select(x => $"{x}"));
+			var modeStack0 = string.Join(",", 
+				new[] {CurrentMode}
+					.Concat(ModeStack)
+					.Select(x => $"{x}"));
 
 			var token = base.NextToken();
 
-			var modeStack1 = string.Join(",", new[] {CurrentMode}.Concat(ModeStack).Select(x => $"{x}"));
+			var modeStack1 = string.Join(",", 
+				new[] {CurrentMode}
+					.Concat(ModeStack)
+					.Select(x => $"{x}"));
 			
 			var displayName = DefaultVocabulary.GetDisplayName(token.Type);
 			var symbolicName = DefaultVocabulary.GetSymbolicName(token.Type);

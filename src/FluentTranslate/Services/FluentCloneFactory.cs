@@ -140,7 +140,7 @@ namespace FluentTranslate.Services
             var clone = new FluentVariant
             {
                 IsDefault = variant.IsDefault,
-                Identifier = Clone(variant.Identifier),
+                Key = Clone(variant.Key),
             };
             clone.Content.AddRange(variant.Content.Select(Clone));
             return clone;

@@ -2,13 +2,15 @@
 {
 	public interface IFluentRecord : IFluentContainer, IFluentAttributable, IFluentDocumentItem, IFluentReference
 	{
-		string Id { get; }
+		string? Comment { get; set; }
+		string Id { get; set; }
 	}
 
 	public abstract class FluentRecord : FluentContainer, IFluentRecord, 
 		IEnumerable<IFluentContent>, 
 		IEnumerable<FluentAttribute>
     {
+		public string? Comment { get; set; }
 		public string Id { get; set; } = default!;
 
 		public List<FluentAttribute> Attributes { get; init; } = new();

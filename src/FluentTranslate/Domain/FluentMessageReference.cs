@@ -4,11 +4,7 @@ namespace FluentTranslate.Domain
 {
 	public class FluentMessageReference : FluentRecordReference
     {
-		public override string Target => AttributeId switch
-		{
-			null => $"{Id}",
-			_ => $"{Id}.{AttributeId}"
-		};
+		public override string Target => string.Join(".", new[] { Id, AttributeId }.Where(x => x is not null));
 
 		public FluentMessageReference()
 		{
@@ -18,5 +14,11 @@ namespace FluentTranslate.Domain
 		{
 			Id = id;
 		}
-	}
+
+        public FluentMessageReference(string id, string? attributeId) : this()
+        {
+            Id = id;
+			AttributeId = attributeId;
+        }
+    }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
-using FluentAssertions;
-using FluentTranslate.Domain;
-using FluentTranslate.Infrastructure;
-using NUnit.Framework;
+﻿using FluentTranslate.Infrastructure;
 
 namespace FluentTranslate.Tests.Infrastructure
 {

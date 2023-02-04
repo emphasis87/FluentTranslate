@@ -4,8 +4,6 @@ namespace FluentTranslate.Domain
 {
 	public class FluentMessage : FluentRecord
     {
-        public string? Comment { get; set; }
-
         public FluentMessage()
 		{
 		}

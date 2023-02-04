@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using System.Linq;
-using Antlr4.Runtime;
-using FluentAssertions;
-using FluentTranslate.Domain;
-using FluentTranslate.Parser;
-using FluentTranslate.Services;
-using FluentTranslate.Tests.Support;
-using NUnit.Framework;
-
-namespace FluentTranslate.Tests.Parser
+﻿namespace FluentTranslate.Tests.Parser
 {
     [Parallelizable(ParallelScope.All)]
     public class FluentParserVisitorTests
@@ -51,25 +39,69 @@ namespace FluentTranslate.Tests.Parser
         }
 
         [Test]
-        public void Can_parse_basic_message()
+        public void Can_parse_empty_message()
         {
-            var actual = Act(Resources.Hello);
+            var ftl = @"empty = ";
+            var actual = Act(ftl);
 
             var expected = new FluentDocument
             {
-                new FluentMessage("hello")
-                {
-                    new FluentText("Hello, world!")
-                }
+                new FluentMessage("empty")
             };
 
             ShouldBeEqual(actual, expected);
         }
 
         [Test]
+        public void Can_parse_single_line_message()
+        {
+            var ftl = @"single = Text can be written in a single line.";
+            var actual = Act(ftl);
+            var expected = new FluentDocument
+            {
+                new FluentMessage("single")
+                {
+                    new FluentText("Text can be written in a single line.")
+                }
+            };
+            ShouldBeEqual(actual, expected);
+        }
+
+        [Test]
+        public void Can_parse_empty_attribute()
+        {
+            var ftl = @"
+login-input = Login
+    .placeholder = 
+next-input = 
+exit-input = Exit";
+            var actual = Act(ftl);
+            var expected = new FluentDocument
+            {
+                new FluentMessage("login-input")
+                {
+                    new FluentText("Login"),
+                    new FluentAttribute("placeholder")
+                },
+                new FluentMessage("next-input"),
+                new FluentMessage("exit-input")
+                {
+                    new FluentText("Exit"),
+                }
+            };
+            ShouldBeEqual(actual, expected);
+        }
+
+        [Test]
         public void Can_parse_attributes()
         {
-            var actual = Act(Resources.Attributes);
+            var ftl = @"
+login-input = Predefined value
+    .placeholder = email@example.com
+    .aria-label = Login input value
+    .title = Type your login email";
+
+            var actual = Act(ftl);
 
             var expected = new FluentDocument
             {
@@ -170,10 +202,8 @@ namespace FluentTranslate.Tests.Parser
                 new FluentMessage("emails")
                 {
                     new FluentText("You have "),
-                    new FluentPlaceable
-                    {
-                        Content = new FluentVariableReference("unreadEmails")
-                    },
+                    new FluentPlaceable(
+                        new FluentVariableReference("unreadEmails")),
                     new FluentText(" unread emails.")
                 },
                 new FluentMessage("emails2")
@@ -182,7 +212,8 @@ namespace FluentTranslate.Tests.Parser
                     new FluentPlaceable(
                         new FluentFunctionCall("NUMBER")
                         {
-                            new FluentCallArgument(new FluentVariableReference("unreadEmails"))
+                            new FluentCallArgument(
+                                new FluentVariableReference("unreadEmails"))
                         }),
                     new FluentText(" unread emails.")
                 },
@@ -192,9 +223,12 @@ namespace FluentTranslate.Tests.Parser
                     new FluentPlaceable(
                         new FluentFunctionCall("DATETIME")
                         {
-                            new FluentCallArgument(new FluentVariableReference("lastChecked")),
-                            new FluentCallArgument("day", new FluentStringLiteral("numeric")),
-                            new FluentCallArgument("month", new FluentStringLiteral("long")),
+                            new FluentCallArgument(
+                                new FluentVariableReference("lastChecked")),
+                            new FluentCallArgument("day",
+                                new FluentStringLiteral("numeric")),
+                            new FluentCallArgument("month",
+                                new FluentStringLiteral("long")),
                         }),
                     new FluentText(".")
                 },
@@ -247,6 +281,132 @@ namespace FluentTranslate.Tests.Parser
                             new FluentCallArgument("minimumFractionDigits", new FluentNumberLiteral("2")),
                         }
                     },
+                },
+            };
+
+            ShouldBeEqual(actual, expected);
+        }
+
+        [Test]
+        public void Can_parse_multiline_message_1()
+        {
+            var ftl = @"
+multi = Text can also span multiple lines as long as
+    each new line is indented by at least one space.
+    Because all lines in this message are indented
+    by the same amount, all indentation will be
+    removed from the final value.";
+
+            var actual = Act(ftl);
+
+            var expected = new FluentDocument
+            {
+                new FluentMessage("multi")
+                {
+                    new FluentText(
+                        "Text can also span multiple lines as long as"
+                        +"\r\neach new line is indented by at least one space."
+                        +"\r\nBecause all lines in this message are indented"
+                        +"\r\nby the same amount, all indentation will be"
+                        +"\r\nremoved from the final value.")
+                },
+            };
+
+            ShouldBeEqual(actual, expected);
+        }
+
+        [Test]
+        public void Can_parse_multiline_message_2()
+        {
+            var ftl = @"
+indents =
+    Indentation common to all indented lines is removed
+    from the final text value.
+      This line has 2 spaces in front of it.";
+            
+            var actual = Act(ftl);
+            
+            var expected = new FluentDocument
+            {
+                new FluentMessage("indents")
+                {
+                    new FluentText(
+                        "Indentation common to all indented lines is removed"
+                        +"\r\nfrom the final text value."
+                        +"\r\n  This line has 2 spaces in front of it.")
+                },
+            };
+            
+            ShouldBeEqual(actual, expected);
+        }
+
+        [Test]
+        public void Can_parse_multiline_message_3()
+        {
+            var ftl = @"
+leading-spaces =     This message's value starts with the word ""This"".";
+
+            var actual = Act(ftl);
+
+            var expected = new FluentDocument
+            {
+                new FluentMessage("leading-spaces")
+                {
+                    new FluentText("This message's value starts with the word \"This\".")
+                },
+            };
+
+            ShouldBeEqual(actual, expected);
+        }
+
+        [Test]
+        public void Can_parse_multiline_message_4()
+        {
+            var ftl = """
+leading-lines =
+
+
+    This message's value starts with the word "This".
+    The blank lines under the identifier are ignored.
+""";
+
+            var actual = Act(ftl);
+
+            var expected = new FluentDocument
+            {
+                new FluentMessage("leading-lines")
+                {
+                    new FluentText(
+                        "This message's value starts with the word \"This\"."
+                        +"\r\nThe blank lines under the identifier are ignored.")
+                },
+            };
+
+            ShouldBeEqual(actual, expected);
+        }
+
+        [Test]
+        public void Can_parse_multiline_message_5()
+        {
+            var ftl = @"
+blank-lines =
+
+    The blank line above this line is ignored.
+    This is a second line of the value.
+
+    The blank line above this line is preserved.";
+
+            var actual = Act(ftl);
+
+            var expected = new FluentDocument
+            {
+                new FluentMessage("blank-lines")
+                {
+                    new FluentText(
+                        "The blank line above this line is ignored."
+                        +"\r\nThis is a second line of the value."
+                        +"\r\n"
+                        +"\r\nThe blank line above this line is preserved.")
                 },
             };
 
@@ -545,11 +705,13 @@ namespace FluentTranslate.Tests.Parser
                         new FluentSelection(
                             new FluentVariableReference("unreadEmails"))
                         {
-                            new FluentVariant(new FluentIdentifier("one"))
+                            new FluentVariant(
+                                new FluentIdentifier("one"))
                             {
                                 new FluentText("You have one unread email.")
                             },
-                            new FluentVariant(new FluentIdentifier("other"), isDefault: true)
+                            new FluentVariant(
+                                new FluentIdentifier("other"), isDefault: true)
                             {
                                 new FluentText("You have "),
                                 new FluentPlaceable(new FluentVariableReference("unreadEmails")),
@@ -565,7 +727,13 @@ namespace FluentTranslate.Tests.Parser
         [Test]
         public void Can_parse_selector_with_function_call()
         {
-            var actual = Act(Resources.SelectorsNumber);
+            var ftl = @"
+your-score =
+    { NUMBER($score, minimumFractionDigits: 1) ->
+        [0.0]   You scored zero points. What happened?
+       *[other] You scored { NUMBER($score, minimumFractionDigits: 1) } points.
+    }";
+            var actual = Act(ftl);
 
             var expected = new FluentDocument
             {
@@ -604,7 +772,16 @@ namespace FluentTranslate.Tests.Parser
         [Test]
         public void Can_parse_selector_with_function_call_and_literal_argument()
         {
-            var actual = Act(Resources.SelectorsOrdinal);
+            var ftl = """
+your-rank = { NUMBER($pos, type: "ordinal") ->
+   [1] You finished first!
+   [one] You finished {$pos}st
+   [two] You finished {$pos}nd
+   [few] You finished {$pos}rd
+  *[other] You finished {$pos}th
+}
+""";
+            var actual = Act(ftl);
 
             var expected = new FluentDocument
             {
@@ -699,7 +876,13 @@ namespace FluentTranslate.Tests.Parser
         [Test]
         public void Can_parse_term_references_with_arguments()
         {
-            var actual = Act(Resources.TermsParameterized);
+            var ftl = @"
+# A contrived example to demonstrate how variables
+# can be passed to terms.
+-https = https://{ $host }
+visit = Visit { -https(host: ""example.com"") } for more information.";
+
+            var actual = Act(ftl);
 
             var expected = new FluentDocument
             {
@@ -708,7 +891,8 @@ namespace FluentTranslate.Tests.Parser
                     + "\r\ncan be passed to terms.")
                 {
                     new FluentText("https://"),
-                    new FluentPlaceable(new FluentVariableReference("host")),
+                    new FluentPlaceable(
+                        new FluentVariableReference("host")),
                 },
                 new FluentMessage("visit")
                 {
