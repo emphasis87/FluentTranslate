@@ -200,12 +200,34 @@ namespace FluentTranslate.Tests.Infrastructure
             engine.Add(
                 new FluentDocument()
                 {
+                    new FluentTerm("fruit")
+                    {
+                        new FluentText("There is a green "),
+                        new FluentPlaceable(
+                            new FluentVariableReference("fruitType")),
+                        new FluentText(" on the table.")
+                    }
+                });
+
+            var result = engine.GetString("-fruit(fruitType: apple)");
+
+            result.Should().Be("There is a green apple on the table.");
+        }
+
+        [Test]
+        public void Can_evaluate_term_reference_2()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
                     new FluentMessage("apples")
                     {
                         new FluentPlaceable(
                             new FluentTermReference("fruit")
                             {
-                                new FluentCallArgument("fruit",
+                                new FluentCallArgument("fruitType",
                                     new FluentStringLiteral("apple"))
                             })
                     },
@@ -213,7 +235,7 @@ namespace FluentTranslate.Tests.Infrastructure
                     {
                         new FluentText("There is a green "),
                         new FluentPlaceable(
-                            new FluentVariableReference("fruit")),
+                            new FluentVariableReference("fruitType")),
                         new FluentText(" on the table.")
                     }
                 });
@@ -225,6 +247,7 @@ namespace FluentTranslate.Tests.Infrastructure
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void Can_evaluate_NUMBER_function_1()
         {
             var engine = new FluentEngine();

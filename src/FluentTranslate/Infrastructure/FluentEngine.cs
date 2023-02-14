@@ -76,7 +76,7 @@ namespace FluentTranslate.Infrastructure
 			}
 		}
 
-		private readonly static Regex _record = new(@"(?<term>-)?(?<id>[a-zA-Z]+)(\.(?<attributeId>[a-zA-Z]+))?", RegexOptions.Compiled);
+		private readonly static Regex _record = new(@"^(?<term>-)?(?<id>[a-zA-Z]+)(\.(?<attributeId>[a-zA-Z]+))?$", RegexOptions.Compiled | RegexOptions.Singleline);
 
         public string GetString(string query, FluentEngineContext? context = null)
 		{
