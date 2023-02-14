@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Engine\**" />
+    <EmbeddedResource Remove="Engine\**" />
+    <None Remove="Engine\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Parser\Grammars\FluentLexer.g4" />
     <None Remove="Parser\Grammars\FluentParser.g4" />
   </ItemGroup>
@@ -35,10 +41,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="6.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Engine\" />
   </ItemGroup>
 
 </Project>

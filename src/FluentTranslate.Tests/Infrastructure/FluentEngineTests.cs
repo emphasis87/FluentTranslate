@@ -2,17 +2,254 @@
 
 namespace FluentTranslate.Tests.Infrastructure
 {
+	[Parallelizable(ParallelScope.All)]
 	public class FluentEngineTests
 	{
-		[Test]
-		public void Hello()
-		{
-			var resource = FluentConverter.Deserialize(Resources.Hello);
-			var engine = new FluentEngine(resource);
+		private readonly FluentEngine _engine = new();
 
-			engine.Evaluate("hello").Should().Be("hello");
-			engine.Evaluate("{hello}").Should().Be("Hello, world!");
-			engine.Evaluate("{test}").Should().Be("{test}");
+		[Test]
+		public void Can_evaluate_message_0()
+		{
+			var engine = new FluentEngine();
+			
+			engine.Add(
+				new FluentDocument()
+				{
+					new FluentMessage("hello")
+					{
+						new FluentText("Hello world!")
+					}
+				});
+
+			var result = engine.GetString("hello");
+
+			result.Should().Be("Hello world!");
 		}
-	}
+
+        [Test]
+        public void Can_evaluate_message_1()
+        {
+            var engine = new FluentEngine();
+            
+			engine.Add(
+                new FluentDocument()
+                {
+                    new FluentMessage("apples")
+                    {
+                        new FluentText("There is a "),
+                        new FluentPlaceable(
+							new FluentStringLiteral("red")),
+                        new FluentText(" apple on the table.")
+                    }
+                });
+
+            var result = engine.GetString("apples");
+
+            result.Should().Be("There is a red apple on the table.");
+        }
+
+        [Test]
+        public void Can_evaluate_message_2()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentMessage("apples")
+                    {
+                        new FluentText("There are "),
+                        new FluentPlaceable(
+                            new FluentNumberLiteral("2")),
+                        new FluentText(" apples on the table.")
+                    }
+                });
+
+            var result = engine.GetString("apples");
+
+            result.Should().Be("There are 2 apples on the table.");
+        }
+
+        [Test]
+        public void Can_evaluate_message_3()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentMessage("logged-in")
+                    {
+                        new FluentText("The user "),
+                        new FluentPlaceable(
+                            new FluentVariableReference("user")),
+                        new FluentText(" is logged in!")
+                    }
+                });
+
+            var result = engine.GetString("logged-in", new() { ["user"] = "xHero" });
+
+            result.Should().Be("The user xHero is logged in!");
+        }
+
+        [Test]
+        public void Can_evaluate_message_4()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentMessage("pizza")
+                    {
+                        new FluentText("The is exactly "),
+                        new FluentPlaceable(
+                            new FluentFunctionCall("NUMBER")
+                            {
+                                new FluentCallArgument(
+                                    new FluentVariableReference("count")),
+                                new FluentCallArgument("minimumFractionDigits",
+                                    new FluentNumberLiteral("2"))
+                            }),
+                        new FluentText(" slices of pizza left!")
+                    }
+                });
+
+            var result = engine.GetString("pizza", new() { ["count"] = "1.6" });
+
+            result.Should().Be("The is exactly 1.60 slices of pizza left!");
+        }
+
+        [Test]
+        public void Can_evaluate_term_1()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentTerm("apples")
+                    {
+                        new FluentText("There are "),
+                        new FluentPlaceable(
+                            new FluentNumberLiteral("2")),
+                        new FluentText(" apples on the table.")
+                    }
+                });
+
+            var result = engine.GetString("-apples");
+
+            result.Should().Be("There are 2 apples on the table.");
+        }
+
+        [Test]
+        public void Can_evaluate_attribute_1()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentMessage("apples")
+                    {
+                        new FluentAttribute("count")
+                        {
+                            new FluentText("There are "),
+                            new FluentPlaceable(
+                                new FluentNumberLiteral("2")),
+                            new FluentText(" apples on the table.")
+                        }
+                    }
+                });
+
+            var result = engine.GetString("apples.count");
+
+            result.Should().Be("There are 2 apples on the table.");
+        }
+
+        [Test]
+        public void Can_evaluate_attribute_2()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentTerm("apples")
+                    {
+                        new FluentAttribute("count")
+                        {
+                            new FluentText("There are "),
+                            new FluentPlaceable(
+                                new FluentNumberLiteral("2")),
+                            new FluentText(" apples on the table.")
+                        }
+                    }
+                });
+
+            var result = engine.GetString("-apples.count");
+
+            result.Should().Be("There are 2 apples on the table.");
+        }
+
+        [Test]
+        public void Can_evaluate_term_reference_1()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentMessage("apples")
+                    {
+                        new FluentPlaceable(
+                            new FluentTermReference("fruit")
+                            {
+                                new FluentCallArgument("fruit",
+                                    new FluentStringLiteral("apple"))
+                            })
+                    },
+                    new FluentTerm("fruit")
+                    {
+                        new FluentText("There is a green "),
+                        new FluentPlaceable(
+                            new FluentVariableReference("fruit")),
+                        new FluentText(" on the table.")
+                    }
+                });
+
+            var result = engine.GetString("apples", new() { ["fruit"] = "broccoli" });
+            
+            // The fruit argument in the context should be ignored
+            result.Should().Be("There is a green apple on the table.");
+        }
+
+        [Test]
+        public void Can_evaluate_NUMBER_function_1()
+        {
+            var engine = new FluentEngine();
+
+            engine.Add(new FluentFunction_NUMBER());
+
+            engine.Add(
+                new FluentDocument()
+                {
+                    new FluentMessage("apples")
+                    {
+                        new FluentText("There are "),
+                        new FluentPlaceable(
+                            new FluentFunctionCall("NUMBER")
+                            {
+                                new FluentCallArgument(
+                                    new FluentVariableReference("count"))
+                            }),
+                        new FluentText(" apples on the table.")
+                    },
+                });
+
+            var result = engine.GetString("apples", new() { ["count"] = "1.5" });
+
+            result.Should().Be("There are 1.5 apples on the table.");
+        }
+    }
 }

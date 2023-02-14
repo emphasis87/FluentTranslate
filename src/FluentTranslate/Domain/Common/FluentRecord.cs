@@ -1,12 +1,12 @@
 ﻿namespace FluentTranslate.Domain.Common
 {
-	public interface IFluentRecord : IFluentContainer, IFluentAttributable, IFluentDocumentItem, IFluentReference
+	public interface IFluentRecord : IFluentContainer, IFluentAttributable, IFluentEntry, IFluentReferencable
 	{
 		string? Comment { get; set; }
 		string Id { get; set; }
 	}
 
-	public abstract class FluentRecord : FluentContainer, IFluentRecord, 
+	public abstract partial class FluentRecord : FluentContainer, IFluentRecord, 
 		IEnumerable<IFluentContent>, 
 		IEnumerable<FluentAttribute>
     {

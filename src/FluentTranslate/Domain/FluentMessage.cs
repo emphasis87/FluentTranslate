@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Domain
 {
-	public class FluentMessage : FluentRecord
+	public partial class FluentMessage : FluentRecord
     {
         public FluentMessage()
 		{

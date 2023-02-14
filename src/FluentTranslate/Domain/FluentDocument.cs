@@ -3,17 +3,17 @@
 namespace FluentTranslate.Domain
 {
 	public class FluentDocument : FluentElement, 
-		IEnumerable<IFluentDocumentItem>
+		IEnumerable<IFluentEntry>
 	{
-		public List<IFluentDocumentItem> Content { get; init; } = new();
+		public List<IFluentEntry> Content { get; init; } = new();
 
 		public FluentDocument()
 		{
 			
 		}
 
-        public void Add(IFluentDocumentItem entry) => Content.Add(entry);
-        public IEnumerator<IFluentDocumentItem> GetEnumerator() => Content.GetEnumerator();
+        public void Add(IFluentEntry entry) => Content.Add(entry);
+        public IEnumerator<IFluentEntry> GetEnumerator() => Content.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Domain
 {
-    public class FluentStringLiteral : FluentElement, IFluentExpression
+    public partial class FluentStringLiteral : FluentElement, IFluentExpression
     {
 		public string Value { get; set; } = default!;
 

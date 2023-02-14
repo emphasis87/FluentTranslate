@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Domain
 {
-    public class FluentEmptyLines : FluentElement, IFluentDocumentItem
+    public class FluentEmptyLines : FluentElement, IFluentEntry
 	{
 		public int Count { get; set; }
 	}

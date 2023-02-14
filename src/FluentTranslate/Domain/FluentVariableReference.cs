@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Domain
 {
-    public class FluentVariableReference : FluentElement, IFluentExpression, IFluentTargetReference
+    public class FluentVariableReference : FluentElement, IFluentExpression, IFluentReference
 	{
 		public string Id { get; set; } = default!;
 

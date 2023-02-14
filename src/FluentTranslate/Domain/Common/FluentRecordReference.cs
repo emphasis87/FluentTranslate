@@ -1,6 +1,6 @@
 ﻿namespace FluentTranslate.Domain.Common
 {
-	public abstract class FluentRecordReference : FluentElement, IFluentExpression, IFluentTargetReference
+	public abstract class FluentRecordReference : FluentElement, IFluentExpression, IFluentReference
 	{
 		public string Id { get; set; } = default!;
 		public string? AttributeId { get; set; } = default!;

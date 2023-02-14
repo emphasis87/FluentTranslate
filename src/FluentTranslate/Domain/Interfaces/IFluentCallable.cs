@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FluentTranslate.Domain
+﻿namespace FluentTranslate.Domain
 {
 	public interface IFluentCallable : IFluentElement, IEnumerable<FluentCallArgument>
 	{
