@@ -1,7 +1,9 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
+    [Entity(FluentTranslateEntities.CallArgument)]
     public class FluentCallArgument : FluentElement
     {
         public string? Identifier { get; set; }

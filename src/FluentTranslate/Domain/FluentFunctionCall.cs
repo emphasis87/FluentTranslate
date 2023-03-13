@@ -1,4 +1,5 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
@@ -7,7 +8,8 @@ namespace FluentTranslate.Domain
 		
 	}
 
-	public class FluentFunctionCall : FluentElement, IFluentFunctionCall, 
+    [Entity(FluentTranslateEntities.FunctionCall)]
+    public class FluentFunctionCall : FluentElement, IFluentFunctionCall, 
 		IEnumerable<FluentCallArgument>
     {
 		public string Id { get; set; } = default!;

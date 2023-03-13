@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentSelection : FluentElement, IFluentExpression, IEnumerable<FluentVariant>
+    [Entity(FluentTranslateEntities.Selection)]
+    public class FluentSelection : FluentElement, IFluentExpression, IEnumerable<FluentVariant>
     {
         public IFluentExpression Match { get; set; } = default!;
         public List<FluentVariant> Variants { get; } = new();

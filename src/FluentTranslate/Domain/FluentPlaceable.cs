@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentPlaceable : FluentElement, IFluentContent, IFluentExpression
+    [Entity(FluentTranslateEntities.Placeable)]
+    public class FluentPlaceable : FluentElement, IFluentContent, IFluentExpression
     {
         public IFluentExpression Content { get; set; } = default!;
 

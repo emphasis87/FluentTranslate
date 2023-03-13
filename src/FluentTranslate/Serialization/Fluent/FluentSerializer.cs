@@ -2,7 +2,7 @@
 
 namespace FluentTranslate.Serialization.Fluent
 {
-    public interface IFluentSerializer
+    public interface IFluentElementSerializer
     {
         string Serialize(IFluentElement element, FluentSerializerContext context = null);
     }
@@ -10,7 +10,7 @@ namespace FluentTranslate.Serialization.Fluent
     /// <summary>
     /// Serializer from <see cref="IFluentElement"/> to fluent syntax.
     /// </summary>
-    public class FluentSerializer : IFluentSerializer
+    public class FluentSerializer : IFluentElementSerializer
     {
         public static FluentSerializer Default { get; } = new FluentSerializer();
 
@@ -21,7 +21,7 @@ namespace FluentTranslate.Serialization.Fluent
             context ??= CreateContext();
             return element switch
             {
-                FluentDocument resource => Serialize(resource, context),
+                FluentResource resource => Serialize(resource, context),
                 FluentEmptyLines emptyLines => Serialize(emptyLines, context),
                 FluentComment comment => Serialize(comment, context),
                 FluentMessage message => Serialize(message, context),
@@ -44,7 +44,7 @@ namespace FluentTranslate.Serialization.Fluent
             };
         }
 
-        public virtual string Serialize(FluentDocument resource, FluentSerializerContext context = null)
+        public virtual string Serialize(FluentResource resource, FluentSerializerContext context = null)
         {
             context ??= CreateContext();
             var entryItems = resource.Content

@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public partial class FluentMessage : FluentRecord
+    [Entity(FluentTranslateEntities.Message)]
+    public partial class FluentMessage : FluentRecord
     {
         public FluentMessage()
 		{

@@ -7,7 +7,7 @@ namespace FluentTranslate.Serialization.Fluent
 {
     public interface IFluentDeserializer
     {
-        FluentDocument Deserialize(string content);
+        FluentResource Deserialize(string content);
         IFluentElement Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse);
     }
 
@@ -15,9 +15,9 @@ namespace FluentTranslate.Serialization.Fluent
     {
         public static FluentDeserializer Default { get; } = new FluentDeserializer();
 
-        public FluentDocument Deserialize(string content)
+        public FluentResource Deserialize(string content)
         {
-            return (FluentDocument)Deserialize(content, (_, x) => x.document());
+            return (FluentResource)Deserialize(content, (_, x) => x.document());
         }
 
         public IFluentElement Deserialize(string content, Func<FluentLexer, FluentParser, FluentParserContext> parse)

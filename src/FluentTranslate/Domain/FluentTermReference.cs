@@ -1,7 +1,9 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
+    [Entity(FluentTranslateEntities.TermReference)]
     public class FluentTermReference : FluentRecordReference, IFluentCallable, IEnumerable<FluentCallArgument>
     {
         public override string Target => AttributeId switch

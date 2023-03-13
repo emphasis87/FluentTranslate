@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+	<LangVersion>preview</LangVersion>
+    <TargetFrameworks>net472;net48;net6.0-windows;net7.0-windows</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FluentTranslate.UI.WPF\FluentTranslate.UI.WPF.csproj" />
+  </ItemGroup>
+
+</Project>

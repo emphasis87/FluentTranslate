@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentTerm : FluentRecord
+    [Entity(FluentTranslateEntities.Term)]
+    public class FluentTerm : FluentRecord
     {
         public override string Reference => $"-{Id}";
 

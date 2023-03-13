@@ -1,7 +1,9 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
+    [Entity(FluentTranslateEntities.VariableReference)]
     public class FluentVariableReference : FluentElement, IFluentExpression, IFluentReference
 	{
 		public string Id { get; set; } = default!;

@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentNumberLiteral : FluentElement, IFluentExpression, IFluentVariantIdentifier
+    [Entity(FluentTranslateEntities.NumberLiteral)]
+    public class FluentNumberLiteral : FluentElement, IFluentExpression, IFluentVariantIdentifier
     {
 		public string Value { get; set; } = default!;
 

@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentComment : FluentElement, IFluentEntry
+    [Entity(FluentTranslateEntities.Comment)]
+    public class FluentComment : FluentElement, IFluentEntry
 	{
         public int Level { get; set; }
 		public string Value { get; set; } = default!;

@@ -19,7 +19,7 @@ namespace FluentTranslate.Readers
 
         }
 
-        public FluentDocument Read(string path, JsonSerializerOptions options = null)
+        public FluentResource Read(string path, JsonSerializerOptions options = null)
         {
             try
             {

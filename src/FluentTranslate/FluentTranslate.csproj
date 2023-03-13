@@ -39,6 +39,9 @@
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.10.1" />
     <PackageReference Include="Antlr4BuildTasks" Version="10.7.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="6.0.4" />
   </ItemGroup>

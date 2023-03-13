@@ -1,7 +1,9 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
+	[Entity(FluentTranslateEntities.Attribute)]
 	public class FluentAttribute : FluentContainer, 
 		IEnumerable<IFluentContent>
     {

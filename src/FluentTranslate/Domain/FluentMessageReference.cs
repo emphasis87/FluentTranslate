@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentMessageReference : FluentRecordReference
+    [Entity(FluentTranslateEntities.MessageReference)]
+    public class FluentMessageReference : FluentRecordReference
     {
 		public override string Target => string.Join(".", new[] { Id, AttributeId }.Where(x => x is not null));
 

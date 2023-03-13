@@ -209,7 +209,7 @@ namespace FluentTranslate.Parser
         public override IFluentElement VisitDocument(FluentParser.DocumentContext context)
         {
             _items.Clear();
-            var document = new FluentDocument();
+            var document = new FluentResource();
             return Resolve(context.Content, document, document.Content);
         }
 

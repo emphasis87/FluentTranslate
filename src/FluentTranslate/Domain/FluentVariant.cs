@@ -1,8 +1,10 @@
-﻿using FluentTranslate.Domain.Common;
+﻿using FluentTranslate.Common;
+using FluentTranslate.Domain.Common;
 
 namespace FluentTranslate.Domain
 {
-	public class FluentVariant : FluentContainer, IFluentContainer
+    [Entity(FluentTranslateEntities.Variant)]
+    public class FluentVariant : FluentContainer, IFluentContainer
 	{
         public bool IsDefault { get; set; }
 		public FluentVariantKey Key { get; set; } = default!;

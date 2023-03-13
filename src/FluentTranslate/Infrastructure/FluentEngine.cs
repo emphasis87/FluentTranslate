@@ -7,7 +7,7 @@ namespace FluentTranslate.Infrastructure
 {
 	public interface IFluentEngine
 	{
-		void Add(FluentDocument document);
+		void Add(FluentResource document);
 		void Add(FluentRecord record);
 
 		void Add(IFluentFunction function, string? name = default);
@@ -17,6 +17,25 @@ namespace FluentTranslate.Infrastructure
 
 		object GetValue(IFluentElement element, FluentEngineContext? context = null);
 	}
+
+    public class ArgumentCollection : IEnumerable<FluentCallArgument>
+    {
+        public void Add(FluentCallArgument argument)
+        {
+
+        }
+
+
+        public IEnumerator<FluentCallArgument> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    } 
 
 	public class FluentEngine : IFluentEngine
 	{
@@ -30,7 +49,7 @@ namespace FluentTranslate.Infrastructure
             _logger = logger;
         }
 
-		public void Add(FluentDocument document)
+		public void Add(FluentResource document)
 		{
 			var records = document.Content
                 .OfType<FluentRecord>()
@@ -66,7 +85,8 @@ namespace FluentTranslate.Infrastructure
             name ??= function.Name;
             if (string.IsNullOrWhiteSpace(name))
             {
-                _logger?.LogDebug("Missing name of the added function.");
+                if (_logger is { } l && l.IsEnabled(LogLevel.Debug))
+                    l.LogDebug("Missing name of the added function.");
                 return;
             }
 
@@ -94,7 +114,7 @@ namespace FluentTranslate.Infrastructure
 			IFluentElement element;
 			try
 			{
-				element = FluentConverter.Deserialize(query, (lexer, parser) =>
+				element = FluentSerializer.Deserialize(query, (lexer, parser) =>
 				{
 					lexer.PushMode(FluentLexer.SINGLELINE);
 					return parser.expressionList();
