@@ -1,13 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
 namespace FluentTranslate.WebApi.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("api/data")]
+    [Authorize]
     public class ProfilesController : ControllerBase
     {
-
         private readonly ILogger<ProfilesController>? _logger;
 
         public ProfilesController(ILogger<ProfilesController>? logger = null)
@@ -15,10 +12,16 @@ namespace FluentTranslate.WebApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/profiles")]
+        [HttpGet("profile/all")]
         public IEnumerable<string> GetProfiles()
         {
             return new[] { "a", "b" };
+        }
+
+        [HttpGet("profile/{profileId}")]
+        public async Task<FileStreamResult> GetProfile(string profileId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
